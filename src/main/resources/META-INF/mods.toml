@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MPL-2.0"
+issueTrackerURL="https://github.com/naileclevrai/stage-tent-mod/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://github.com/naileclevrai/stage-tent-mod"
+logoFile="stagetents_logo.png"
+authors="Nailec"
+description='''
+Tensioned canvas tents for building stages and events: circus big tops, pagodas, reception tents,
+folding gazebos, stretch tents and inflatable arches, with floors, stages, rigging bars, festoon lights
+and event furniture.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
