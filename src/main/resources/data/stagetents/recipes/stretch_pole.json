@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    " L ",
+    " L ",
+    "III"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:stripped_spruce_log"
+    },
+    "I": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "item": "stagetents:stretch_pole",
+    "count": 2
+  }
+}

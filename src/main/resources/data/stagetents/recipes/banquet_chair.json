@@ -1,0 +1,21 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "decorations",
+ "pattern": [
+  "I  ",
+  "IWI",
+  "I I"
+ ],
+ "key": {
+  "I": {
+   "item": "minecraft:iron_nugget"
+  },
+  "W": {
+   "item": "minecraft:white_wool"
+  }
+ },
+ "result": {
+  "item": "stagetents:banquet_chair",
+  "count": 4
+ }
+}

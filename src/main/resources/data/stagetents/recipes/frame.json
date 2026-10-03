@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": ["WWW", "WGW", "I I"],
+  "key": {
+    "W": { "item": "minecraft:white_wool" },
+    "G": { "item": "minecraft:glass_pane" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": { "item": "stagetents:frame" }
+}

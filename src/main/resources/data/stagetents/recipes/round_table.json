@@ -1,0 +1,21 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "decorations",
+ "pattern": [
+  "WWW",
+  " P ",
+  " P "
+ ],
+ "key": {
+  "W": {
+   "item": "minecraft:white_carpet"
+  },
+  "P": {
+   "item": "minecraft:oak_planks"
+  }
+ },
+ "result": {
+  "item": "stagetents:round_table",
+  "count": 2
+ }
+}

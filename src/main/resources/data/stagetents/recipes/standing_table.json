@@ -1,0 +1,21 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "decorations",
+ "pattern": [
+  " W ",
+  " P ",
+  " W "
+ ],
+ "key": {
+  "W": {
+   "item": "minecraft:white_carpet"
+  },
+  "P": {
+   "item": "minecraft:stick"
+  }
+ },
+ "result": {
+  "item": "stagetents:standing_table",
+  "count": 2
+ }
+}
