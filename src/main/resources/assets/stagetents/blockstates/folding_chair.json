@@ -5,7 +5,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair"
+        "model": "stagetents:block/props/folding_chair"
       }
     },
     {
@@ -13,7 +13,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair",
+        "model": "stagetents:block/props/folding_chair",
         "y": 90
       }
     },
@@ -22,7 +22,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair",
+        "model": "stagetents:block/props/folding_chair",
         "y": 180
       }
     },
@@ -31,7 +31,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair",
+        "model": "stagetents:block/props/folding_chair",
         "y": 270
       }
     }

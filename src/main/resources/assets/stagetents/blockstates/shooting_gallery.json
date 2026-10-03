@@ -5,7 +5,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair"
+        "model": "stagetents:block/props/shooting_gallery"
       }
     },
     {
@@ -13,7 +13,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair",
+        "model": "stagetents:block/props/shooting_gallery",
         "y": 90
       }
     },
@@ -22,7 +22,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair",
+        "model": "stagetents:block/props/shooting_gallery",
         "y": 180
       }
     },
@@ -31,7 +31,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "stagetents:block/props/banquet_chair",
+        "model": "stagetents:block/props/shooting_gallery",
         "y": 270
       }
     }

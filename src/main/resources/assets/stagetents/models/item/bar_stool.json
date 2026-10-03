@@ -1,5 +1,5 @@
 {
-  "parent": "stagetents:block/props/banquet_chair",
+  "parent": "stagetents:block/props/bar_stool",
   "display": {
     "gui": {
       "rotation": [

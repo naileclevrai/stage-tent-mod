@@ -1,0 +1,8 @@
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+
+newmtl rubber
+Kd 1 1 1
+map_Kd #rubber
+

@@ -1,0 +1,5 @@
+newmtl cloth
+Kd 1 1 1
+map_Kd #cloth
+forge_TintIndex 0
+

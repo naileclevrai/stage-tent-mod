@@ -1,0 +1,16 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/banquet_chair.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/white",
+    "white": "stagetents:block/props/white",
+    "gold": "stagetents:block/props/gold",
+    "rubber": "stagetents:block/props/rubber",
+    "cloth": "stagetents:block/props/cloth"
+  }
+}

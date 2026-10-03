@@ -1,0 +1,18 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/bar_counter.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "cloth": "stagetents:block/props/cloth",
+    "white": "stagetents:block/props/white",
+    "wood_dark": "stagetents:block/props/wood_dark",
+    "bulb": "stagetents:block/props/bulb",
+    "chrome": "stagetents:block/props/chrome"
+  }
+}

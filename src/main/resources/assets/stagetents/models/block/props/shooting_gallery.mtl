@@ -1,0 +1,72 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl red
+Kd 1 1 1
+map_Kd #red
+
+newmtl white
+Kd 1 1 1
+map_Kd #white
+
+newmtl gold
+Kd 1 1 1
+map_Kd #gold
+
+newmtl wood
+Kd 1 1 1
+map_Kd #wood
+
+newmtl wood_dark
+Kd 1 1 1
+map_Kd #wood_dark
+
+newmtl metal
+Kd 1 1 1
+map_Kd #metal
+
+newmtl booth_back
+Kd 1 1 1
+map_Kd #booth_back
+
+newmtl navy
+Kd 1 1 1
+map_Kd #navy
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+
+newmtl yellow
+Kd 1 1 1
+map_Kd #yellow
+
+newmtl orange
+Kd 1 1 1
+map_Kd #orange
+
+newmtl target
+Kd 1 1 1
+map_Kd #target
+
+newmtl plush_pink
+Kd 1 1 1
+map_Kd #plush_pink
+
+newmtl plush_blue
+Kd 1 1 1
+map_Kd #plush_blue
+
+newmtl plush_mint
+Kd 1 1 1
+map_Kd #plush_mint
+
+newmtl booth_sign
+Kd 1 1 1
+map_Kd #booth_sign
+
+newmtl bulb
+Kd 1 1 1
+map_Kd #bulb
+

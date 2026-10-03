@@ -1,0 +1,17 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl rubber
+Kd 1 1 1
+map_Kd #rubber
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+
+newmtl seat
+Kd 1 1 1
+map_Kd #seat
+forge_TintIndex 0
+

@@ -1,0 +1,30 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/shooting_gallery.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "red": "stagetents:block/props/red",
+    "white": "stagetents:block/props/white",
+    "gold": "stagetents:block/props/gold",
+    "wood": "stagetents:block/props/wood",
+    "wood_dark": "stagetents:block/props/wood_dark",
+    "metal": "stagetents:block/props/metal",
+    "booth_back": "stagetents:block/props/booth_back",
+    "navy": "stagetents:block/props/navy",
+    "chrome": "stagetents:block/props/chrome",
+    "yellow": "stagetents:block/props/yellow",
+    "orange": "stagetents:block/props/orange",
+    "target": "stagetents:block/props/target",
+    "plush_pink": "stagetents:block/props/plush_pink",
+    "plush_blue": "stagetents:block/props/plush_blue",
+    "plush_mint": "stagetents:block/props/plush_mint",
+    "booth_sign": "stagetents:block/props/booth_sign",
+    "bulb": "stagetents:block/props/bulb"
+  }
+}

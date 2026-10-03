@@ -1,0 +1,17 @@
+newmtl white
+Kd 1 1 1
+map_Kd #white
+
+newmtl gold
+Kd 1 1 1
+map_Kd #gold
+
+newmtl rubber
+Kd 1 1 1
+map_Kd #rubber
+
+newmtl cloth
+Kd 1 1 1
+map_Kd #cloth
+forge_TintIndex 0
+

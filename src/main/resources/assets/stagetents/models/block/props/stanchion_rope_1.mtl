@@ -1,0 +1,9 @@
+newmtl velvet
+Kd 1 1 1
+map_Kd #velvet
+forge_TintIndex 0
+
+newmtl gold
+Kd 1 1 1
+map_Kd #gold
+

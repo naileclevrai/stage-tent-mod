@@ -1,0 +1,43 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "stagetents:block/props/stanchion"
+      }
+    },
+    {
+      "when": {
+        "east": "1"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stanchion_rope_1"
+      }
+    },
+    {
+      "when": {
+        "east": "2"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stanchion_rope_2"
+      }
+    },
+    {
+      "when": {
+        "south": "1"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stanchion_rope_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "2"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stanchion_rope_2",
+        "y": 90
+      }
+    }
+  ]
+}

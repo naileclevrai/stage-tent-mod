@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "stagetents:block/props/round_table"
+        "model": "stagetents:block/props/bar_stool"
       }
     }
   ]
