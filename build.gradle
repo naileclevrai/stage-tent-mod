@@ -67,3 +67,9 @@ tasks.register('dumpMeshes', JavaExec) {
     mainClass = 'com.nailec.stagetents.client.MeshDump'
     args = [project.findProperty('dumpDir') ?: "${buildDir}/meshdump"]
 }
+
+// Dev only: mesh performance bench (./gradlew benchMeshes).
+tasks.register('benchMeshes', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.MeshBench'
+}
