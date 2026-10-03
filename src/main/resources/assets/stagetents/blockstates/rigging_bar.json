@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "stagetents:block/rigging_bar"
+    },
+    "axis=z": {
+      "model": "stagetents:block/rigging_bar",
+      "y": 90
+    }
+  }
+}

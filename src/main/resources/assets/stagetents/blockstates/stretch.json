@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=east,hidden=false": {
+      "model": "stagetents:block/stretch"
+    },
+    "facing=east,hidden=true": {
+      "model": "stagetents:block/hidden_plate"
+    },
+    "facing=south,hidden=false": {
+      "model": "stagetents:block/stretch",
+      "y": 90
+    },
+    "facing=south,hidden=true": {
+      "model": "stagetents:block/hidden_plate"
+    },
+    "facing=west,hidden=false": {
+      "model": "stagetents:block/stretch",
+      "y": 180
+    },
+    "facing=west,hidden=true": {
+      "model": "stagetents:block/hidden_plate"
+    },
+    "facing=north,hidden=false": {
+      "model": "stagetents:block/stretch",
+      "y": 270
+    },
+    "facing=north,hidden=true": {
+      "model": "stagetents:block/hidden_plate"
+    }
+  }
+}
