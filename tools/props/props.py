@@ -196,10 +196,11 @@ def bar_counter_base():
     m.box("cloth", 0.06, 0.13, 0.015, 0.94, 0.95, 0.03, faces="n")
     for (xa, xb, ya, yb) in ((0.0, 0.06, 0.07, 1.02), (0.94, 1.0, 0.07, 1.02), (0.0, 1.0, 0.07, 0.13), (0.0, 1.0, 0.95, 1.02)):
         m.box("black", xa, ya, 0.01, xb, yb, 0.03, faces="nud")
-    # Back: shelf for the bartender and an under-counter shelf.
-    m.box("black", 0.0, 0.07, 0.60, 1.0, 1.02, 0.64, faces="s")
-    m.bevel_box("white", 0.0, 0.70, 0.46, 1.0, 0.73, 0.64, 0.004)
-    m.bevel_box("white", 0.0, 0.30, 0.30, 1.0, 0.33, 0.64, 0.004)
+    # Back, open on the bartender side: a work shelf and an under-counter shelf, set in from the block edges so the
+    # end panels and the next module never share a plane with them.
+    m.box("black", 0.0, 0.07, 0.60, 1.0, 0.16, 0.64, faces="su")
+    m.bevel_box("white", 0.002, 0.70, 0.46, 0.998, 0.73, 0.635, 0.004)
+    m.bevel_box("white", 0.002, 0.30, 0.30, 0.998, 0.33, 0.635, 0.004)
     # Top with an overhang towards the guests.
     m.bevel_box("wood", 0.0, 1.02, -0.10, 1.0, 1.075, 0.66, 0.008)
     # LED strip under the lip.
@@ -215,8 +216,9 @@ def bar_counter_base():
 def bar_counter_end(side):
     """Black side panel closing the end of a bar run (side -1 = left, 1 = right)."""
     m = Mesh()
-    x0 = 0.0 if side < 0 else 0.97
-    m.box("black", x0, 0.0, 0.01, x0 + 0.03, 1.02, 0.64)
+    # Stands 3 mm proud of the module's own end faces (carcass, kick plate, shelves) and of the frame front.
+    x0 = -0.003 if side < 0 else 0.97
+    m.box("black", x0, 0.0, 0.006, x0 + 0.033, 1.018, 0.645)
     return m
 
 
