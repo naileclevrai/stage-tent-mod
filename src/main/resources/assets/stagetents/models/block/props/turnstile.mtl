@@ -1,0 +1,20 @@
+newmtl steel
+Kd 1 1 1
+map_Kd #steel
+forge_TintIndex -1
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+forge_TintIndex -1
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl reader
+Kd 1 1 1
+map_Kd #reader
+forge_TintIndex -1
+

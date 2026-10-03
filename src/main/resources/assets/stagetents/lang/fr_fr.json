@@ -189,5 +189,12 @@
   "screen.stagetents.preset.arena_white_navy": "Blanc, doublure marine",
   "screen.stagetents.preset.arena_white": "Tout blanc",
   "screen.stagetents.preset.arena_black": "Noir",
-  "screen.stagetents.preset.arena_sand": "Sable"
+  "screen.stagetents.preset.arena_sand": "Sable",
+  "block.stagetents.turnstile": "Tourniquet tripode",
+  "block.stagetents.guide_rail": "Rambarde de file",
+  "screen.stagetents.turnstile.free": "passage libre",
+  "screen.stagetents.turnstile.badge": "badge",
+  "screen.stagetents.turnstile.locked": "verrouillé",
+  "message.stagetents.turnstile_mode": "Tourniquet : %s",
+  "message.stagetents.turnstile_locked": "Accès fermé"
 }

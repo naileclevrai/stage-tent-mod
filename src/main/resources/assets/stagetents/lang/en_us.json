@@ -189,5 +189,12 @@
   "screen.stagetents.preset.arena_white_navy": "White, navy lining",
   "screen.stagetents.preset.arena_white": "All white",
   "screen.stagetents.preset.arena_black": "Black",
-  "screen.stagetents.preset.arena_sand": "Sand"
+  "screen.stagetents.preset.arena_sand": "Sand",
+  "block.stagetents.turnstile": "Tripod Turnstile",
+  "block.stagetents.guide_rail": "Queue Rail",
+  "screen.stagetents.turnstile.free": "free passage",
+  "screen.stagetents.turnstile.badge": "badge",
+  "screen.stagetents.turnstile.locked": "locked",
+  "message.stagetents.turnstile_mode": "Turnstile: %s",
+  "message.stagetents.turnstile_locked": "Access closed"
 }

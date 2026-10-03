@@ -13,6 +13,8 @@
     "stagetents:stanchion",
     "stagetents:bleacher_aisle",
     "stagetents:bleacher_support",
-    "stagetents:tensile"
+    "stagetents:tensile",
+    "stagetents:turnstile",
+    "stagetents:guide_rail"
   ]
 }

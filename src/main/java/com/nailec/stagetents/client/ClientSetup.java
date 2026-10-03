@@ -20,6 +20,7 @@ public final class ClientSetup {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModRegistry.TENT_BE.get(), TentRenderer::new);
         event.registerEntityRenderer(ModRegistry.SEAT.get(), NoopRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.TURNSTILE_BE.get(), TurnstileRenderer::new);
     }
 
     /** Furniture: tint index 0 is the dyed part (tablecloth, cushion, front panel). */

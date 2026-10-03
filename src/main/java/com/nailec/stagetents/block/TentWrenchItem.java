@@ -40,6 +40,13 @@ public class TentWrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
+        // On a turnstile: next mode.
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.TurnstileBlock) {
+            if (!level.isClientSide && ctx.getPlayer() != null) {
+                com.nailec.stagetents.furniture.TurnstileBlock.cycleMode(level, ctx.getClickedPos(), level.getBlockState(ctx.getClickedPos()), ctx.getPlayer());
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         // On a bleacher: open the grandstand builder.
         if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.ConnectedFurnitureBlock c
                 && c.group.equals("grandstand")) {

@@ -14,6 +14,8 @@ import com.nailec.stagetents.furniture.MultiPropBlock;
 import com.nailec.stagetents.furniture.PropPartBlock;
 import com.nailec.stagetents.furniture.StanchionBlock;
 import com.nailec.stagetents.furniture.StandingTableBlock;
+import com.nailec.stagetents.furniture.TurnstileBlock;
+import com.nailec.stagetents.furniture.TurnstileBlockEntity;
 import net.minecraft.world.item.DyeColor;
 import com.nailec.stagetents.furniture.SeatEntity;
 import net.minecraft.world.entity.EntityType;
@@ -94,6 +96,10 @@ public final class ModRegistry {
     public static final RegistryObject<MultiPropBlock> SHOOTING_GALLERY = BLOCKS.register("shooting_gallery", () -> new MultiPropBlock(
             furnitureProps(SoundType.WOOD), Spec.of(true, DyeColor.WHITE, new double[]{0, 0, 0, 16, 16, 16}),
             new int[][]{{-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}));
+    public static final RegistryObject<TurnstileBlock> TURNSTILE = BLOCKS.register("turnstile", () -> new TurnstileBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+    public static final RegistryObject<FurnitureBlock> GUIDE_RAIL = BLOCKS.register("guide_rail", () -> new FurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{7, 0, 0, 9, 24, 16})));
     public static final RegistryObject<PropPartBlock> PROP_PART = BLOCKS.register("prop_part", () -> new PropPartBlock(
             BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK)
                     .isValidSpawn((st, l, ps, e) -> false).isSuffocating((st, l, ps) -> false).isViewBlocking((st, l, ps) -> false)));
@@ -122,6 +128,8 @@ public final class ModRegistry {
     public static final RegistryObject<Item> BAR_STOOL_ITEM = blockItem("bar_stool", BAR_STOOL);
     public static final RegistryObject<Item> CROWD_BARRIER_ITEM = blockItem("crowd_barrier", CROWD_BARRIER);
     public static final RegistryObject<Item> STANCHION_ITEM = blockItem("stanchion", STANCHION);
+    public static final RegistryObject<Item> TURNSTILE_ITEM = blockItem("turnstile", TURNSTILE);
+    public static final RegistryObject<Item> GUIDE_RAIL_ITEM = blockItem("guide_rail", GUIDE_RAIL);
     public static final RegistryObject<Item> SHOOTING_GALLERY_ITEM = ITEMS.register("shooting_gallery",
             () -> new BlockItem(SHOOTING_GALLERY.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WRENCH = ITEMS.register("tent_wrench", () -> new TentWrenchItem(new Item.Properties().stacksTo(1)));
@@ -129,6 +137,9 @@ public final class ModRegistry {
     public static final RegistryObject<BlockEntityType<TentBlockEntity>> TENT_BE = BLOCK_ENTITIES.register("tent",
             () -> BlockEntityType.Builder.of(TentBlockEntity::new, BIG_TOP.get(), PAGODA.get(), FRAME_TENT.get(),
                     GAZEBO.get(), ARCH.get(), STRETCH.get(), TENSILE.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<TurnstileBlockEntity>> TURNSTILE_BE = BLOCK_ENTITIES.register("turnstile",
+            () -> BlockEntityType.Builder.of(TurnstileBlockEntity::new, TURNSTILE.get()).build(null));
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stagetents"))
@@ -154,6 +165,8 @@ public final class ModRegistry {
                 out.accept(BLEACHER_SUPPORT_ITEM.get());
                 out.accept(CROWD_BARRIER_ITEM.get());
                 out.accept(STANCHION_ITEM.get());
+                out.accept(TURNSTILE_ITEM.get());
+                out.accept(GUIDE_RAIL_ITEM.get());
                 out.accept(SHOOTING_GALLERY_ITEM.get());
                 out.accept(WRENCH.get());
             })
