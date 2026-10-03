@@ -12,13 +12,15 @@ import textures  # noqa: E402
 from export import write_model  # noqa: E402
 from mesh import chain  # noqa: E402
 
-# Real-world sizes read small next to a 1.8 block player: seats are scaled up around the block centre.
-CHAIR_SCALE = 1.22
-STOOL_SCALE = 1.1
+# Real-world sizes read small next to a 1.8 block player: seats are scaled up around the block centre, more in
+# width than in height so the seat stays at sitting height.
+CHAIR_SCALE = (1.45, 1.2)
+STOOL_SCALE = (1.2, 1.1)
 
 
 def scaled(mesh, k):
-    return mesh.transformed(lambda p: (0.5 + (p[0] - 0.5) * k, p[1] * k, 0.5 + (p[2] - 0.5) * k))
+    kh, kv = k
+    return mesh.transformed(lambda p: (0.5 + (p[0] - 0.5) * kh, p[1] * kv, 0.5 + (p[2] - 0.5) * kh))
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 ASSETS = os.path.join(ROOT, "src", "main", "resources", "assets", "stagetents")

@@ -201,7 +201,7 @@ def bar_counter_base():
     m.bevel_box("white", 0.0, 0.70, 0.46, 1.0, 0.73, 0.64, 0.004)
     m.bevel_box("white", 0.0, 0.30, 0.30, 1.0, 0.33, 0.64, 0.004)
     # Top with an overhang towards the guests.
-    m.bevel_box("wood_dark", 0.0, 1.02, -0.10, 1.0, 1.075, 0.66, 0.008)
+    m.bevel_box("wood", 0.0, 1.02, -0.10, 1.0, 1.075, 0.66, 0.008)
     # LED strip under the lip.
     m.box("bulb", 0.0, 1.005, -0.075, 1.0, 1.02, -0.06, faces="dn")
     # Foot rail on two brackets.
@@ -224,7 +224,7 @@ def bar_counter_end(side):
 
 def _bucket_seat(m, cx):
     """Moulded stadium seat (dyed plastic) centred on x = cx, sitting on the riser."""
-    w = 0.40
+    w = 0.74
     # Side profile of the shell in the y/z plane: seat pan curving up into the backrest.
     prof = [(0.54, 0.50), (0.60, 0.485), (0.70, 0.48), (0.80, 0.49), (0.86, 0.52), (0.90, 0.60),
             (0.92, 0.70), (0.93, 0.80)]
@@ -246,7 +246,8 @@ def _bucket_seat(m, cx):
     for x in (cx - w / 2, cx + w / 2):
         m.tube("seat", [(x, p[1] + 0.012, p[0]) for p in prof], 0.007, segs=5)
     # Mounting bracket.
-    m.box("metal", cx - 0.03, 0.445, 0.62, cx + 0.03, 0.462, 0.80)
+    for dx in (-0.22, 0.22):
+        m.box("metal", cx + dx - 0.03, 0.445, 0.62, cx + dx + 0.03, 0.462, 0.80)
 
 
 def bleacher_base():
@@ -261,8 +262,7 @@ def bleacher_base():
     # Riser and seat deck.
     m.box("metal", 0.0, 0.0, 0.50, 1.0, 0.44, 0.52)
     m.bevel_box("metal", 0.0, 0.42, 0.50, 1.0, 0.445, 1.0, 0.003)
-    for cx in (0.27, 0.73):
-        _bucket_seat(m, cx)
+    _bucket_seat(m, 0.5)
     # Seat numbers would go here; a small reflector stud instead.
     m.box("yellow", 0.48, 0.36, 0.495, 0.52, 0.40, 0.50, faces="n")
     _bleacher_frame(m, 0.02)
@@ -456,15 +456,16 @@ def shooting_gallery():
     m = Mesh()
     X0, X1 = -1.0, 2.0
     # ---- counter: striped front panel, black plinth, wooden top, gold trim
-    m.box("black", X0, 0.0, 0.02, X1, 0.10, 0.45)
+    IX0, IX1 = X0 + 0.06, X1 - 0.06  # inside faces of the side walls: nothing shares a face with them
+    m.box("black", IX0, 0.0, 0.025, IX1, 0.10, 0.45, faces="nsu")
     stripes = 12
     for k in range(stripes):
-        xa = X0 + (X1 - X0) * k / stripes
-        xb = X0 + (X1 - X0) * (k + 1) / stripes
-        m.box("red" if k % 2 == 0 else "white", xa, 0.10, 0.0, xb, 0.98, 0.02, faces="nud")
-    m.box("gold", X0, 0.95, -0.006, X1, 0.98, 0.004, faces="nud")
-    m.box("gold", X0, 0.10, -0.006, X1, 0.13, 0.004, faces="nud")
-    m.box("black", X0, 0.10, 0.02, X1, 0.98, 0.45, faces="sweu")
+        xa = IX0 + (IX1 - IX0) * k / stripes
+        xb = IX0 + (IX1 - IX0) * (k + 1) / stripes
+        m.box("red" if k % 2 == 0 else "white", xa, 0.10, 0.005, xb, 0.98, 0.025, faces="n")
+    m.box("gold", IX0, 0.95, -0.004, IX1, 0.98, 0.005, faces="nud")
+    m.box("gold", IX0, 0.10, -0.004, IX1, 0.13, 0.005, faces="nud")
+    m.box("black", IX0, 0.10, 0.025, IX1, 0.98, 0.45, faces="su")
     m.bevel_box("wood", X0 - 0.02, 0.98, -0.10, X1 + 0.02, 1.06, 0.48, 0.012)
     for (x, yaw) in ((-0.45, 8), (0.50, -5), (1.45, 4)):
         _rifle(m, x, 0.18, yaw)
@@ -472,8 +473,8 @@ def shooting_gallery():
     for x0 in (X0, X1 - 0.06):
         m.box("red", x0, 0.0, 0.0, x0 + 0.06, 2.20, 1.0)
         m.box("gold", x0 - 0.004, 0.0, -0.004, x0 + 0.064, 2.20, 0.03, faces="nwe")
-    m.box("booth_back", X0 + 0.06, 0.0, 0.94, X1 - 0.06, 2.20, 1.0, faces="n")
-    m.box("navy", X0, 0.0, 0.94, X1, 2.20, 1.0, faces="sud")
+    m.box("booth_back", X0 + 0.06, 0.0, 0.94, X1 - 0.06, 2.195, 1.0, faces="n")
+    m.box("navy", X0 + 0.06, 0.0, 0.94, X1 - 0.06, 2.195, 1.0, faces="s")
     # ---- gallery: two rails of ducks swimming in opposite directions, bullseyes above
     for (y, n, flip, phase) in ((1.30, 8, False, 0.0), (1.66, 7, True, 0.17)):
         m.tube("chrome", [(X0 + 0.08, y, 0.86), (X1 - 0.08, y, 0.86)], 0.012, segs=8)

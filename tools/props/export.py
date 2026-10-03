@@ -21,8 +21,8 @@ def write_model(mesh, name, assets, textures, tinted=(), particle=None, gui_scal
     with open(os.path.join(folder, name + ".mtl"), "w", encoding="utf-8", newline="\n") as f:
         for mat in mesh.groups:
             f.write(f"newmtl {mat}\nKd 1 1 1\nmap_Kd #{mat}\n")
-            if mat in tinted:
-                f.write("forge_TintIndex 0\n")
+            # Forge tints every OBJ material with index 0 unless told otherwise.
+            f.write("forge_TintIndex 0\n" if mat in tinted else "forge_TintIndex -1\n")
             f.write("\n")
     model = {
         "loader": "forge:obj",
