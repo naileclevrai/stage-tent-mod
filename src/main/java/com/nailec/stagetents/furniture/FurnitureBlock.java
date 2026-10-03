@@ -27,35 +27,48 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Event furniture: one dyeable part (tablecloth, cushion, panel), optionally a facing, optionally a seat. Right-click
- * with a dye recolours it; right-click with an empty hand sits down on seats.
+ * Event furniture: one dyeable part (tablecloth, cushion, seat shell, panel, rope), optionally a facing, optionally a
+ * seat. Right-click with a dye recolours it; right-click with an empty hand sits down on seats.
  */
 public class FurnitureBlock extends Block {
     public static final EnumProperty<DyeColor> COLOR = EnumProperty.create("color", DyeColor.class);
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
-    private final boolean directional;
-    /** Seat height in blocks, or a negative value when it is not a seat. */
-    private final double seatHeight;
+    /**
+     * How a piece of furniture behaves.
+     *
+     * @param directional whether it faces the player who places it
+     * @param seatHeight  seat height in blocks, negative when it is not a seat
+     * @param seatBack    how far the seat sits behind the centre, towards the back (bleachers)
+     * @param color       colour of the dyed part when placed
+     * @param shape       collision boxes for a block facing north, in pixels: {x0, y0, z0, x1, y1, z1}
+     */
+    public record Spec(boolean directional, double seatHeight, double seatBack, DyeColor color, double[]... shape) {
+        public static Spec of(boolean directional, DyeColor color, double[]... shape) {
+            return new Spec(directional, -1, 0, color, shape);
+        }
+
+        public static Spec seat(double height, double back, DyeColor color, double[]... shape) {
+            return new Spec(true, height, back, color, shape);
+        }
+    }
+
+    protected final Spec spec;
     private final Map<Direction, VoxelShape> shapes = new EnumMap<>(Direction.class);
 
-    /** {@code shape} is given for a block facing north, in pixels: {x0, y0, z0, x1, y1, z1} boxes. */
-    public FurnitureBlock(Properties props, boolean directional, double seatHeight, double[]... shape) {
+    public FurnitureBlock(Properties props, Spec spec) {
         super(props);
-        this.directional = directional;
-        this.seatHeight = seatHeight;
+        this.spec = spec;
         for (Direction d : Direction.Plane.HORIZONTAL) {
             VoxelShape s = Shapes.empty();
-            for (double[] b : shape) s = Shapes.or(s, rotated(b, d));
+            for (double[] b : spec.shape()) s = Shapes.or(s, rotated(b, d));
             shapes.put(d, s.optimize());
         }
-        BlockState def = stateDefinition.any().setValue(COLOR, DyeColor.WHITE);
-        if (directional) def = def.setValue(FACING, Direction.NORTH);
-        registerDefaultState(def);
+        registerDefaultState(stateDefinition.any().setValue(COLOR, spec.color()).setValue(FACING, Direction.NORTH));
     }
 
     /** Rotates a north-facing box (pixels) to face {@code d}. */
-    private static VoxelShape rotated(double[] b, Direction d) {
+    static VoxelShape rotated(double[] b, Direction d) {
         double x0 = b[0], z0 = b[2], x1 = b[3], z1 = b[5];
         return switch (d) {
             case SOUTH -> Block.box(16 - x1, b[1], 16 - z1, 16 - x0, b[4], 16 - z0);
@@ -73,13 +86,13 @@ public class FurnitureBlock extends Block {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState s = defaultBlockState();
-        return directional ? s.setValue(FACING, ctx.getHorizontalDirection().getOpposite()) : s;
+        return spec.directional() ? s.setValue(FACING, ctx.getHorizontalDirection().getOpposite()) : s;
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return shapes.get(directional ? state.getValue(FACING) : Direction.NORTH);
+        return shapes.get(spec.directional() ? state.getValue(FACING) : Direction.NORTH);
     }
 
     @Override
@@ -91,8 +104,12 @@ public class FurnitureBlock extends Block {
             if (!level.isClientSide) level.setBlock(pos, state.setValue(COLOR, dye.getDyeColor()), Block.UPDATE_ALL);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        if (seatHeight >= 0 && held.isEmpty() && !player.isShiftKeyDown()) {
-            if (!level.isClientSide && SeatEntity.sit(level, pos, seatHeight, player)) return InteractionResult.CONSUME;
+        if (spec.seatHeight() >= 0 && held.isEmpty() && !player.isShiftKeyDown()) {
+            if (!level.isClientSide) {
+                Direction back = state.getValue(FACING).getOpposite();
+                double ox = back.getStepX() * spec.seatBack(), oz = back.getStepZ() * spec.seatBack();
+                if (SeatEntity.sit(level, pos, ox, spec.seatHeight(), oz, player)) return InteractionResult.CONSUME;
+            }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;
@@ -101,12 +118,12 @@ public class FurnitureBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public BlockState rotate(BlockState state, Rotation rot) {
-        return directional ? state.setValue(FACING, rot.rotate(state.getValue(FACING))) : state;
+        return spec.directional() ? state.setValue(FACING, rot.rotate(state.getValue(FACING))) : state;
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public BlockState mirror(BlockState state, Mirror mirror) {
-        return directional ? state.rotate(mirror.getRotation(state.getValue(FACING))) : state;
+        return spec.directional() ? state.rotate(mirror.getRotation(state.getValue(FACING))) : state;
     }
 }

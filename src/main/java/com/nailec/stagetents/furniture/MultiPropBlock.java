@@ -1,0 +1,70 @@
+package com.nailec.stagetents.furniture;
+
+import com.nailec.stagetents.ModRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Prop bigger than one block (the shooting gallery). The main block is the centre of the bottom row; invisible
+ * {@link PropPartBlock}s fill the rest of the footprint. Placement is refused when the footprint isn't free.
+ */
+public class MultiPropBlock extends FurnitureBlock {
+    /** Footprint in model space (facing north): {dx along +x, dy}, the main block being {0, 0}. */
+    private final int[][] cells;
+
+    public MultiPropBlock(Properties props, Spec spec, int[][] cells) {
+        super(props, spec);
+        this.cells = cells;
+    }
+
+    /** World positions of the extra cells for a main block at {@code pos} facing {@code facing}. */
+    public List<BlockPos> parts(BlockPos pos, Direction facing) {
+        List<BlockPos> out = new ArrayList<>();
+        Direction right = facing.getClockWise();
+        for (int[] c : cells) {
+            if (c[0] == 0 && c[1] == 0) continue;
+            out.add(pos.relative(right, c[0]).above(c[1]));
+        }
+        return out;
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState s = super.getStateForPlacement(ctx);
+        if (s == null) return null;
+        Level level = ctx.getLevel();
+        for (BlockPos p : parts(ctx.getClickedPos(), s.getValue(FACING))) {
+            if (!level.getBlockState(p).canBeReplaced(ctx) || level.isOutsideBuildHeight(p)) return null;
+        }
+        return s;
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (level.isClientSide) return;
+        BlockState part = ModRegistry.PROP_PART.get().defaultBlockState();
+        for (BlockPos p : parts(pos, state.getValue(FACING))) level.setBlock(p, part, Block.UPDATE_ALL);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide) {
+            for (BlockPos p : parts(pos, state.getValue(FACING))) {
+                if (level.getBlockState(p).is(ModRegistry.PROP_PART.get())) level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
+        super.onRemove(state, level, pos, newState, moving);
+    }
+}

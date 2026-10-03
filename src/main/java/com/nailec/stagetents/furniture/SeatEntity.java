@@ -21,11 +21,14 @@ public class SeatEntity extends Entity {
         noPhysics = true;
     }
 
-    /** Sits {@code player} on the seat of the block at {@code pos}; false if somebody already sits there. */
-    public static boolean sit(Level level, BlockPos pos, double seatHeight, Player player) {
+    /**
+     * Sits {@code player} on the seat of the block at {@code pos}, offset from the block centre by (ox, oz); false if
+     * somebody already sits there.
+     */
+    public static boolean sit(Level level, BlockPos pos, double ox, double seatHeight, double oz, Player player) {
         if (!level.getEntitiesOfClass(SeatEntity.class, new AABB(pos)).isEmpty()) return false;
         SeatEntity seat = new SeatEntity(ModRegistry.SEAT.get(), level);
-        seat.setPos(pos.getX() + 0.5, pos.getY() + seatHeight, pos.getZ() + 0.5);
+        seat.setPos(pos.getX() + 0.5 + ox, pos.getY() + seatHeight, pos.getZ() + 0.5 + oz);
         level.addFreshEntity(seat);
         return player.startRiding(seat);
     }
