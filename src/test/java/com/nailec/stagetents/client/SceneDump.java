@@ -37,6 +37,9 @@ public final class SceneDump {
             p.stretchPoles.add(new int[]{1, -9, 5});
         });
         dump(out, "arch", TentType.ARCH, p -> { p.width = 10; p.height = 7; });
+        dump(out, "bar_mid", TentType.PAGODA, p -> { p.width = 5; p.height = 7; Presets.forType(TentType.PAGODA).get(1).apply().accept(p); p.joined = (1 << 0) | (1 << 2); });
+        dump(out, "bar_end", TentType.PAGODA, p -> { p.width = 5; p.height = 7; Presets.forType(TentType.PAGODA).get(1).apply().accept(p); p.joined = 1 << 0; });
+        dump(out, "bar_end2", TentType.PAGODA, p -> { p.width = 5; p.height = 7; Presets.forType(TentType.PAGODA).get(1).apply().accept(p); p.joined = 1 << 2; });
     }
 
     static void dump(String out, String name, TentType type, Consumer<TentParams> setup) throws Exception {
