@@ -1,0 +1,74 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "bar": "minecraft:block/iron_block",
+    "clamp": "minecraft:block/black_concrete",
+    "particle": "minecraft:block/iron_block"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        6.5,
+        6.5
+      ],
+      "to": [
+        16,
+        9.5,
+        9.5
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bar"
+        },
+        "up": {
+          "texture": "#bar"
+        },
+        "north": {
+          "texture": "#bar"
+        },
+        "south": {
+          "texture": "#bar"
+        },
+        "west": {
+          "texture": "#bar"
+        },
+        "east": {
+          "texture": "#bar"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        5.5,
+        5.5
+      ],
+      "to": [
+        9,
+        10.5,
+        10.5
+      ],
+      "faces": {
+        "down": {
+          "texture": "#clamp"
+        },
+        "up": {
+          "texture": "#clamp"
+        },
+        "north": {
+          "texture": "#clamp"
+        },
+        "south": {
+          "texture": "#clamp"
+        },
+        "west": {
+          "texture": "#clamp"
+        },
+        "east": {
+          "texture": "#clamp"
+        }
+      }
+    }
+  ]
+}
