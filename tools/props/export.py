@@ -1,5 +1,6 @@
 """Writes Mesh objects as Forge OBJ block models (obj + mtl + block/item model json)."""
 import json
+import math
 import os
 
 from mesh import _cross, _sub
@@ -64,6 +65,7 @@ def _write_obj(mesh, path, name):
             avg = (na[0] + nb[0] + nc[0], na[1] + nb[1] + nc[1], na[2] + nb[2] + nc[2])
             if g[0] * avg[0] + g[1] * avg[1] + g[2] * avg[2] < 0:
                 t = (t[0], t[2], t[1])
+            t = _fit_uvs(t)
             idx = []
             for (p, n, uv) in t:
                 lines.append(f"v {p[0]:.5f} {p[1]:.5f} {p[2]:.5f}")
@@ -74,6 +76,25 @@ def _write_obj(mesh, path, name):
             body.append("f " + " ".join(idx))
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines + body) + "\n")
+
+
+def _fit_uvs(t):
+    """Block textures live side by side in an atlas and don't repeat: uvs outside 0..1 would sample the neighbouring
+    sprites. Shift each triangle's uvs into the unit square, and shrink the ones that span more than one tile."""
+    us = [v[2][0] for v in t]
+    vs = [v[2][1] for v in t]
+    out = []
+    du, dv = math.floor(min(us)), math.floor(min(vs))
+    su = max(1.0, max(us) - min(us))
+    sv = max(1.0, max(vs) - min(vs))
+    # Keep the triangle where it falls in its tile when it fits, otherwise slide it back inside.
+    ou = min(min(us) - du, 1.0 - (max(us) - min(us)) / su)
+    ov = min(min(vs) - dv, 1.0 - (max(vs) - min(vs)) / sv)
+    for (p, n, uv) in t:
+        u = (uv[0] - min(us)) / su + ou
+        v = (uv[1] - min(vs)) / sv + ov
+        out.append((p, n, (min(1.0, max(0.0, u)), min(1.0, max(0.0, v)))))
+    return tuple(out)
 
 
 def _json(path, obj):
