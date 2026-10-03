@@ -60,3 +60,10 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+// Dev only: dump tent meshes for offline previews (./gradlew dumpMeshes -PdumpDir=...).
+tasks.register('dumpMeshes', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.MeshDump'
+    args = [project.findProperty('dumpDir') ?: "${buildDir}/meshdump"]
+}
