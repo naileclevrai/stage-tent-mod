@@ -280,43 +280,96 @@ def _bleacher_frame(m, x):
     m.cylinder("rubber", 0.03, 0.0, 0.01, cx=x, cz=0.96, segs=8)
 
 
+def _guard_rail(m, x):
+    for z in (0.10, 0.90):
+        m.tube("galvanised", [(x, 0.07, z), (x, 1.05, z)], 0.018, segs=8)
+    m.tube("galvanised", [(x, 1.05, 0.10), (x, 1.05, 0.90)], 0.02, segs=8, caps=False)
+    m.tube("galvanised", [(x, 0.60, 0.10), (x, 0.60, 0.90)], 0.013, segs=6, caps=False)
+
+
+def bleacher_end_left():
+    m = Mesh()
+    _guard_rail(m, 0.015)
+    return m
+
+
+def bleacher_aisle():
+    """Aisle of a grandstand: two steps per row with yellow nosings, centre handrail climbing to the next row."""
+    m = Mesh()
+    for k in range(3):
+        z0 = 0.02 + k * 0.165
+        m.bevel_box("wood", 0.0, 0.035, z0, 1.0, 0.07, z0 + 0.15, 0.004)
+    m.box("yellow", 0.0, 0.04, 0.0, 1.0, 0.072, 0.025)
+    # Half-height step on the back half.
+    m.box("metal", 0.0, 0.0, 0.50, 1.0, 0.47, 0.52)
+    for k in range(3):
+        z0 = 0.52 + k * 0.16
+        m.bevel_box("wood", 0.0, 0.47, z0, 1.0, 0.50, z0 + 0.145, 0.004)
+    m.box("yellow", 0.0, 0.475, 0.50, 1.0, 0.503, 0.525)
+    m.box("metal", 0.0, 0.0, 0.98, 1.0, 0.47, 1.0, faces="s")
+    _bleacher_frame(m, 0.02)
+    # Centre handrail on two posts, sloping like the steps.
+    for (z, y) in ((0.12, 0.07), (0.62, 0.50)):
+        m.tube("galvanised", [(0.5, y, z), (0.5, y + 0.95, z)], 0.016, segs=8)
+        m.cylinder("galvanised", 0.035, y, y + 0.01, cx=0.5, cz=z, segs=10)
+    m.tube("galvanised", [(0.5, 1.02, 0.0), (0.5, 1.45, 0.75), (0.5, 1.53, 1.0)], 0.02, segs=8, caps=False)
+    return m
+
+
+def bleacher_support():
+    """Grandstand substructure: aluminium posts, ledgers and diagonal braces under the raised rows."""
+    m = Mesh()
+    F = "metal"
+    for x in (0.03, 0.97):
+        for z in (0.03, 0.97):
+            m.tube(F, [(x, 0.0, z), (x, 1.0, z)], 0.024, segs=8, caps=False)
+        m.tube(F, [(x, 0.08, 0.03), (x, 0.92, 0.97)], 0.014, segs=6)
+    for y in (0.06, 0.96):
+        for (a, b) in (((0.03, y, 0.03), (0.97, y, 0.03)), ((0.03, y, 0.97), (0.97, y, 0.97)),
+                       ((0.03, y, 0.03), (0.03, y, 0.97)), ((0.97, y, 0.03), (0.97, y, 0.97))):
+            m.tube(F, [a, b], 0.016, segs=6, caps=False)
+    m.tube(F, [(0.03, 0.10, 0.97), (0.97, 0.90, 0.97)], 0.013, segs=6)
+    for x in (0.03, 0.97):
+        for z in (0.03, 0.97):
+            m.box("black", x - 0.05, 0.0, z - 0.05, x + 0.05, 0.012, z + 0.05)
+    return m
+
+
 def bleacher_end_right():
     m = Mesh()
     _bleacher_frame(m, 0.98)
-    # Guard rail on the open side.
-    for z in (0.10, 0.90):
-        m.tube("galvanised", [(0.985, 0.07, z), (0.985, 1.05, z)], 0.018, segs=8)
-    m.tube("galvanised", [(0.985, 1.05, 0.10), (0.985, 1.05, 0.90)], 0.02, segs=8, caps=False)
-    m.tube("galvanised", [(0.985, 0.60, 0.10), (0.985, 0.60, 0.90)], 0.013, segs=6, caps=False)
+    _guard_rail(m, 0.985)
     return m
 
 
 # ---------------------------------------------------------------------------------------------------------------- crowd control
 
 def crowd_barrier():
-    """Galvanised steel crowd barrier (Vauban type): tube frame, vertical bars, flat feet, link hooks."""
+    """Galvanised steel crowd barrier (Vauban type), three blocks wide (x from -1 to 2): tube frame, vertical bars,
+    three flat feet, link hooks on one end and eyes on the other."""
     m = Mesh()
     G = "galvanised"
     zc = 0.5
-    x0, x1, yb, yt = 0.03, 0.97, 0.09, 1.08
-    frame = [(x0, yb, zc), (x0, yt - 0.03, zc), (x0 + 0.03, yt, zc), (x1 - 0.03, yt, zc), (x1, yt - 0.03, zc), (x1, yb, zc)]
-    m.tube(G, frame, 0.019, segs=10)
-    m.tube(G, [(x0, yb, zc), (x1, yb, zc)], 0.016, segs=8)
-    m.tube(G, [(x0, yb + 0.10, zc), (x1, yb + 0.10, zc)], 0.012, segs=8)
-    for k in range(1, 12):
-        x = x0 + (x1 - x0) * k / 12
-        m.tube(G, [(x, yb + 0.10, zc), (x, yt, zc)], 0.008, segs=6)
-    # Feet: flat bars across, welded to short legs.
-    for x in (0.10, 0.90):
-        m.tube(G, [(x, yb, zc), (x, 0.03, zc)], 0.014, segs=8)
-        m.bevel_box(G, x - 0.025, 0.0, zc - 0.30, x + 0.025, 0.03, zc + 0.30, 0.004)
-        m.box("rubber", x - 0.026, 0.0, zc - 0.30, x + 0.026, 0.008, zc - 0.26)
-        m.box("rubber", x - 0.026, 0.0, zc + 0.26, x + 0.026, 0.008, zc + 0.30)
-    # Link hooks on one side, eyes on the other.
-    for y in (0.30, 0.95):
-        m.tube(G, [(x1, y, zc), (x1 + 0.03, y, zc), (x1 + 0.03, y - 0.04, zc)], 0.007, segs=5)
-        ring = [(x0 + 0.015 * math.cos(TAU * k / 12) - 0.015, y + 0.015 * math.sin(TAU * k / 12), zc) for k in range(13)]
-        m.tube(G, ring, 0.005, segs=5, caps=False)
+    x0, x1, yb, yt = -0.97, 1.97, 0.09, 1.10
+    frame = [(x0, yb, zc), (x0, yt - 0.04, zc), (x0 + 0.04, yt, zc), (x1 - 0.04, yt, zc), (x1, yt - 0.04, zc), (x1, yb, zc)]
+    m.tube(G, frame, 0.021, segs=10)
+    m.tube(G, [(x0, yb, zc), (x1, yb, zc)], 0.018, segs=8)
+    m.tube(G, [(x0, yb + 0.11, zc), (x1, yb + 0.11, zc)], 0.013, segs=8)
+    bars = 30
+    for k in range(1, bars):
+        x = x0 + (x1 - x0) * k / bars
+        m.tube(G, [(x, yb + 0.11, zc), (x, yt, zc)], 0.009, segs=6)
+    # Feet: flat bars across, on short legs, with rubber pads.
+    for x in (-0.80, 0.50, 1.80):
+        m.tube(G, [(x, yb, zc), (x, 0.03, zc)], 0.015, segs=8)
+        m.bevel_box(G, x - 0.03, 0.0, zc - 0.32, x + 0.03, 0.03, zc + 0.32, 0.004)
+        m.box("rubber", x - 0.031, 0.0, zc - 0.32, x + 0.031, 0.008, zc - 0.27)
+        m.box("rubber", x - 0.031, 0.0, zc + 0.27, x + 0.031, 0.008, zc + 0.32)
+    # Link hooks on the right end, eyes on the left end.
+    for y in (0.32, 0.98):
+        m.tube(G, [(x1, y, zc), (x1 + 0.035, y, zc), (x1 + 0.035, y - 0.05, zc)], 0.008, segs=5)
+        ring = [(x0 - 0.018 + 0.016 * math.cos(TAU * k / 12), y + 0.016 * math.sin(TAU * k / 12), zc) for k in range(13)]
+        m.tube(G, ring, 0.006, segs=5, caps=False)
     return m
 
 
