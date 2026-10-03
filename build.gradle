@@ -73,3 +73,10 @@ tasks.register('benchMeshes', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.nailec.stagetents.client.MeshBench'
 }
+
+// Dev only: dump the showcase tents used for the README images (./gradlew dumpScene -PdumpDir=...).
+tasks.register('dumpScene', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.SceneDump'
+    args = [project.findProperty('dumpDir') ?: "${buildDir}/scenedump"]
+}
