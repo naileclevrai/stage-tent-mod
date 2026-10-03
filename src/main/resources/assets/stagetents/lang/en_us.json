@@ -146,7 +146,7 @@
   "screen.stagetents.preset.stretch_terracotta": "Terracotta",
   "message.stagetents.pole_height": "Pole height: %s",
   "block.stagetents.round_table": "Round Banquet Table",
-  "block.stagetents.standing_table": "Standing Table",
+  "block.stagetents.standing_table": "Cocktail Table",
   "block.stagetents.banquet_chair": "Banquet Chair",
   "block.stagetents.bar_counter": "Bar Counter",
   "block.stagetents.bleacher": "Bleacher",
@@ -162,5 +162,11 @@
   "screen.stagetents.sign_color": "Sign: %s",
   "screen.stagetents.sign_text_color": "Lettering: %s",
   "screen.stagetents.pole_curtains": "Pole curtains",
-  "screen.stagetents.preset.bar": "Festival bar"
+  "screen.stagetents.preset.bar": "Festival bar",
+  "block.stagetents.folding_chair": "Folding Chair",
+  "block.stagetents.bar_stool": "Bar Stool",
+  "block.stagetents.crowd_barrier": "Crowd Barrier",
+  "block.stagetents.stanchion": "Queue Post",
+  "block.stagetents.shooting_gallery": "Shooting Gallery",
+  "block.stagetents.prop_part": "Prop"
 }

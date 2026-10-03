@@ -162,5 +162,11 @@
   "screen.stagetents.sign_color": "Enseigne : %s",
   "screen.stagetents.sign_text_color": "Lettrage : %s",
   "screen.stagetents.pole_curtains": "Rideaux aux poteaux",
-  "screen.stagetents.preset.bar": "Bar de festival"
+  "screen.stagetents.preset.bar": "Bar de festival",
+  "block.stagetents.folding_chair": "Chaise pliante",
+  "block.stagetents.bar_stool": "Tabouret de bar",
+  "block.stagetents.crowd_barrier": "Barrière Vauban",
+  "block.stagetents.stanchion": "Poteau à corde",
+  "block.stagetents.shooting_gallery": "Stand de tir",
+  "block.stagetents.prop_part": "Décor"
 }

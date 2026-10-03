@@ -6,6 +6,10 @@
     "stagetents:gazebo",
     "stagetents:arch",
     "stagetents:stretch",
-    "stagetents:rigging_bar"
+    "stagetents:rigging_bar",
+    "stagetents:folding_chair",
+    "stagetents:bar_stool",
+    "stagetents:crowd_barrier",
+    "stagetents:stanchion"
   ]
 }
