@@ -1,0 +1,39 @@
+# Gradle
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+
+# ForgeGradle dev runs (worlds, configs, logs, screenshots)
+run/
+runs/
+logs/
+crash-reports/
+*.log
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+eclipse/
+bin/
+classes/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc
+*.hprof
+*.tmp
+*.bak
+*.swp
+.env
