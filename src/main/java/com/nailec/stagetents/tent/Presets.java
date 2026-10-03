@@ -45,6 +45,11 @@ public final class Presets {
                     new Preset("stretch_white", p -> style(p, Palette.WHITE, Palette.WHITE, false, -1, WallMode.OPEN, LightMode.WARM)),
                     new Preset("stretch_black", p -> style(p, BLACK, BLACK, false, BLACK, WallMode.OPEN, LightMode.PARTY)),
                     new Preset("stretch_terracotta", p -> style(p, 0xB5532E, 0xB5532E, false, -1, WallMode.OPEN, LightMode.WARM)));
+            case TENSILE -> List.of(
+                    new Preset("arena_white_navy", p -> style(p, Palette.WHITE, Palette.WHITE, false, NAVY, WallMode.OPEN, LightMode.OFF)),
+                    new Preset("arena_white", p -> style(p, Palette.WHITE, Palette.WHITE, false, Palette.WHITE, WallMode.OPEN, LightMode.WARM)),
+                    new Preset("arena_black", p -> style(p, BLACK, BLACK, false, BLACK, WallMode.OPEN, LightMode.OFF)),
+                    new Preset("arena_sand", p -> style(p, 0xD2BC8F, 0xD2BC8F, false, -1, WallMode.OPEN, LightMode.WARM)));
         };
     }
 

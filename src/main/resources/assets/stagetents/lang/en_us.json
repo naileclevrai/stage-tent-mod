@@ -179,5 +179,15 @@
   "message.stagetents.grandstand_built": "Grandstand built: %s blocks",
   "tooltip.stagetents.wrench.4": "Use on a bleacher: build a grandstand",
   "block.stagetents.bleacher_aisle": "Grandstand Aisle",
-  "block.stagetents.bleacher_support": "Grandstand Support"
+  "block.stagetents.bleacher_support": "Grandstand Support",
+  "block.stagetents.tensile": "Tensile Arena",
+  "screen.stagetents.width.tensile": "Span: %s",
+  "screen.stagetents.height.tensile": "Mast height: %s",
+  "screen.stagetents.wall_height.tensile": "Edge arches: %s",
+  "screen.stagetents.spacing.tensile": "Anchor spacing: %s",
+  "screen.stagetents.masts_per_line": "Masts per line: %s",
+  "screen.stagetents.preset.arena_white_navy": "White, navy lining",
+  "screen.stagetents.preset.arena_white": "All white",
+  "screen.stagetents.preset.arena_black": "Black",
+  "screen.stagetents.preset.arena_sand": "Sand"
 }

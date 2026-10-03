@@ -49,6 +49,7 @@ public final class ModRegistry {
     public static final RegistryObject<TentBlock> GAZEBO = tent(TentType.GAZEBO);
     public static final RegistryObject<TentBlock> ARCH = tent(TentType.ARCH);
     public static final RegistryObject<TentBlock> STRETCH = tent(TentType.STRETCH);
+    public static final RegistryObject<TentBlock> TENSILE = tent(TentType.TENSILE);
 
     public static final RegistryObject<StretchPoleBlock> STRETCH_POLE = BLOCKS.register("stretch_pole", () -> new StretchPoleBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0F).sound(SoundType.WOOD).noOcclusion()));
@@ -107,6 +108,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> GAZEBO_ITEM = tentItem("gazebo", GAZEBO);
     public static final RegistryObject<Item> ARCH_ITEM = tentItem("arch", ARCH);
     public static final RegistryObject<Item> STRETCH_ITEM = tentItem("stretch", STRETCH);
+    public static final RegistryObject<Item> TENSILE_ITEM = tentItem("tensile", TENSILE);
     public static final RegistryObject<Item> STRETCH_POLE_ITEM = ITEMS.register("stretch_pole", () -> new BlockItem(STRETCH_POLE.get(), new Item.Properties()));
     public static final RegistryObject<Item> RIGGING_BAR_ITEM = ITEMS.register("rigging_bar", () -> new BlockItem(RIGGING_BAR.get(), new Item.Properties()));
     public static final RegistryObject<Item> ROUND_TABLE_ITEM = blockItem("round_table", ROUND_TABLE);
@@ -126,7 +128,7 @@ public final class ModRegistry {
 
     public static final RegistryObject<BlockEntityType<TentBlockEntity>> TENT_BE = BLOCK_ENTITIES.register("tent",
             () -> BlockEntityType.Builder.of(TentBlockEntity::new, BIG_TOP.get(), PAGODA.get(), FRAME_TENT.get(),
-                    GAZEBO.get(), ARCH.get(), STRETCH.get()).build(null));
+                    GAZEBO.get(), ARCH.get(), STRETCH.get(), TENSILE.get()).build(null));
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stagetents"))
@@ -138,6 +140,7 @@ public final class ModRegistry {
                 out.accept(GAZEBO_ITEM.get());
                 out.accept(STRETCH_ITEM.get());
                 out.accept(STRETCH_POLE_ITEM.get());
+                out.accept(TENSILE_ITEM.get());
                 out.accept(ARCH_ITEM.get());
                 out.accept(RIGGING_BAR_ITEM.get());
                 out.accept(ROUND_TABLE_ITEM.get());

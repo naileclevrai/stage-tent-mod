@@ -12,6 +12,7 @@
     "stagetents:crowd_barrier",
     "stagetents:stanchion",
     "stagetents:bleacher_aisle",
-    "stagetents:bleacher_support"
+    "stagetents:bleacher_support",
+    "stagetents:tensile"
   ]
 }

@@ -179,5 +179,15 @@
   "message.stagetents.grandstand_built": "Gradins construits : %s blocs",
   "tooltip.stagetents.wrench.4": "Sur un gradin : construire une tribune",
   "block.stagetents.bleacher_aisle": "Allée de gradins",
-  "block.stagetents.bleacher_support": "Structure de gradins"
+  "block.stagetents.bleacher_support": "Structure de gradins",
+  "block.stagetents.tensile": "Arène tensile",
+  "screen.stagetents.width.tensile": "Portée : %s",
+  "screen.stagetents.height.tensile": "Hauteur des mâts : %s",
+  "screen.stagetents.wall_height.tensile": "Arches de rive : %s",
+  "screen.stagetents.spacing.tensile": "Écart des ancrages : %s",
+  "screen.stagetents.masts_per_line": "Mâts par ligne : %s",
+  "screen.stagetents.preset.arena_white_navy": "Blanc, doublure marine",
+  "screen.stagetents.preset.arena_white": "Tout blanc",
+  "screen.stagetents.preset.arena_black": "Noir",
+  "screen.stagetents.preset.arena_sand": "Sable"
 }

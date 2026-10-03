@@ -37,6 +37,7 @@ public abstract class TentShape {
             case GAZEBO -> new GazeboShape(p, facing);
             case ARCH -> new ArchShape(p, facing);
             case STRETCH -> new StretchShape(p, facing);
+            case TENSILE -> new TensileShape(p, facing);
         };
     }
 

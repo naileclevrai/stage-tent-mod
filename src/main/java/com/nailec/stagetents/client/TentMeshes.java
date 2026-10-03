@@ -7,6 +7,7 @@ import com.nailec.stagetents.tent.FrameShape;
 import com.nailec.stagetents.tent.GazeboShape;
 import com.nailec.stagetents.tent.RectShape;
 import com.nailec.stagetents.tent.StretchShape;
+import com.nailec.stagetents.tent.TensileShape;
 import com.nailec.stagetents.tent.LightMode;
 import com.nailec.stagetents.tent.PagodaShape;
 import com.nailec.stagetents.tent.TentParams;
@@ -270,8 +271,9 @@ final class TentMeshes {
 
     private static void stretch(MeshBuilder m, StretchShape g) {
         double P = g.perimeterLength();
-        int ns = Math.max(48, (int) Math.ceil(P / 0.5));
-        int nt = 22;
+        // Resolution grows with the membrane: arenas need more rows to keep the cones round.
+        int ns = Mth.clamp((int) Math.ceil(P / 0.5), 48, 720);
+        int nt = Mth.clamp((int) Math.round(g.footprint() * 0.45), 22, 56);
         double cx = g.centreX(), cz = g.centreZ();
         double[][] gx = new double[ns + 1][nt + 1], gy = new double[ns + 1][nt + 1], gz = new double[ns + 1][nt + 1];
         double[] per = new double[5];
@@ -303,9 +305,13 @@ final class TentMeshes {
             }
         }
         edgeRope(m, g);
-        for (double[] mast : g.masts) {
-            m.tube(mast[0], 0, mast[1], mast[0], mast[2] + 0.9, mast[1], 0.09, 8, WOOD);
-            m.box(mast[0], mast[2] - 0.05, mast[1], 0.2, mast[2] + 0.08, RING, false);
+        if (g instanceof TensileShape t) {
+            tensileStructure(m, t);
+        } else {
+            for (double[] mast : g.masts) {
+                m.tube(mast[0], 0, mast[1], mast[0], mast[2] + 0.9, mast[1], 0.09, 8, WOOD);
+                m.box(mast[0], mast[2] - 0.05, mast[1], 0.2, mast[2] + 0.08, RING, false);
+            }
         }
         double reach = g.Hw * 0.8 + 0.8;
         for (int k = 0; k < g.anchorS.length; k++) {
@@ -344,6 +350,104 @@ final class TentMeshes {
                 }
             }
         }
+    }
+
+    /**
+     * Arena structure: square lattice masts with a crown ring holding the membrane, guy cables on the end masts,
+     * and a grid of box trusses hung between the masts over the floor.
+     */
+    private static void tensileStructure(MeshBuilder m, TensileShape g) {
+        double crown = 1.1;
+        for (double[] mast : g.masts) {
+            double top = mast[2];
+            lattice(m, mast[0], 0, mast[1], mast[0], top + 1.6, mast[1], 0.32, true);
+            // Crown: ring the membrane is laced to, struts up to the mast head, and a cap.
+            int n = 16;
+            double ry = top - 0.05;
+            double[] px = new double[n + 1], pz = new double[n + 1];
+            for (int k = 0; k <= n; k++) {
+                double a = Math.PI * 2 * k / n;
+                px[k] = mast[0] + crown * Math.cos(a);
+                pz[k] = mast[1] + crown * Math.sin(a);
+            }
+            for (int k = 0; k < n; k++) m.tube(px[k], ry, pz[k], px[k + 1], ry, pz[k + 1], 0.07, 6, ALU);
+            for (int k = 0; k < n; k += 4) m.tube(px[k], ry, pz[k], mast[0], top + 1.4, mast[1], 0.035, 4, ALU);
+            m.box(mast[0], top + 1.55, mast[1], 0.28, top + 1.75, RING, false);
+        }
+        // Guy cables from the end masts out past the membrane.
+        if (m.p.guyRopes) {
+            double[] xs = g.mastXs();
+            double reach = g.H * 0.55;
+            for (double z : new double[]{g.lineZ(), -g.lineZ()}) {
+                for (int end : new int[]{0, xs.length - 1}) {
+                    double x = xs[end], dir = end == 0 ? -1 : 1;
+                    double gx = dir * (g.params.length / 2.0 + reach * 0.6), gz = z * 1.6;
+                    m.rope(x, g.H * 0.95, z, gx, 0.2, gz, 0.4, 0.04, ROPE);
+                    m.box(gx, 0, gz, 0.4, 0.25, RING, false);
+                }
+            }
+        }
+        if (!m.p.rigging) return;
+        double y = g.trussY();
+        double[] xs = g.mastXs();
+        double z = g.lineZ();
+        for (double lz : new double[]{z, -z}) {
+            for (int i = 0; i + 1 < xs.length; i++) lattice(m, xs[i] + 0.4, y, lz, xs[i + 1] - 0.4, y, lz, 0.26, false);
+        }
+        for (double x : xs) lattice(m, x, y, -z + 0.4, x, y, z - 0.4, 0.26, false);
+    }
+
+    /**
+     * Square lattice truss from a to b: four chords, rungs and zig-zag diagonals on every face. {@code vertical}
+     * builds a mast with a base plate.
+     */
+    private static void lattice(MeshBuilder m, double ax, double ay, double az, double bx, double by, double bz, double half, boolean vertical) {
+        double dx = bx - ax, dy = by - ay, dz = bz - az, len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (len < 1e-6) return;
+        dx /= len; dy /= len; dz /= len;
+        // Two directions across the truss.
+        double ux, uy, uz, wx, wy, wz;
+        if (Math.abs(dy) > 0.9) {
+            ux = 1; uy = 0; uz = 0;
+            wx = 0; wy = 0; wz = 1;
+        } else {
+            ux = -dz; uy = 0; uz = dx;
+            double l = Math.hypot(ux, uz);
+            ux /= l; uz /= l;
+            wx = 0; wy = 1; wz = 0;
+        }
+        double[][] corners = {{1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+        double chord = Math.max(0.035, half * 0.16), lace = chord * 0.45;
+        for (double[] c : corners) {
+            double ox = (ux * c[0] + wx * c[1]) * half, oy = (uy * c[0] + wy * c[1]) * half, oz = (uz * c[0] + wz * c[1]) * half;
+            m.tube(ax + ox, ay + oy, az + oz, bx + ox, by + oy, bz + oz, chord, 6, ALU);
+        }
+        int bays = Math.max(1, (int) Math.round(len / (half * 2.2)));
+        for (int b = 0; b <= bays; b++) {
+            double t0 = len * b / bays;
+            for (int f = 0; f < 4; f++) {
+                double[] c0 = corners[f], c1 = corners[(f + 1) % 4];
+                double[] p0 = corner(ax, ay, az, dx, dy, dz, ux, uy, uz, wx, wy, wz, half, c0, t0);
+                double[] p1 = corner(ax, ay, az, dx, dy, dz, ux, uy, uz, wx, wy, wz, half, c1, t0);
+                m.tube(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], lace, 4, ALU);
+                if (b < bays) {
+                    double t1 = len * (b + 1) / bays;
+                    double[] q = corner(ax, ay, az, dx, dy, dz, ux, uy, uz, wx, wy, wz, half, (b + f) % 2 == 0 ? c1 : c0, t1);
+                    double[] p = (b + f) % 2 == 0 ? p0 : p1;
+                    m.tube(p[0], p[1], p[2], q[0], q[1], q[2], lace, 4, ALU);
+                }
+            }
+        }
+        if (vertical) m.box(ax, ay, az, half * 2.2, ay + 0.06, RING, false);
+    }
+
+    private static double[] corner(double ax, double ay, double az, double dx, double dy, double dz,
+                                   double ux, double uy, double uz, double wx, double wy, double wz,
+                                   double half, double[] c, double t) {
+        return new double[]{
+                ax + dx * t + (ux * c[0] + wx * c[1]) * half,
+                ay + dy * t + (uy * c[0] + wy * c[1]) * half,
+                az + dz * t + (uz * c[0] + wz * c[1]) * half};
     }
 
     /** Floor laid inside the walls, with a skirt when raised. */

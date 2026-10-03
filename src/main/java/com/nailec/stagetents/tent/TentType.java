@@ -10,7 +10,9 @@ public enum TentType {
     /** Inflatable arch: width = span, height = top, wall height = tube thickness. */
     ARCH("arch", new Ranges(4, 24, 0, 0, 1, 3, 14, 1, 3, 3, 6)),
     /** Stretch tent: free canvas over masts. Width = overhang past the masts, wall height = edge pole height. */
-    STRETCH("stretch", new Ranges(2, 10, 0, 0, 1, 4, 16, 1, 5, 3, 8));
+    STRETCH("stretch", new Ranges(2, 10, 0, 0, 1, 4, 16, 1, 5, 3, 8)),
+    /** Tensile arena: membrane on two lines of lattice masts. Width = span, length = full length, wall = edge arch. */
+    TENSILE("tensile", new Ranges(24, 90, 24, 160, 2, 12, 40, 3, 14, 8, 24));
 
     public record Ranges(int minWidth, int maxWidth, int minLength, int maxLength, int lengthStep,
                          int minHeight, int maxHeight, int minWall, int maxWall, int minSpacing, int maxSpacing) {}
@@ -67,6 +69,14 @@ public enum TentType {
                 p.walls = WallMode.OPEN; p.entrance = Entrance.NONE; p.valance = false;
                 p.stripes = false; p.guyRopes = true; p.flags = false;
                 p.colorA = 0xD2BC8F; p.colorB = 0xD2BC8F;
+            }
+            case TENSILE -> {
+                // Real proportions of the large touring arenas: 86 x 160 m, 25 m masts, 10 masts in two lines.
+                p.width = 86; p.length = 160; p.height = 25; p.wallHeight = 9; p.poleSpacing = 16; p.masts = 5;
+                p.walls = WallMode.OPEN; p.entrance = Entrance.NONE; p.valance = false;
+                p.stripes = false; p.guyRopes = true; p.flags = false;
+                p.colorA = Palette.WHITE; p.colorB = Palette.WHITE; p.lining = 0x1C2541;
+                p.stage = true; p.stageDepth = 12; p.stageHeight = 2; p.rigging = true;
             }
         }
         return p;

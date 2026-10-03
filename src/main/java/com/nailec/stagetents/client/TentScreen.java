@@ -119,7 +119,7 @@ public class TentScreen extends Screen {
         addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "width." + t, r.minWidth(), r.maxWidth(), 1,
                 () -> edit.width, v -> edit.width = v, null));
         if (r.maxLength() > 0) {
-            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, (type == TentType.FRAME || type == TentType.GAZEBO) ? "length" : "length_extra",
+            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, (type == TentType.FRAME || type == TentType.GAZEBO || type == TentType.TENSILE) ? "length" : "length_extra",
                     r.minLength(), r.maxLength(), r.lengthStep(), () -> edit.length, v -> edit.length = v, null));
         }
         addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "height." + t, r.minHeight(), r.maxHeight(), 1,
@@ -130,13 +130,13 @@ public class TentScreen extends Screen {
             addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "spacing." + t, r.minSpacing(), r.maxSpacing(), 1,
                     () -> edit.poleSpacing, v -> edit.poleSpacing = v, null));
         }
-        if (type == TentType.BIG_TOP) {
-            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "masts", 2, TentParams.MAX_MASTS, 1,
+        if (type == TentType.BIG_TOP || type == TentType.TENSILE) {
+            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, type == TentType.TENSILE ? "masts_per_line" : "masts", 2, TentParams.MAX_MASTS, 1,
                     () -> Math.max(2, edit.masts), v -> edit.masts = v, null));
         }
 
         row = 0;
-        if (type.hasInterior()) {
+        if (type.hasInterior() && type != TentType.TENSILE) {
             addRenderableWidget(CycleButton.<WallMode>builder(m -> tr("walls." + lower(m)))
                     .withValues(WallMode.values()).withInitialValue(edit.walls)
                     .create(x2, y + ROW_H * row++, COL_W, 20, tr("walls"), (b, v) -> { edit.walls = v; preview(); }));

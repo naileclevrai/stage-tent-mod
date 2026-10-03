@@ -43,6 +43,7 @@ public final class MeshBench {
         st.stretchPoles.add(new int[]{10, 6, 7}); st.stretchPoles.add(new int[]{-9, -5, 6}); st.stretchPoles.add(new int[]{4, -10, 5});
         st.lights = LightMode.WARM;
         bench("stretch 4 masts lights", st);
+        bench("tensile arena 86x160 (real size)", TentType.TENSILE.defaults());
     }
 
     static void bench(String name, TentParams p) throws Exception {

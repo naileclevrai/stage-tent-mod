@@ -14,9 +14,9 @@ import java.util.List;
  * as a tensioned membrane (Laplace equation with a little sag) with the masts and the edge held fixed, which gives
  * the saddles and peaks of real stretch fabric.
  */
-public final class StretchShape extends TentShape {
-    private static final double GRID = 0.4;
-    private static final double CAP = 0.4;
+public class StretchShape extends TentShape {
+    /** Membrane grid step: fine for small tents, coarser for arenas so the solve stays fast. */
+    private final double grid;
 
     /** Masts in local coordinates: x, z, height. The plate itself is the first mast. */
     public final List<double[]> masts = new ArrayList<>();
@@ -36,15 +36,10 @@ public final class StretchShape extends TentShape {
 
     public StretchShape(TentParams params, Direction facing) {
         super(params, facing, 1);
-        masts.add(new double[]{0, 0, Math.max(params.height, Hw + 1)});
-        for (int[] sp : params.stretchPoles) {
-            double lx = toLocalX(sp[0], sp[1]), lz = toLocalZ(sp[0], sp[1]);
-            if (Math.hypot(lx, lz) < 1) continue;
-            masts.add(new double[]{lx, lz, Math.max(sp[2], Hw + 1)});
-        }
+        buildMasts(masts);
 
         // Rounded convex hull of the masts, grown by the overhang.
-        double margin = params.width;
+        double margin = margin();
         List<double[]> hull = convexHull(masts);
         List<double[]> ring = new ArrayList<>(); // x, z, nx, nz
         int nh = hull.size();
@@ -76,16 +71,17 @@ public final class StretchShape extends TentShape {
         }
         double p0 = cum[ring.size()];
 
-        int k = Math.max(4, 2 * (int) Math.round(p0 / (2.0 * params.poleSpacing)));
+        boolean arches = arches();
+        int k = Math.max(4, 2 * (int) Math.round(p0 / (2.0 * anchorSpacing())));
         anchorS = new double[k];
         anchorPole = new boolean[k];
         for (int i = 0; i < k; i++) {
             anchorS[i] = p0 * i / k;
-            anchorPole[i] = i % 2 == 0;
+            anchorPole[i] = !arches && i % 2 == 0;
         }
 
         // Scalloped edge: pulled in between anchors, height interpolated between pole tops and ground anchors.
-        nb = Math.max(32, (int) Math.ceil(p0 / 0.3));
+        nb = Math.max(32, Math.min(900, (int) Math.ceil(p0 / 0.3)));
         P = p0;
         bx = new double[nb];
         bz = new double[nb];
@@ -106,14 +102,15 @@ public final class StretchShape extends TentShape {
             nz /= nl;
             int ai = Math.min(k - 1, (int) Math.floor(s / seg));
             double u = s / seg - ai;
-            double pull = 0.13 * seg * Math.sin(Math.PI * u);
+            double pull = (arches ? 0.06 : 0.13) * seg * Math.sin(Math.PI * u);
             bx[i] = x - nx * pull;
             bz[i] = z - nz * pull;
             bnx[i] = nx;
             bnz[i] = nz;
             double h0 = anchorHeight(ai), h1 = anchorHeight((ai + 1) % k);
             double sm = u * u * (3 - 2 * u);
-            bh[i] = h0 + (h1 - h0) * sm - 0.04 * seg * Math.sin(Math.PI * u);
+            // Stretch tents droop between edge poles; arenas lift their edge into an arch between ground anchors.
+            bh[i] = arches ? 0.35 + Hw * Math.sin(Math.PI * u) : h0 + (h1 - h0) * sm - 0.04 * seg * Math.sin(Math.PI * u);
             sumX += bx[i];
             sumZ += bz[i];
         }
@@ -128,10 +125,11 @@ public final class StretchShape extends TentShape {
             minZ = Math.min(minZ, bz[i]);
             maxZ = Math.max(maxZ, bz[i]);
         }
-        gx0 = minX - 2 * GRID;
-        gz0 = minZ - 2 * GRID;
-        gw = (int) Math.ceil((maxX - minX) / GRID) + 5;
-        gh = (int) Math.ceil((maxZ - minZ) / GRID) + 5;
+        grid = Math.max(0.4, Math.max(maxX - minX, maxZ - minZ) / 220);
+        gx0 = minX - 2 * grid;
+        gz0 = minZ - 2 * grid;
+        gw = (int) Math.ceil((maxX - minX) / grid) + 5;
+        gh = (int) Math.ceil((maxZ - minZ) / grid) + 5;
         field = new double[gw * gh];
         inside = new boolean[gw * gh];
         boolean[] fixed = new boolean[gw * gh];
@@ -141,7 +139,7 @@ public final class StretchShape extends TentShape {
         for (int j = 0; j < gh; j++) {
             for (int i = 0; i < gw; i++) {
                 int id = j * gw + i;
-                double x = gx0 + i * GRID, z = gz0 + j * GRID;
+                double x = gx0 + i * grid, z = gz0 + j * grid;
                 inside[id] = pointInPolygon(x, z);
                 if (!inside[id]) {
                     field[id] = edgeHeightNear(x, z);
@@ -150,7 +148,7 @@ public final class StretchShape extends TentShape {
                     field[id] = meanEdge;
                 }
                 for (double[] m : masts) {
-                    if (Math.hypot(x - m[0], z - m[1]) <= CAP) {
+                    if (Math.hypot(x - m[0], z - m[1]) <= Math.max(cap(), grid * 0.8)) {
                         field[id] = m[2];
                         fixed[id] = true;
                     }
@@ -159,7 +157,7 @@ public final class StretchShape extends TentShape {
         }
         double sag = 0.002; // slight droop of the fabric between supports
         // Successive over-relaxation, stopped once no cell moves by more than a millimetre.
-        for (int it = 0; it < 600; it++) {
+        for (int it = 0; it < 1500; it++) {
             double maxDelta = 0;
             for (int j = 1; j < gh - 1; j++) {
                 for (int i = 1; i < gw - 1; i++) {
@@ -180,6 +178,37 @@ public final class StretchShape extends TentShape {
 
     private double anchorHeight(int i) {
         return anchorPole[i] ? Hw : 0.35;
+    }
+
+    // ------------------------------------------------------------------ layout, overridden by the tensile arena
+
+    /** Masts in local coordinates {x, z, height}. Stretch tent: the plate plus the stretch poles found around it. */
+    protected void buildMasts(List<double[]> out) {
+        out.add(new double[]{0, 0, Math.max(params.height, Hw + 1)});
+        for (int[] sp : params.stretchPoles) {
+            double lx = toLocalX(sp[0], sp[1]), lz = toLocalZ(sp[0], sp[1]);
+            if (Math.hypot(lx, lz) < 1) continue;
+            out.add(new double[]{lx, lz, Math.max(sp[2], Hw + 1)});
+        }
+    }
+
+    /** Overhang of the membrane past the masts. */
+    protected double margin() {
+        return params.width;
+    }
+
+    protected double anchorSpacing() {
+        return params.poleSpacing;
+    }
+
+    /** Edge lifted into arches between ground anchors (arena) instead of edge poles and ground anchors in turn. */
+    protected boolean arches() {
+        return false;
+    }
+
+    /** Radius of the ring the membrane is held by at the top of each mast. */
+    protected double cap() {
+        return 0.4;
     }
 
     private static List<double[]> convexHull(List<double[]> pts) {
@@ -247,7 +276,7 @@ public final class StretchShape extends TentShape {
     }
 
     private double sampleField(double lx, double lz) {
-        double fx = (lx - gx0) / GRID, fz = (lz - gz0) / GRID;
+        double fx = (lx - gx0) / grid, fz = (lz - gz0) / grid;
         int i = Mth.clamp(Mth.floor(fx), 0, gw - 2), j = Mth.clamp(Mth.floor(fz), 0, gh - 2);
         double u = Mth.clamp(fx - i, 0, 1), v = Mth.clamp(fz - j, 0, 1);
         double a = field[j * gw + i], b = field[j * gw + i + 1], c = field[(j + 1) * gw + i], d = field[(j + 1) * gw + i + 1];
@@ -323,6 +352,13 @@ public final class StretchShape extends TentShape {
     @Override
     public double footprint() {
         return ext;
+    }
+
+    @Override
+    public double backX() {
+        double min = 0;
+        for (double x : bx) min = Math.min(min, x);
+        return min;
     }
 
     @Override
