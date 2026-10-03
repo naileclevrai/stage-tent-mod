@@ -83,9 +83,14 @@ public abstract class TentShape {
         return false;
     }
 
+    /** Whether local (x, z) lies on the back side (opposite the front). */
+    public boolean isBackSide(double lx, double lz) {
+        return false;
+    }
+
     /** True where the wall stops at counter height. */
     public boolean isCounter(double lx, double lz) {
-        return params.entrance == Entrance.COUNTER && isFrontSide(lx, lz);
+        return params.entrance.hasCounter() && isFrontSide(lx, lz);
     }
 
     /** Top of the wall at local (x, z), given the eave height there. */

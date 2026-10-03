@@ -144,6 +144,7 @@ public final class BigTopShape extends TentShape {
     @Override
     public boolean isEntrance(double lx, double lz) {
         if (params.entrance == Entrance.OPEN_FRONT) return isFrontSide(lx, lz);
+        if (params.entrance == Entrance.COUNTER_BACK) return isBackSide(lx, lz);
         if (params.entrance == Entrance.NONE || params.entrance == Entrance.COUNTER || Math.abs(lz) >= entranceHalf) return false;
         return lx > half + 0.01 || (params.entrance == Entrance.BOTH && lx < -half - 0.01);
     }
@@ -151,6 +152,11 @@ public final class BigTopShape extends TentShape {
     @Override
     public boolean isFrontSide(double lx, double lz) {
         return lx > half + 0.01;
+    }
+
+    @Override
+    public boolean isBackSide(double lx, double lz) {
+        return lx < -half - 0.01;
     }
 
     @Override

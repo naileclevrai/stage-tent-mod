@@ -763,8 +763,7 @@ final class TentMeshes {
 
     /** Door curtains tied back on each side of every opening in closed walls. */
     private static void entranceFlaps(MeshBuilder m, TentShape g) {
-        if (m.p.walls == WallMode.OPEN || m.p.entrance == com.nailec.stagetents.tent.Entrance.OPEN_FRONT
-                || m.p.entrance == com.nailec.stagetents.tent.Entrance.COUNTER) return;
+        if (m.p.walls == WallMode.OPEN || m.p.entrance.opensWholeSide()) return;
         double P = g.perimeterLength(), step = 0.25;
         int n = (int) Math.ceil(P / step);
         double[] per = new double[5], pa = new double[5], pb = new double[5];

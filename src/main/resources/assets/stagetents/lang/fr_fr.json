@@ -154,5 +154,6 @@
   "screen.stagetents.show_plate": "Platine visible",
   "screen.stagetents.entrance.open_front": "Façade ouverte",
   "screen.stagetents.entrance.counter": "Comptoir",
-  "screen.stagetents.preset.regie": "Régie"
+  "screen.stagetents.preset.regie": "Régie",
+  "screen.stagetents.entrance.counter_back": "Comptoir + arrière ouvert"
 }

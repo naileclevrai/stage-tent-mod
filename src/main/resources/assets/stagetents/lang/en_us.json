@@ -154,5 +154,6 @@
   "screen.stagetents.show_plate": "Plate visible",
   "screen.stagetents.entrance.open_front": "Open front",
   "screen.stagetents.entrance.counter": "Counter",
-  "screen.stagetents.preset.regie": "FOH control"
+  "screen.stagetents.preset.regie": "FOH control",
+  "screen.stagetents.entrance.counter_back": "Counter + open back"
 }

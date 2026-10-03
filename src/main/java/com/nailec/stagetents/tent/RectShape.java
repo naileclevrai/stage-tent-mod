@@ -176,8 +176,14 @@ public abstract class RectShape extends TentShape {
     }
 
     @Override
+    public boolean isBackSide(double lx, double lz) {
+        return lx < -ax + 1 - 1e-3 && Math.abs(lx) - ax >= Math.abs(lz) - az - 1e-6;
+    }
+
+    @Override
     public boolean isEntrance(double lx, double lz) {
         if (params.entrance == Entrance.OPEN_FRONT) return isFrontSide(lx, lz);
+        if (params.entrance == Entrance.COUNTER_BACK) return isBackSide(lx, lz);
         if (params.entrance == Entrance.NONE || params.entrance == Entrance.COUNTER || Math.abs(lz) >= entranceHalfWidth()) return false;
         return lx > ax - 1 + 1e-3 || (params.entrance == Entrance.BOTH && lx < -ax + 1 - 1e-3);
     }
