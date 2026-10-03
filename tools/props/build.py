@@ -83,6 +83,8 @@ def main():
     report["stanchion"] = model(props.stanchion_base(), "stanchion")
     report["stanchion_rope_1"] = model(props.stanchion_rope(1), "stanchion_rope_1", tinted=("velvet",))
     report["stanchion_rope_2"] = model(props.stanchion_rope(2), "stanchion_rope_2", tinted=("velvet",))
+    report["turnstile"] = model(props.turnstile_cabinet(), "turnstile", gui_scale=0.5)
+    report["guide_rail"] = model(props.guide_rail(), "guide_rail")
     report["shooting_gallery"] = model(props.shooting_gallery(), "shooting_gallery", gui_scale=0.22, gui_offset=(0, -1.5, 0))
 
     # The connecting parts are not items.
@@ -114,6 +116,8 @@ def main():
         {"when": {"south": "1"}, "apply": {"model": "stagetents:block/props/stanchion_rope_1", "y": 90}},
         {"when": {"south": "2"}, "apply": {"model": "stagetents:block/props/stanchion_rope_2", "y": 90}}])
     blockstate("shooting_gallery", facing_parts("shooting_gallery"))
+    blockstate("turnstile", facing_parts("turnstile"))
+    blockstate("guide_rail", facing_parts("guide_rail"))
     # Invisible collision cells of multi-block props.
     with open(os.path.join(ASSETS, "blockstates", "prop_part.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump({"variants": {"": {"model": "stagetents:block/prop_part"}}}, f, indent=2)

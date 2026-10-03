@@ -550,3 +550,67 @@ def _vertical_disc(x, y, z, r, segs=24):
         m.tri("target", (x, y, z), p0, p1, n, n, n, (0.5, 0.5), (0.5 + 0.5 * math.cos(a0), 0.5 - 0.5 * math.sin(a0)), (0.5 + 0.5 * math.cos(a1), 0.5 - 0.5 * math.sin(a1)))
     m.tube("black", [(x, y, z + 0.003), (x, y, z + 0.015)], r + 0.006, segs=segs, caps=False)
     return m
+
+
+# ---------------------------------------------------------------------------------------------------------------- access
+
+# Turnstile geometry, shared with the Java renderer of the rotor (TurnstileRenderer):
+# hub centre in block space and arm length. The passage runs along z, the cabinet stands on the -x side.
+TURNSTILE_HUB = (0.385, 0.92, 0.5)
+TURNSTILE_ARM = 0.60
+
+
+def turnstile_cabinet():
+    """Tripod turnstile cabinet in brushed stainless steel: column, wide head with a sloped top carrying two badge
+    readers and the arrow display, end displays, hub boss on the passage side, base plate with anchor bolts.
+    The rotor and the lit displays are drawn by the block entity renderer."""
+    m = Mesh()
+    S = "steel"
+    # Base plate with bolts.
+    m.bevel_box(S, 0.01, 0.0, 0.10, 0.36, 0.012, 0.90, 0.003)
+    for (x, z) in ((0.05, 0.14), (0.31, 0.14), (0.05, 0.86), (0.31, 0.86)):
+        m.cylinder("chrome", 0.012, 0.012, 0.02, cx=x, cz=z, segs=8)
+    # Column with an access door outline and a key lock.
+    m.bevel_box(S, 0.04, 0.012, 0.16, 0.29, 0.84, 0.84, 0.006)
+    m.box("black", 0.288, 0.20, 0.24, 0.292, 0.76, 0.245, faces="e")
+    m.box("black", 0.288, 0.20, 0.755, 0.292, 0.76, 0.76, faces="e")
+    m.box("black", 0.288, 0.755, 0.24, 0.292, 0.76, 0.76, faces="e")
+    m.box("black", 0.288, 0.20, 0.24, 0.292, 0.205, 0.76, faces="e")
+    m.box("chrome", 0.289, 0.62, 0.70, 0.296, 0.65, 0.73, faces="eud")
+    # Head: wider housing whose top slopes down towards the passage.
+    head = [(0.0, 0.84), (0.34, 0.84), (0.34, 1.00), (0.0, 1.07)]
+    m.extrude(S, [(p[0], p[1]) for p in head], 0.06, 0.94)
+    m.box("black", 0.0, 0.838, 0.06, 0.34, 0.842, 0.94, faces="d")
+    # Recesses on the sloped top: two readers and the display window.
+    slope = math.atan2(0.07, 0.34)
+    def on_top(x0, x1, z0, z1, mat, lift):
+        y0 = 1.07 - 0.07 * x0 / 0.34 + lift
+        y1 = 1.07 - 0.07 * x1 / 0.34 + lift
+        m.quad(mat, (x0, y0, z1), (x1, y1, z1), (x1, y1, z0), (x0, y0, z0))
+    for (z0, z1) in ((0.12, 0.30), (0.70, 0.88)):
+        on_top(0.07, 0.27, z0, z1, "reader", 0.003)
+    on_top(0.10, 0.25, 0.37, 0.63, "black", 0.002)
+    # End display windows.
+    m.box("black", 0.06, 0.88, 0.055, 0.28, 1.00, 0.06, faces="n")
+    m.box("black", 0.06, 0.88, 0.94, 0.28, 1.00, 0.945, faces="s")
+    # Hub boss on the passage side.
+    boss = Mesh()
+    boss.lathe("steel", [(0.075, 0.0), (0.075, 0.03), (0.06, 0.045)], cx=0.0, cz=0.0, segs=20)
+    boss.disc("steel", 0.06, 0.045, cx=0.0, cz=0.0, segs=20)
+    hx, hy, hz = TURNSTILE_HUB
+    m.merge(boss.transformed(lambda p: (0.34 + p[1], hy + p[0], hz + p[2])))
+    return m
+
+
+def guide_rail():
+    """Stainless steel queue rail: two posts with flanged feet and three rails along the passage."""
+    m = Mesh()
+    S = "steel"
+    x = 0.5
+    for z in (0.06, 0.94):
+        m.lathe(S, [(0.07, 0.0), (0.07, 0.012), (0.03, 0.03)], cx=x, cz=z, segs=16)
+        m.cylinder(S, 0.025, 0.03, 1.02, cx=x, cz=z, segs=14)
+        m.sphere("chrome", 0.03, x, 1.03, z, segs=12, rings=6)
+    for y in (0.30, 0.62, 0.98):
+        m.tube(S, [(x, y, 0.06), (x, y, 0.94)], 0.018, segs=10, caps=False)
+    return m

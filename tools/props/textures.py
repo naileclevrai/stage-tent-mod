@@ -107,6 +107,38 @@ def make_all(folder):
     for name, c in (("plush_pink", (240, 140, 180)), ("plush_blue", (110, 170, 240)), ("plush_mint", (130, 220, 180))):
         tex[name] = _img(lambda x, y, r, c=c: (_clamp(c[0] + r.uniform(-12, 12)), _clamp(c[1] + r.uniform(-12, 12)), _clamp(c[2] + r.uniform(-12, 12)), 255))
 
+    # Brushed stainless steel: brighter than aluminium, long vertical grain.
+    cols = [random.Random(17).uniform(-9, 9) for _ in range(N)]
+    tex["steel"] = _img(lambda x, y, r: (_clamp(206 + cols[x] + r.uniform(-3, 3)), _clamp(208 + cols[x] + r.uniform(-3, 3)),
+                                        _clamp(212 + cols[x] + r.uniform(-3, 3)), 255))
+
+    # Badge reader: black bezel, dark glass, a card symbol.
+    def reader(x, y, r):
+        if x < 2 or y < 2 or x > 29 or y > 29:
+            return (18, 18, 20, 255)
+        if 9 <= x <= 22 and 11 <= y <= 20 and (x in (9, 22) or y in (11, 20)):
+            return (140, 146, 156, 255)
+        if 11 <= x <= 14 and 13 <= y <= 15:
+            return (190, 160, 70, 255)
+        return (_clamp(34 + r.uniform(-3, 3)), _clamp(36 + r.uniform(-3, 3)), _clamp(42 + r.uniform(-3, 3)), 255)
+    tex["reader"] = _img(reader)
+
+    # LED matrix displays: a green arrow pointing up (the direction of passage) and a red cross, as dots.
+    arrow = {(x, y) for y in range(4, 28) for x in range(32) if
+             (y < 14 and abs(x - 15.5) <= (y - 4) * 1.0 + 0.5) or (y >= 14 and 11 <= x <= 20)}
+    cross = {(x, y) for y in range(5, 27) for x in range(5, 27) if abs(x - y) <= 2 or abs(x + y - 31) <= 2}
+
+    def led(cells, on):
+        def f(x, y, r):
+            if (x % 2 == 0) and (y % 2 == 0) and (x, y) in cells:
+                return (*on, 255)
+            if (x % 2 == 0) and (y % 2 == 0):
+                return (on[0] // 7, on[1] // 7, on[2] // 7, 255)
+            return (8, 8, 9, 255)
+        return f
+    tex["led_arrow"] = _img(led(arrow, (70, 255, 110)))
+    tex["led_cross"] = _img(led(cross, (255, 60, 50)))
+
     for name, im in tex.items():
         im.save(os.path.join(folder, name + ".png"))
 
