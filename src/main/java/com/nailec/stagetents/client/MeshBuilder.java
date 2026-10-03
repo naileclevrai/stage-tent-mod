@@ -1,12 +1,19 @@
 package com.nailec.stagetents.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nailec.stagetents.tent.TentParams;
 import com.nailec.stagetents.tent.TentShape;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -23,8 +30,11 @@ import java.util.Arrays;
  * <p>Quads are sorted into layers so the renderer can skip what can't be seen: the outside of the canvas from inside
  * the tent, the inside of the canvas and the small details from far away. Canvas faces are emitted twice (outside
  * and inside) with opposite winding so they can be drawn with back-face culling and lit from both sides.
+ *
+ * <p>Layers are uploaded once to GPU vertex buffers and drawn from there with {@link TentShaders}, which also does the
+ * wind; a layer is uploaded again only when its light actually changed. {@link #emit} is the CPU fallback.
  */
-final class MeshBuilder {
+final class MeshBuilder implements AutoCloseable {
     /** Structure: poles, beams, plates, rolled walls, drapes. Always drawn. */
     static final int SOLID = 0;
     /** See-through window panels. */
@@ -60,6 +70,10 @@ final class MeshBuilder {
     private int relightLayer, relightIndex;
     private boolean relightRunning;
     private Long2IntOpenHashMap relightCache;
+    private final VertexBuffer[] gpu = new VertexBuffer[LAYERS];
+    private final boolean[] gpuStale = new boolean[LAYERS];
+    /** Shared staging buffer for uploads (render thread only); its native memory is reused, never reallocated per tent. */
+    private static BufferBuilder staging;
 
     MeshBuilder(TentShape g, int version) {
         this.g = g;
@@ -409,7 +423,10 @@ final class MeshBuilder {
                     lv = LevelRenderer.getLightColor(level, mp.set(x, y, z));
                     relightCache.put(key, lv);
                 }
-                l.light[i] = lv;
+                if (l.light[i] != lv) {
+                    l.light[i] = lv;
+                    gpuStale[relightLayer] = true;
+                }
             }
             if (relightIndex >= l.count) {
                 relightLayer++;
@@ -428,6 +445,79 @@ final class MeshBuilder {
 
     boolean hasLayer(int layer) {
         return layers[layer].count > 0;
+    }
+
+    // ------------------------------------------------------------------ GPU path
+
+    /**
+     * Draws a layer from GPU memory with the tent shader ({@code modelView} already holds the block entity pose);
+     * uploads it first when it is new or its light changed.
+     */
+    void draw(int layer, RenderType type, org.joml.Matrix4f modelView, ShaderInstance shader) {
+        if (layers[layer].count == 0) return;
+        VertexBuffer vb = gpu[layer];
+        if (vb == null || gpuStale[layer]) vb = upload(layer);
+        type.setupRenderState();
+        vb.bind();
+        vb.drawWithShader(modelView, RenderSystem.getProjectionMatrix(), shader);
+        VertexBuffer.unbind();
+        type.clearRenderState();
+    }
+
+    private VertexBuffer upload(int layer) {
+        Layer l = layers[layer];
+        if (staging == null) staging = new BufferBuilder(1 << 18);
+        BufferBuilder bb = staging;
+        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
+        float[] data = l.data, flex = l.flex;
+        int[] color = l.color, light = l.light;
+        for (int i = 0; i < l.count; i++) {
+            int o = i * STRIDE, c = color[i];
+            int packed = 0;
+            if (flex != null) {
+                int f = i * FLEX_STRIDE;
+                if (flex[f] > 0) {
+                    // Overlay slot reused for the flex: weight in u, octahedral direction in v (see tent.vsh).
+                    packed = Math.max(1, Math.round(flex[f] * 1000)) | octEncode(flex[f + 1], flex[f + 2], flex[f + 3]) << 16;
+                }
+            }
+            bb.vertex(data[o], data[o + 1], data[o + 2],
+                    ((c >> 16) & 0xFF) * INV255, ((c >> 8) & 0xFF) * INV255, (c & 0xFF) * INV255, (c >>> 24) * INV255,
+                    data[o + 3], data[o + 4], packed, light[i], data[o + 5], data[o + 6], data[o + 7]);
+        }
+        VertexBuffer vb = gpu[layer];
+        if (vb == null) vb = gpu[layer] = new VertexBuffer(VertexBuffer.Usage.STATIC);
+        vb.bind();
+        vb.upload(bb.end());
+        VertexBuffer.unbind();
+        gpuStale[layer] = false;
+        return vb;
+    }
+
+    /** Unit vector to 7 + 7 bits, octahedral with y up (decoded in tent.vsh). */
+    static int octEncode(float x, float y, float z) {
+        float s = Math.abs(x) + Math.abs(y) + Math.abs(z);
+        if (s < 1e-6F) return 63 * 128 + 63;
+        float px = x / s, pz = z / s;
+        if (y < 0) {
+            float ox = (1 - Math.abs(pz)) * (px >= 0 ? 1 : -1), oz = (1 - Math.abs(px)) * (pz >= 0 ? 1 : -1);
+            px = ox;
+            pz = oz;
+        }
+        int a = Mth.clamp(Math.round((px * 0.5F + 0.5F) * 127), 0, 127), b = Mth.clamp(Math.round((pz * 0.5F + 0.5F) * 127), 0, 127);
+        return a * 128 + b;
+    }
+
+    /** Frees the GPU buffers (on the render thread). */
+    @Override
+    public void close() {
+        VertexBuffer[] buffers = gpu.clone();
+        java.util.Arrays.fill(gpu, null);
+        Runnable free = () -> {
+            for (VertexBuffer vb : buffers) if (vb != null) vb.close();
+        };
+        if (RenderSystem.isOnRenderThread()) free.run();
+        else RenderSystem.recordRenderCall(free::run);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.nailec.stagetents.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nailec.stagetents.StageTents;
@@ -9,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -47,6 +49,7 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         if (stale && (old == null || System.nanoTime() - old.builtAt > REBUILD_NANOS)) {
             mesh = TentMeshes.build(be.shape(), be.clientVersion());
             be.clientMesh = mesh;
+            if (old != null) old.close();
         }
         if (mesh == null) return;
         BlockPos origin = be.getBlockPos();
@@ -68,16 +71,34 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         float t = time + partialTick;
         float wind = beyond < WIND_RANGE ? windAmplitude(level, partialTick) : 0;
         PoseStack.Pose pose = poseStack.last();
-        VertexConsumer solid = buffers.getBuffer(RenderType.entityCutout(CANVAS_TEXTURE));
-        mesh.emit(MeshBuilder.SOLID, pose, solid, packedOverlay, t, wind);
-        if (!inside) mesh.emit(MeshBuilder.OUTER, pose, solid, packedOverlay, t, wind);
+        RenderType canvas = RenderType.entityCutout(CANVAS_TEXTURE);
+        ShaderInstance shader = TentShaders.tent();
+        Layers draw;
+        MeshBuilder m = mesh;
+        if (shader != null) {
+            // GPU path: the mesh lives in vertex buffers, only a few uniforms change per frame.
+            org.joml.Matrix4f modelView = new org.joml.Matrix4f(RenderSystem.getModelViewMatrix()).mul(pose.pose());
+            var camera = shader.getUniform("TentCamera");
+            if (camera != null) camera.set((float) (cam.x - origin.getX()), (float) (cam.y - origin.getY()), (float) (cam.z - origin.getZ()));
+            var windUniform = shader.getUniform("TentWind");
+            if (windUniform != null) {
+                float speed = 0.12F + wind * 2.5F;
+                // Both waves (x1 and x2.3) repeat after 20 pi: keeps the phase small enough for float precision.
+                windUniform.set(wind, (float) ((double) t * speed % (20 * Math.PI)));
+            }
+            draw = (layer, type) -> m.draw(layer, type, modelView, shader);
+        } else {
+            draw = (layer, type) -> m.emit(layer, pose, buffers.getBuffer(type), packedOverlay, t, wind);
+        }
+        draw.layer(MeshBuilder.SOLID, canvas);
+        if (!inside) draw.layer(MeshBuilder.OUTER, canvas);
         // From far away the inside only shows through rolled-up walls.
         if (inside || beyond < INNER_RANGE || be.params().walls == com.nailec.stagetents.tent.WallMode.OPEN) {
-            mesh.emit(MeshBuilder.INNER, pose, solid, packedOverlay, t, wind);
+            draw.layer(MeshBuilder.INNER, canvas);
         }
-        if (beyond < DETAIL_RANGE) mesh.emit(MeshBuilder.DETAIL, pose, solid, packedOverlay, t, wind);
+        if (beyond < DETAIL_RANGE) draw.layer(MeshBuilder.DETAIL, canvas);
         if (be.params().flags) {
-            flags(mesh.g, origin, level, t, wind, pose, solid, packedOverlay);
+            flags(mesh.g, origin, level, t, wind, pose, buffers.getBuffer(canvas), packedOverlay);
         }
         if (be.params().sign && shape instanceof com.nailec.stagetents.tent.RectShape rect && beyond < DETAIL_RANGE) {
             signText(rect, origin, level, poseStack, buffers);
@@ -88,14 +109,20 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
                 case WHITE -> TILES_TEXTURE;
                 default -> CARPET_TEXTURE;
             };
-            mesh.emit(MeshBuilder.FLOOR, poseStack.last(), buffers.getBuffer(RenderType.entityCutout(tex)), packedOverlay, t, 0);
+            draw.layer(MeshBuilder.FLOOR, RenderType.entityCutout(tex));
         }
         if (mesh.hasLayer(MeshBuilder.DECK)) {
-            mesh.emit(MeshBuilder.DECK, poseStack.last(), buffers.getBuffer(RenderType.entityCutout(CARPET_TEXTURE)), packedOverlay, t, 0);
+            draw.layer(MeshBuilder.DECK, RenderType.entityCutout(CARPET_TEXTURE));
         }
+        // Glass stays on the batched path: translucent panes must be drawn after everything behind them.
         if (mesh.hasLayer(MeshBuilder.GLASS)) {
             mesh.emit(MeshBuilder.GLASS, poseStack.last(), buffers.getBuffer(TentRenderTypes.glass(CANVAS_TEXTURE)), packedOverlay, t, wind);
         }
+    }
+
+    @FunctionalInterface
+    private interface Layers {
+        void layer(int layer, RenderType type);
     }
 
     /** Lettering on the front sign: a big title and a smaller line, centred and fitted to the board. */

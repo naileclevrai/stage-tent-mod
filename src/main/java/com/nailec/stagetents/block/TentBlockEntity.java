@@ -262,6 +262,29 @@ public class TentBlockEntity extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
+    /** Frees the client mesh (GPU buffers) when the tent goes away or its chunk unloads. */
+    private void releaseClientMesh() {
+        if (clientMesh instanceof AutoCloseable c) {
+            try {
+                c.close();
+            } catch (Exception ignored) {
+            }
+        }
+        clientMesh = null;
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        releaseClientMesh();
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        releaseClientMesh();
+    }
+
     @Override
     public AABB getRenderBoundingBox() {
         TentShape s = shape();
