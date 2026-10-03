@@ -14,6 +14,9 @@ import net.minecraft.world.phys.AABB;
  */
 public class TurnstileBlockEntity extends BlockEntity {
     public static final int EVENT_TURN = 1;
+    public static final int EVENT_BUMP = 2;
+    /** Ticks a bump against a locked rotor takes. */
+    private static final int BUMP_TICKS = 6;
     /** Ticks a third of a turn takes. */
     public static final int TURN_TICKS = 10;
 
@@ -24,6 +27,8 @@ public class TurnstileBlockEntity extends BlockEntity {
     // Client animation, in turns of 120 degrees.
     private float from, to;
     private int animTick = TURN_TICKS;
+    private int bumpTick = BUMP_TICKS;
+    private float bumpDir;
 
     public TurnstileBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistry.TURNSTILE_BE.get(), pos, state);
@@ -42,6 +47,11 @@ public class TurnstileBlockEntity extends BlockEntity {
         credit = ticks;
     }
 
+    /** Server: somebody pushed the locked rotor. */
+    public void bumped() {
+        cooldown = BUMP_TICKS + 4;
+    }
+
     /** Server: somebody went through. */
     public void passed() {
         cooldown = TURN_TICKS + 2;
@@ -52,6 +62,13 @@ public class TurnstileBlockEntity extends BlockEntity {
     }
 
     public boolean triggerEvent(int id, int param) {
+        if (id == EVENT_BUMP) {
+            if (level != null && level.isClientSide) {
+                bumpTick = 0;
+                bumpDir = param == 1 ? 1 : -1;
+            }
+            return true;
+        }
         if (id != EVENT_TURN) return false;
         if (level != null && level.isClientSide) {
             from = angle(1);
@@ -65,6 +82,7 @@ public class TurnstileBlockEntity extends BlockEntity {
         if (level == null) return;
         if (level.isClientSide) {
             if (animTick < TURN_TICKS) animTick++;
+            if (bumpTick < BUMP_TICKS) bumpTick++;
             return;
         }
         if (cooldown > 0 && --cooldown == 0 && closeAfterPass) {
@@ -86,7 +104,12 @@ public class TurnstileBlockEntity extends BlockEntity {
         float t = Math.min(1F, (animTick + partialTick) / TURN_TICKS);
         // Smooth start and a little settle at the end, like a damped mechanism.
         float e = t < 1 ? 1 - (float) Math.pow(1 - t, 3) : 1;
-        return from + (to - from) * e;
+        float bump = 0;
+        if (bumpTick < BUMP_TICKS) {
+            float b = (bumpTick + partialTick) / BUMP_TICKS;
+            bump = bumpDir * 0.045F * (float) Math.sin(Math.PI * Math.min(1, b));
+        }
+        return from + (to - from) * e + bump;
     }
 
     @Override

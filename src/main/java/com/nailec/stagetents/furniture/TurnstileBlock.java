@@ -73,8 +73,11 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
     // Model space (facing north, passage along z, cabinet on the -x side), in pixels.
     private static final double[][] CABINET = {{0.2, 0, 1.6, 5.8, 13.5, 14.4}, {0, 13.4, 1, 5.5, 17.1, 15}};
     private static final double[] BARRIER = {5.4, 0, 7.4, 16, 24, 8.6};
+    /** What the crosshair sees of the rotor: the horizontal arm. */
+    private static final double[] ARM_OUTLINE = {5.4, 13.5, 7, 16, 16, 9};
     private final Map<Direction, VoxelShape> cabinet = new EnumMap<>(Direction.class);
     private final Map<Direction, VoxelShape> closed = new EnumMap<>(Direction.class);
+    private final Map<Direction, VoxelShape> outline = new EnumMap<>(Direction.class);
 
     public TurnstileBlock(Properties props) {
         super(props);
@@ -83,9 +86,10 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
             for (double[] b : CABINET) s = Shapes.or(s, FurnitureBlock.rotated(b, d));
             cabinet.put(d, s.optimize());
             closed.put(d, Shapes.or(s, FurnitureBlock.rotated(BARRIER, d)).optimize());
+            outline.put(d, Shapes.or(s, FurnitureBlock.rotated(ARM_OUTLINE, d)).optimize());
         }
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(MODE, Mode.BADGE)
-                .setValue(OPEN, false).setValue(POWERED, false));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(MODE, Mode.FREE)
+                .setValue(OPEN, true).setValue(POWERED, false));
     }
 
     @Override
@@ -97,7 +101,8 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         boolean powered = ctx.getLevel().hasNeighborSignal(ctx.getClickedPos());
         // People go through in the direction the player was looking.
-        return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection()).setValue(POWERED, powered).setValue(OPEN, powered);
+        BlockState s = defaultBlockState().setValue(FACING, ctx.getHorizontalDirection()).setValue(POWERED, powered);
+        return s.setValue(OPEN, shouldBeOpen(s));
     }
 
     // ------------------------------------------------------------------ shapes
@@ -111,7 +116,7 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
     @Override
     @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return closed.get(state.getValue(FACING));
+        return outline.get(state.getValue(FACING));
     }
 
     @Override
@@ -177,7 +182,7 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
     @Override
     @SuppressWarnings("deprecation")
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide || !state.getValue(OPEN) || !(entity instanceof LivingEntity)) return;
+        if (level.isClientSide || !(entity instanceof LivingEntity)) return;
         if (!(level.getBlockEntity(pos) instanceof TurnstileBlockEntity be) || be.busy()) return;
         Direction facing = state.getValue(FACING);
         Vec3 off = entity.position().subtract(Vec3.atBottomCenterOf(pos));
@@ -188,6 +193,17 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
         double along = off.x * facing.getStepX() + off.z * facing.getStepZ();
         // Coming from behind (negative along) means walking in the facing direction.
         boolean forward = along < 0;
+        if (!state.getValue(OPEN)) {
+            // Pushing a locked rotor: it gives a little and knocks back.
+            if (Math.abs(along) < 0.55) {
+                level.blockEvent(pos, this, TurnstileBlockEntity.EVENT_BUMP, forward ? 1 : 0);
+                be.bumped();
+                level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.25F, 2.0F);
+            }
+            return;
+        }
+        // Turn when the body reaches the arm, not as soon as it touches the block.
+        if (Math.abs(along) > 0.4) return;
         level.blockEvent(pos, this, TurnstileBlockEntity.EVENT_TURN, forward ? 1 : 0);
         be.passed();
         level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.35F, 1.6F);
