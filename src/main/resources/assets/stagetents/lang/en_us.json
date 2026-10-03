@@ -168,5 +168,16 @@
   "block.stagetents.crowd_barrier": "Crowd Barrier",
   "block.stagetents.stanchion": "Queue Post",
   "block.stagetents.shooting_gallery": "Shooting Gallery",
-  "block.stagetents.prop_part": "Prop"
+  "block.stagetents.prop_part": "Prop",
+  "screen.stagetents.grandstand": "Grandstand builder",
+  "screen.stagetents.grandstand.rows": "Rows: %s",
+  "screen.stagetents.grandstand.width": "Width: %s",
+  "screen.stagetents.grandstand.aisle": "Aisle every %s seats (0 = none)",
+  "screen.stagetents.grandstand.color": "Seats",
+  "screen.stagetents.grandstand.build": "Build",
+  "screen.stagetents.grandstand.info": "%s seats on %s rows, %s levels of supports",
+  "message.stagetents.grandstand_built": "Grandstand built: %s blocks",
+  "tooltip.stagetents.wrench.4": "Use on a bleacher: build a grandstand",
+  "block.stagetents.bleacher_aisle": "Grandstand Aisle",
+  "block.stagetents.bleacher_support": "Grandstand Support"
 }

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "decorations",
+  "ingredients": [
+    {
+      "item": "stagetents:bleacher"
+    }
+  ],
+  "result": {
+    "item": "stagetents:bleacher_aisle"
+  }
+}

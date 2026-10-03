@@ -10,6 +10,8 @@
     "stagetents:folding_chair",
     "stagetents:bar_stool",
     "stagetents:crowd_barrier",
-    "stagetents:stanchion"
+    "stagetents:stanchion",
+    "stagetents:bleacher_aisle",
+    "stagetents:bleacher_support"
   ]
 }

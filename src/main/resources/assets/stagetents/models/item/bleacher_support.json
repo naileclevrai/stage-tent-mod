@@ -1,5 +1,5 @@
 {
-  "parent": "stagetents:block/props/crowd_barrier",
+  "parent": "stagetents:block/props/bleacher_support",
   "display": {
     "gui": {
       "rotation": [
@@ -13,9 +13,9 @@
         0
       ],
       "scale": [
-        0.3,
-        0.3,
-        0.3
+        0.625,
+        0.625,
+        0.625
       ]
     },
     "ground": {
@@ -30,9 +30,9 @@
         0
       ],
       "scale": [
-        0.12,
-        0.12,
-        0.12
+        0.25,
+        0.25,
+        0.25
       ]
     },
     "fixed": {
@@ -47,9 +47,9 @@
         0
       ],
       "scale": [
-        0.24,
-        0.24,
-        0.24
+        0.5,
+        0.5,
+        0.5
       ]
     },
     "thirdperson_righthand": {
@@ -64,9 +64,9 @@
         0
       ],
       "scale": [
-        0.18,
-        0.18,
-        0.18
+        0.375,
+        0.375,
+        0.375
       ]
     },
     "firstperson_righthand": {
@@ -81,9 +81,9 @@
         0
       ],
       "scale": [
-        0.192,
-        0.192,
-        0.192
+        0.4,
+        0.4,
+        0.4
       ]
     },
     "firstperson_lefthand": {
@@ -98,9 +98,9 @@
         0
       ],
       "scale": [
-        0.192,
-        0.192,
-        0.192
+        0.4,
+        0.4,
+        0.4
       ]
     }
   }

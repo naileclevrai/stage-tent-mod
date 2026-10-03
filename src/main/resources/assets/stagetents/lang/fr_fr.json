@@ -168,5 +168,16 @@
   "block.stagetents.crowd_barrier": "Barrière Vauban",
   "block.stagetents.stanchion": "Poteau à corde",
   "block.stagetents.shooting_gallery": "Stand de tir",
-  "block.stagetents.prop_part": "Décor"
+  "block.stagetents.prop_part": "Décor",
+  "screen.stagetents.grandstand": "Générateur de gradins",
+  "screen.stagetents.grandstand.rows": "Rangées : %s",
+  "screen.stagetents.grandstand.width": "Largeur : %s",
+  "screen.stagetents.grandstand.aisle": "Allée tous les %s sièges (0 = aucune)",
+  "screen.stagetents.grandstand.color": "Sièges",
+  "screen.stagetents.grandstand.build": "Construire",
+  "screen.stagetents.grandstand.info": "%s places sur %s rangées, %s niveaux de structure",
+  "message.stagetents.grandstand_built": "Gradins construits : %s blocs",
+  "tooltip.stagetents.wrench.4": "Sur un gradin : construire une tribune",
+  "block.stagetents.bleacher_aisle": "Allée de gradins",
+  "block.stagetents.bleacher_support": "Structure de gradins"
 }
