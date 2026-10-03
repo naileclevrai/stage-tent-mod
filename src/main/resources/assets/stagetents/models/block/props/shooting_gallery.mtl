@@ -1,72 +1,90 @@
 newmtl black
 Kd 1 1 1
 map_Kd #black
+forge_TintIndex -1
 
 newmtl red
 Kd 1 1 1
 map_Kd #red
+forge_TintIndex -1
 
 newmtl white
 Kd 1 1 1
 map_Kd #white
+forge_TintIndex -1
 
 newmtl gold
 Kd 1 1 1
 map_Kd #gold
+forge_TintIndex -1
 
 newmtl wood
 Kd 1 1 1
 map_Kd #wood
+forge_TintIndex -1
 
 newmtl wood_dark
 Kd 1 1 1
 map_Kd #wood_dark
+forge_TintIndex -1
 
 newmtl metal
 Kd 1 1 1
 map_Kd #metal
+forge_TintIndex -1
 
 newmtl booth_back
 Kd 1 1 1
 map_Kd #booth_back
+forge_TintIndex -1
 
 newmtl navy
 Kd 1 1 1
 map_Kd #navy
+forge_TintIndex -1
 
 newmtl chrome
 Kd 1 1 1
 map_Kd #chrome
+forge_TintIndex -1
 
 newmtl yellow
 Kd 1 1 1
 map_Kd #yellow
+forge_TintIndex -1
 
 newmtl orange
 Kd 1 1 1
 map_Kd #orange
+forge_TintIndex -1
 
 newmtl target
 Kd 1 1 1
 map_Kd #target
+forge_TintIndex -1
 
 newmtl plush_pink
 Kd 1 1 1
 map_Kd #plush_pink
+forge_TintIndex -1
 
 newmtl plush_blue
 Kd 1 1 1
 map_Kd #plush_blue
+forge_TintIndex -1
 
 newmtl plush_mint
 Kd 1 1 1
 map_Kd #plush_mint
+forge_TintIndex -1
 
 newmtl booth_sign
 Kd 1 1 1
 map_Kd #booth_sign
+forge_TintIndex -1
 
 newmtl bulb
 Kd 1 1 1
 map_Kd #bulb
+forge_TintIndex -1
 

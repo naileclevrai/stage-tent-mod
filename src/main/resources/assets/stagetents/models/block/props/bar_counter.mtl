@@ -1,6 +1,7 @@
 newmtl black
 Kd 1 1 1
 map_Kd #black
+forge_TintIndex -1
 
 newmtl cloth
 Kd 1 1 1
@@ -10,16 +11,20 @@ forge_TintIndex 0
 newmtl white
 Kd 1 1 1
 map_Kd #white
+forge_TintIndex -1
 
-newmtl wood_dark
+newmtl wood
 Kd 1 1 1
-map_Kd #wood_dark
+map_Kd #wood
+forge_TintIndex -1
 
 newmtl bulb
 Kd 1 1 1
 map_Kd #bulb
+forge_TintIndex -1
 
 newmtl chrome
 Kd 1 1 1
 map_Kd #chrome
+forge_TintIndex -1
 

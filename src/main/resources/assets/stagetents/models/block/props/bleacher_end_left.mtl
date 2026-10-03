@@ -1,4 +1,5 @@
 newmtl galvanised
 Kd 1 1 1
 map_Kd #galvanised
+forge_TintIndex -1
 

@@ -1,12 +1,15 @@
 newmtl chrome
 Kd 1 1 1
 map_Kd #chrome
+forge_TintIndex -1
 
 newmtl rubber
 Kd 1 1 1
 map_Kd #rubber
+forge_TintIndex -1
 
 newmtl white
 Kd 1 1 1
 map_Kd #white
+forge_TintIndex -1
 

@@ -1,4 +1,5 @@
 newmtl black
 Kd 1 1 1
 map_Kd #black
+forge_TintIndex -1
 

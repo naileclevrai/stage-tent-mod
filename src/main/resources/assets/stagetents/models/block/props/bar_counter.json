@@ -11,7 +11,7 @@
     "black": "stagetents:block/props/black",
     "cloth": "stagetents:block/props/cloth",
     "white": "stagetents:block/props/white",
-    "wood_dark": "stagetents:block/props/wood_dark",
+    "wood": "stagetents:block/props/wood",
     "bulb": "stagetents:block/props/bulb",
     "chrome": "stagetents:block/props/chrome"
   }

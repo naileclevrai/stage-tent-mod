@@ -115,6 +115,18 @@ public class FurnitureBlock extends Block {
         return InteractionResult.PASS;
     }
 
+    /** Furniture is mostly open frames and thin parts: let sky light through instead of casting block shadows. */
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return true;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return 1.0F;
+    }
+
     @Override
     @SuppressWarnings("deprecation")
     public BlockState rotate(BlockState state, Rotation rot) {

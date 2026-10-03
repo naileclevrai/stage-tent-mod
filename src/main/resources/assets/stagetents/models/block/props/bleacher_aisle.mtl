@@ -1,20 +1,25 @@
 newmtl wood
 Kd 1 1 1
 map_Kd #wood
+forge_TintIndex -1
 
 newmtl yellow
 Kd 1 1 1
 map_Kd #yellow
+forge_TintIndex -1
 
 newmtl metal
 Kd 1 1 1
 map_Kd #metal
+forge_TintIndex -1
 
 newmtl rubber
 Kd 1 1 1
 map_Kd #rubber
+forge_TintIndex -1
 
 newmtl galvanised
 Kd 1 1 1
 map_Kd #galvanised
+forge_TintIndex -1
 
