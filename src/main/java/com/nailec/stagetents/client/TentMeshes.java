@@ -44,7 +44,11 @@ final class TentMeshes {
             floor(m, g);
             stage(m, g);
         }
-        if (g instanceof RectShape r) gutters(m, r);
+        if (g instanceof RectShape r) {
+            gutters(m, r);
+            if (m.p.sign) signBoard(m, r);
+            if (m.p.poleCurtains) poleCurtains(m, r);
+        }
         return m.done();
     }
 
@@ -490,6 +494,60 @@ final class TentMeshes {
     private static double[] crossing(double[] a, double[] b, double x) {
         double t = (x - a[0]) / (b[0] - a[0]);
         return new double[]{x, a[1] + (b[1] - a[1]) * t};
+    }
+
+    /** Sign board over the front, on two brackets; the lettering is drawn by the renderer. */
+    private static void signBoard(MeshBuilder m, RectShape g) {
+        double[] b = g.signBoard();
+        int col = MeshBuilder.opaque(m.p.signColor), trim = 0xFF1A1A1C;
+        m.box(b[0] - 0.1, b[1], b[3], b[0], b[2], b[4], col, false);
+        m.box(b[0] - 0.09, b[2] - 0.04, b[3], b[0] + 0.01, b[2] + 0.01, b[4], trim, false);
+        m.box(b[0] - 0.09, b[1] - 0.01, b[3], b[0] + 0.01, b[1] + 0.04, b[4], trim, false);
+        for (double z : new double[]{b[3] + 0.3, b[4] - 0.3}) {
+            m.box(g.ax - 0.05, b[1] + 0.2, z - 0.04, b[0] - 0.1, b[1] + 0.3, z + 0.04, ALU, false);
+        }
+    }
+
+    /** Gathered curtains hanging in front of every front pole, tied at mid height. */
+    private static void poleCurtains(MeshBuilder m, RectShape g) {
+        double[] per = new double[5];
+        int col = MeshBuilder.opaque(m.p.colorA);
+        double top = m.p.sign ? g.signBoard()[1] : g.Hw - 0.05;
+        for (double s : g.poleStations()) {
+            g.perimeterPoint(s, per);
+            if (!(per[0] > g.ax - 1e-6)) continue;
+            // Corner curtains move in a little so they stay on the front.
+            double z = Mth.clamp(per[1], -g.az + 0.25, g.az - 0.25);
+            drape(m, g.ax + 0.16, z, top, col);
+        }
+    }
+
+    /**
+     * A curtain gathered at a tie: wide and pleated at the top, pinched at the tie, flaring out again to the floor.
+     * Built in the local frame facing +x, centred on z.
+     */
+    private static void drape(MeshBuilder m, double x, double z, double top, int col) {
+        double tie = Math.max(0.9, top * 0.48);
+        double[] ys = {top, tie, 0.02};
+        double[] half = {0.42, 0.07, 0.24};
+        double[] depth = {0.07, 0.03, 0.09};
+        int folds = 6;
+        for (int r = 0; r < 2; r++) {
+            for (int k = 0; k < folds; k++) {
+                double[][] q = new double[4][];
+                int[][] corners = {{r, k}, {r, k + 1}, {r + 1, k + 1}, {r + 1, k}};
+                for (int c = 0; c < 4; c++) {
+                    int row = corners[c][0], f = corners[c][1];
+                    double u = f / (double) folds;
+                    double zz = z + (u * 2 - 1) * half[row];
+                    double xx = x + ((f % 2 == 0) ? depth[row] : -depth[row]) * 0.5;
+                    double flex = row == 0 ? 0 : row == 1 ? 0.15 : 0.6;
+                    q[c] = MeshBuilder.vf(xx, ys[row], zz, zz / 2, ys[row] / 2, 1, 0, (f % 2 == 0) ? 0.3 : -0.3, flex);
+                }
+                m.doubleSided(q, col);
+            }
+        }
+        m.box(x, tie - 0.05, z, 0.09, tie + 0.05, ROPE, false);
     }
 
     /** Gutters along edges joined to a neighbouring tent. */

@@ -155,5 +155,12 @@
   "screen.stagetents.entrance.open_front": "Open front",
   "screen.stagetents.entrance.counter": "Counter",
   "screen.stagetents.preset.regie": "FOH control",
-  "screen.stagetents.entrance.counter_back": "Counter + open back"
+  "screen.stagetents.entrance.counter_back": "Counter + open back",
+  "screen.stagetents.sign": "Sign board",
+  "screen.stagetents.sign_title": "Sign title",
+  "screen.stagetents.sign_text": "Sign text",
+  "screen.stagetents.sign_color": "Sign: %s",
+  "screen.stagetents.sign_text_color": "Lettering: %s",
+  "screen.stagetents.pole_curtains": "Pole curtains",
+  "screen.stagetents.preset.bar": "Festival bar"
 }

@@ -129,6 +129,17 @@ public abstract class RectShape extends TentShape {
         return az - 0.6;
     }
 
+    /**
+     * Front sign board: local x of its face, y bottom, y top, z min, z max. On a joined side it stops just short
+     * of the edge so the boards of neighbouring tents butt up without overlapping.
+     */
+    public double[] signBoard() {
+        double h = Math.min(0.9, Math.max(0.5, Hw * 0.3));
+        double top = Hw + 0.15;
+        double zMin = isJoined(2) ? -az + 0.002 : -az - 0.04, zMax = isJoined(0) ? az - 0.002 : az + 0.04;
+        return new double[]{ax + 0.24, top - h, top, zMin, zMax};
+    }
+
     /** Perimeter edge nearest to a local point: 0 = +z (left seen from the front), 1 = back, 2 = -z, 3 = front. */
     public int edgeOfPoint(double lx, double lz) {
         return Math.abs(lx) - ax > Math.abs(lz) - az ? (lx > 0 ? 3 : 1) : (lz > 0 ? 0 : 2);

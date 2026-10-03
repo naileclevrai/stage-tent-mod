@@ -60,9 +60,25 @@ public final class Presets {
         });
     }
 
+    /** Festival bar: white canvas, counter front open at the back, red sign board, curtains at the poles. */
+    private static Preset bar() {
+        return new Preset("bar", p -> {
+            style(p, Palette.WHITE, Palette.WHITE, false, -1, WallMode.CLOSED, LightMode.WARM);
+            p.entrance = Entrance.COUNTER_BACK;
+            p.sign = true;
+            p.signTitle = "BAR";
+            p.signColor = 0x7A1414;
+            p.signTextColor = 0xFFFFFF;
+            p.poleCurtains = true;
+            p.valance = false;
+            p.guyRopes = false;
+        });
+    }
+
     private static List<Preset> withRegie(List<Preset> list) {
         java.util.ArrayList<Preset> out = new java.util.ArrayList<>(list);
         out.add(0, regie());
+        out.add(1, bar());
         return out;
     }
 

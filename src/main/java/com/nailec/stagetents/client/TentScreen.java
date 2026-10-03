@@ -235,6 +235,16 @@ public class TentScreen extends Screen {
         row = 0;
         addRenderableWidget(CycleButton.onOffBuilder(edit.rigging)
                 .create(x3, y + ROW_H * row++, COL_W, 20, tr("rigging"), (b, v) -> { edit.rigging = v; preview(); }));
+        if (type.isModular()) {
+            addRenderableWidget(CycleButton.onOffBuilder(edit.poleCurtains)
+                    .create(x3, y + ROW_H * row++, COL_W, 20, tr("pole_curtains"), (b, v) -> { edit.poleCurtains = v; preview(); }));
+            addRenderableWidget(CycleButton.onOffBuilder(edit.sign)
+                    .create(x3, y + ROW_H * row++, COL_W, 20, tr("sign"), (b, v) -> { edit.sign = v; preview(); }));
+            textRow(x3, y + ROW_H * row++, "sign_title", edit.signTitle, TentParams.MAX_SIGN_TITLE, v -> edit.signTitle = v);
+            textRow(x3, y + ROW_H * row++, "sign_text", edit.signText, TentParams.MAX_SIGN_TEXT, v -> edit.signText = v);
+            colorRow(x1, y + ROW_H * 3, "sign_color", false, () -> edit.signColor, v -> edit.signColor = v);
+            colorRow(x1, y + ROW_H * 4, "sign_text_color", false, () -> edit.signTextColor, v -> edit.signTextColor = v);
+        }
     }
 
     // ------------------------------------------------------------------ actions
@@ -306,6 +316,19 @@ public class TentScreen extends Screen {
         tag.putBoolean("RescanPoles", true);
         ModNetwork.CHANNEL.sendToServer(new UpdateTentPacket(be.getBlockPos(), tag));
         onClose();
+    }
+
+    /** Text field with its placeholder shown while empty. */
+    private void textRow(int x, int y, String key, String value, int max, java.util.function.Consumer<String> set) {
+        EditBox box = new EditBox(font, x + 1, y + 1, COL_W - 2, 18, tr(key));
+        box.setMaxLength(max);
+        box.setValue(value);
+        box.setHint(tr(key));
+        box.setResponder(text -> {
+            set.accept(text);
+            preview();
+        });
+        addRenderableWidget(box);
     }
 
     private void colorRow(int x, int y, String key, boolean allowAuto, IntSupplier get, IntConsumer set) {

@@ -49,6 +49,16 @@ public final class TentParams {
     public boolean rigging = false;
     /** Whether the plate at the centre is drawn; a hidden plate has no collision and only shows to wrench holders. */
     public boolean showPlate = true;
+    /** Sign board over the front opening (rectangular tents). */
+    public boolean sign = false;
+    public String signTitle = "BAR";
+    public String signText = "";
+    public int signColor = 0x7A1414;
+    public int signTextColor = 0xFFFFFF;
+    /** Curtains tied back at every front pole. */
+    public boolean poleCurtains = false;
+
+    public static final int MAX_SIGN_TITLE = 24, MAX_SIGN_TEXT = 64;
     /** Stretch tents: extra masts as world offsets from the plate {dx, dz, height}. */
     public List<int[]> stretchPoles = new ArrayList<>();
 
@@ -77,6 +87,10 @@ public final class TentParams {
         stageHeight = Mth.clamp(stageHeight, MIN_STAGE, MAX_STAGE);
         stageDepth = Mth.clamp(stageDepth, MIN_STAGE_DEPTH, MAX_STAGE_DEPTH);
         joined &= 0xF;
+        signTitle = trim(signTitle, MAX_SIGN_TITLE);
+        signText = trim(signText, MAX_SIGN_TEXT);
+        signColor &= 0xFFFFFF;
+        signTextColor &= 0xFFFFFF;
         if (stretchPoles.size() > MAX_STRETCH_POLES) stretchPoles = new ArrayList<>(stretchPoles.subList(0, MAX_STRETCH_POLES));
         for (int[] sp : stretchPoles) {
             sp[0] = Mth.clamp(sp[0], -32, 32);
@@ -104,6 +118,10 @@ public final class TentParams {
         lights = o.lights;
         floor = o.floor;
         curtain = o.curtain;
+        sign = o.sign;
+        signColor = o.signColor;
+        signTextColor = o.signTextColor;
+        poleCurtains = o.poleCurtains;
     }
 
     public CompoundTag save() {
@@ -134,6 +152,12 @@ public final class TentParams {
         t.putInt("Joined", joined);
         t.putBoolean("Rigging", rigging);
         t.putBoolean("ShowPlate", showPlate);
+        t.putBoolean("Sign", sign);
+        t.putString("SignTitle", signTitle);
+        t.putString("SignText", signText);
+        t.putInt("SignColor", signColor);
+        t.putInt("SignTextColor", signTextColor);
+        t.putBoolean("PoleCurtains", poleCurtains);
         int[] flat = new int[stretchPoles.size() * 3];
         for (int i = 0; i < stretchPoles.size(); i++) System.arraycopy(stretchPoles.get(i), 0, flat, i * 3, 3);
         t.putIntArray("StretchPoles", flat);
@@ -168,9 +192,21 @@ public final class TentParams {
         if (t.contains("Joined")) p.joined = t.getInt("Joined");
         if (t.contains("Rigging")) p.rigging = t.getBoolean("Rigging");
         if (t.contains("ShowPlate")) p.showPlate = t.getBoolean("ShowPlate");
+        if (t.contains("Sign")) p.sign = t.getBoolean("Sign");
+        if (t.contains("SignTitle")) p.signTitle = t.getString("SignTitle");
+        if (t.contains("SignText")) p.signText = t.getString("SignText");
+        if (t.contains("SignColor")) p.signColor = t.getInt("SignColor");
+        if (t.contains("SignTextColor")) p.signTextColor = t.getInt("SignTextColor");
+        if (t.contains("PoleCurtains")) p.poleCurtains = t.getBoolean("PoleCurtains");
         int[] flat = t.getIntArray("StretchPoles");
         for (int i = 0; i + 2 < flat.length; i += 3) p.stretchPoles.add(new int[]{flat[i], flat[i + 1], flat[i + 2]});
         return p.clamp();
+    }
+
+    private static String trim(String s, int max) {
+        if (s == null) return "";
+        s = s.replaceAll("[\\p{Cntrl}]", "");
+        return s.length() > max ? s.substring(0, max) : s;
     }
 
     public static TentType typeOf(CompoundTag t, TentType fallback) {

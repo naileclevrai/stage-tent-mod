@@ -79,6 +79,9 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         if (be.params().flags) {
             flags(mesh.g, origin, level, t, wind, pose, solid, packedOverlay);
         }
+        if (be.params().sign && shape instanceof com.nailec.stagetents.tent.RectShape rect && beyond < DETAIL_RANGE) {
+            signText(rect, origin, level, poseStack, buffers);
+        }
         if (mesh.hasLayer(MeshBuilder.FLOOR)) {
             ResourceLocation tex = switch (be.params().floor) {
                 case WOOD, DARK_WOOD -> WOOD_TEXTURE;
@@ -93,6 +96,47 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         if (mesh.hasLayer(MeshBuilder.GLASS)) {
             mesh.emit(MeshBuilder.GLASS, poseStack.last(), buffers.getBuffer(TentRenderTypes.glass(CANVAS_TEXTURE)), packedOverlay, t, wind);
         }
+    }
+
+    /** Lettering on the front sign: a big title and a smaller line, centred and fitted to the board. */
+    private static void signText(com.nailec.stagetents.tent.RectShape g, BlockPos origin, Level level, PoseStack ps, MultiBufferSource buffers) {
+        var p = g.params;
+        if (p.signTitle.isEmpty() && p.signText.isEmpty()) return;
+        double[] b = g.signBoard();
+        var font = Minecraft.getInstance().font;
+        double fx = b[0] + 0.006, width = (b[4] - b[3]) * 0.92, height = b[2] - b[1], cz = (b[3] + b[4]) / 2;
+        double wx = g.toWorldX(fx, cz), wz = g.toWorldZ(fx, cz);
+        double nx = g.toWorldX(1, 0), nz = g.toWorldZ(1, 0);
+        int light = LevelRenderer.getLightColor(level, origin.offset((int) Math.round(wx + nx), (int) Math.floor(b[1] + height / 2), (int) Math.round(wz + nz)));
+        int color = 0xFF000000 | p.signTextColor;
+        ps.pushPose();
+        ps.translate(0.5 + wx, b[1] + height / 2, 0.5 + wz);
+        ps.mulPose(com.mojang.math.Axis.YP.rotationDegrees((float) Math.toDegrees(Math.atan2(nx, nz))));
+        boolean both = !p.signTitle.isEmpty() && !p.signText.isEmpty();
+        if (!p.signTitle.isEmpty()) {
+            float s = fit(font.width(p.signTitle), width, height * (both ? 0.58 : 0.8));
+            ps.pushPose();
+            ps.translate(0, both ? height * 0.14 : 0, 0);
+            ps.scale(s, -s, s);
+            font.drawInBatch(p.signTitle, -font.width(p.signTitle) / 2F, -4F, color, false, ps.last().pose(), buffers,
+                    net.minecraft.client.gui.Font.DisplayMode.POLYGON_OFFSET, 0, light);
+            ps.popPose();
+        }
+        if (!p.signText.isEmpty()) {
+            float s = fit(font.width(p.signText), width, height * (both ? 0.24 : 0.5));
+            ps.pushPose();
+            ps.translate(0, both ? -height * 0.3 : 0, 0);
+            ps.scale(s, -s, s);
+            font.drawInBatch(p.signText, -font.width(p.signText) / 2F, -4F, color, false, ps.last().pose(), buffers,
+                    net.minecraft.client.gui.Font.DisplayMode.POLYGON_OFFSET, 0, light);
+            ps.popPose();
+        }
+        ps.popPose();
+    }
+
+    /** Scale (blocks per font pixel) that fits a line of {@code pixels} into width x line height. */
+    private static float fit(int pixels, double width, double lineHeight) {
+        return (float) Math.min(lineHeight / 9.0, width / Math.max(1, pixels));
     }
 
     /** Flutter amplitude from the weather: a breath when calm, clearly moving in rain, flapping in a storm. */
