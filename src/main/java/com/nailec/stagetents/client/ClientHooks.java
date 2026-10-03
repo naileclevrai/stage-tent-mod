@@ -21,6 +21,10 @@ public final class ClientHooks {
         }
     }
 
+    public static void openGrandstandScreen(BlockPos pos) {
+        Minecraft.getInstance().setScreen(new GrandstandScreen(pos));
+    }
+
     /** Opens the settings of the tent the player is standing in, if any. */
     public static void openTentScreenAround() {
         Minecraft mc = Minecraft.getInstance();

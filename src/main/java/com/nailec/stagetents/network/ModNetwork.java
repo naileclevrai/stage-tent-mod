@@ -20,5 +20,10 @@ public final class ModNetwork {
                 .decoder(UpdateTentPacket::decode)
                 .consumerMainThread(UpdateTentPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(BuildGrandstandPacket.class, 1, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(BuildGrandstandPacket::encode)
+                .decoder(BuildGrandstandPacket::decode)
+                .consumerMainThread(BuildGrandstandPacket::handle)
+                .add();
     }
 }

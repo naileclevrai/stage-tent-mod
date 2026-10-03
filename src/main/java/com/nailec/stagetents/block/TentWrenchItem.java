@@ -40,6 +40,14 @@ public class TentWrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
+        // On a bleacher: open the grandstand builder.
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.ConnectedFurnitureBlock c
+                && c.group.equals("grandstand")) {
+            if (level.isClientSide) {
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openGrandstandScreen(ctx.getClickedPos()));
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!(level.getBlockEntity(ctx.getClickedPos()) instanceof TentBlockEntity be)) return InteractionResult.PASS;
         Player player = ctx.getPlayer();
         ItemStack stack = ctx.getItemInHand();
@@ -95,5 +103,6 @@ public class TentWrenchItem extends Item {
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.1").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.3").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.4").withStyle(ChatFormatting.GRAY));
     }
 }

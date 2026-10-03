@@ -21,10 +21,24 @@ import java.util.List;
 public class MultiPropBlock extends FurnitureBlock {
     /** Footprint in model space (facing north): {dx along +x, dy}, the main block being {0, 0}. */
     private final int[][] cells;
+    /** Whether the extra cells are thin panels (crowd barriers) instead of full blocks. */
+    private final boolean panels;
 
     public MultiPropBlock(Properties props, Spec spec, int[][] cells) {
+        this(props, spec, cells, false);
+    }
+
+    public MultiPropBlock(Properties props, Spec spec, int[][] cells, boolean panels) {
         super(props, spec);
         this.cells = cells;
+        this.panels = panels;
+    }
+
+    private BlockState partState(Direction facing) {
+        BlockState part = ModRegistry.PROP_PART.get().defaultBlockState();
+        if (!panels) return part;
+        // The panel runs across the facing, like the barrier itself.
+        return part.setValue(PropPartBlock.FORM, facing.getAxis() == Direction.Axis.Z ? PropPartBlock.Form.PANEL_X : PropPartBlock.Form.PANEL_Z);
     }
 
     /** World positions of the extra cells for a main block at {@code pos} facing {@code facing}. */
@@ -53,7 +67,7 @@ public class MultiPropBlock extends FurnitureBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.isClientSide) return;
-        BlockState part = ModRegistry.PROP_PART.get().defaultBlockState();
+        BlockState part = partState(state.getValue(FACING));
         for (BlockPos p : parts(pos, state.getValue(FACING))) level.setBlock(p, part, Block.UPDATE_ALL);
     }
 

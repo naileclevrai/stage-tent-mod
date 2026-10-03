@@ -28,7 +28,7 @@ public final class ClientSetup {
         event.register((state, level, pos, tint) -> tint == 0 ? dyeTint(state) : -1,
                 ModRegistry.ROUND_TABLE.get(), ModRegistry.STANDING_TABLE.get(), ModRegistry.BANQUET_CHAIR.get(),
                 ModRegistry.BAR_COUNTER.get(), ModRegistry.BLEACHER.get(), ModRegistry.FOLDING_CHAIR.get(),
-                ModRegistry.BAR_STOOL.get(), ModRegistry.STANCHION.get());
+                ModRegistry.BAR_STOOL.get(), ModRegistry.STANCHION.get(), ModRegistry.BLEACHER_AISLE.get());
     }
 
     private static int dyeTint(BlockState state) {

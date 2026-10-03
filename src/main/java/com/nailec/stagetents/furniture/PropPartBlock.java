@@ -1,22 +1,51 @@
 package com.nailec.stagetents.furniture;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Invisible solid cell filling the footprint of a multi-block prop around its main block. The main block places and
+ * Invisible cell filling the footprint of a multi-block prop around its main block. The main block places and
  * removes them; they can't be aimed at, so the prop is always broken through its main block.
  */
 public class PropPartBlock extends Block {
+    /** Collision of the cell: a full block, or a thin fence-high panel along x or z (crowd barriers). */
+    public enum Form implements StringRepresentable {
+        FULL("full"), PANEL_X("panel_x"), PANEL_Z("panel_z");
+
+        private final String name;
+
+        Form(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
+    }
+
+    public static final EnumProperty<Form> FORM = EnumProperty.create("form", Form.class);
+    private static final VoxelShape PANEL_X = Block.box(0, 0, 7, 16, 24, 9);
+    private static final VoxelShape PANEL_Z = Block.box(7, 0, 0, 9, 24, 16);
+
     public PropPartBlock(Properties props) {
         super(props);
+        registerDefaultState(stateDefinition.any().setValue(FORM, Form.FULL));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FORM);
     }
 
     @Override
@@ -34,7 +63,11 @@ public class PropPartBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return Shapes.block();
+        return switch (state.getValue(FORM)) {
+            case PANEL_X -> PANEL_X;
+            case PANEL_Z -> PANEL_Z;
+            default -> Shapes.block();
+        };
     }
 
     @Override

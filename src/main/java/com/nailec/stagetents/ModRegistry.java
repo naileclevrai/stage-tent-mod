@@ -68,20 +68,26 @@ public final class ModRegistry {
     public static final RegistryObject<StandingTableBlock> STANDING_TABLE = BLOCKS.register("standing_table", () -> new StandingTableBlock(
             furnitureProps(SoundType.WOOL), Spec.of(false, DyeColor.WHITE, new double[]{1.6, 0, 1.6, 14.4, 17.6, 14.4})));
     public static final RegistryObject<FurnitureBlock> BANQUET_CHAIR = BLOCKS.register("banquet_chair", () -> new FurnitureBlock(
-            furnitureProps(SoundType.WOOD), Spec.seat(0.45, 0, DyeColor.WHITE,
-            new double[]{4.8, 0, 4.8, 11.2, 7.9, 11.2}, new double[]{4.8, 7.9, 10.6, 11.2, 15, 11.8})));
+            furnitureProps(SoundType.WOOD), Spec.seat(0.55, 0, DyeColor.WHITE,
+            new double[]{4.1, 0, 4.1, 11.9, 9.6, 11.9}, new double[]{4.1, 9.6, 11.2, 11.9, 18.3, 12.6})));
     public static final RegistryObject<FurnitureBlock> FOLDING_CHAIR = BLOCKS.register("folding_chair", () -> new FurnitureBlock(
-            furnitureProps(SoundType.METAL), Spec.seat(0.45, 0.02, DyeColor.BLACK,
-            new double[]{4.6, 0, 5, 11.4, 7.5, 11.6}, new double[]{4.6, 7.5, 9.4, 11.4, 13, 11.4})));
+            furnitureProps(SoundType.METAL), Spec.seat(0.55, 0.02, DyeColor.BLACK,
+            new double[]{3.9, 0, 4.3, 12.1, 9.2, 12.4}, new double[]{3.9, 9.2, 9.7, 12.1, 15.9, 12.2})));
     public static final RegistryObject<FurnitureBlock> BAR_STOOL = BLOCKS.register("bar_stool", () -> new FurnitureBlock(
-            furnitureProps(SoundType.METAL), new Spec(false, 0.76, 0, DyeColor.RED, new double[]{4.8, 0, 4.8, 11.2, 12.5, 11.2})));
+            furnitureProps(SoundType.METAL), new Spec(false, 0.84, 0, DyeColor.RED, new double[]{4.5, 0, 4.5, 11.5, 13.75, 11.5})));
     public static final RegistryObject<ConnectedFurnitureBlock> BAR_COUNTER = BLOCKS.register("bar_counter", () -> new ConnectedFurnitureBlock(
-            furnitureProps(SoundType.WOOD), Spec.of(true, DyeColor.BLACK, new double[]{0, 0, 0, 16, 17.2, 10.6})));
+            furnitureProps(SoundType.WOOD), Spec.of(true, DyeColor.BLACK, new double[]{0, 0, 0, 16, 17.2, 10.6}), "bar"));
     public static final RegistryObject<ConnectedFurnitureBlock> BLEACHER = BLOCKS.register("bleacher", () -> new ConnectedFurnitureBlock(
-            furnitureProps(SoundType.METAL), Spec.seat(0.5, 0.22, DyeColor.BLUE,
-            new double[]{0, 0, 0, 16, 1.2, 8}, new double[]{0, 0, 8, 16, 7.4, 16}, new double[]{0, 7.4, 14, 16, 12.8, 16})));
-    public static final RegistryObject<FurnitureBlock> CROWD_BARRIER = BLOCKS.register("crowd_barrier", () -> new FurnitureBlock(
-            furnitureProps(SoundType.CHAIN), Spec.of(true, DyeColor.WHITE, new double[]{0, 0, 7, 16, 24, 9})));
+            furnitureProps(SoundType.METAL), Spec.seat(0.5, 0.22, DyeColor.WHITE,
+            new double[]{0, 0, 0, 16, 1.2, 8}, new double[]{0, 0, 8, 16, 7.4, 16}, new double[]{0, 7.4, 14, 16, 12.8, 16}), "grandstand"));
+    public static final RegistryObject<ConnectedFurnitureBlock> BLEACHER_AISLE = BLOCKS.register("bleacher_aisle", () -> new ConnectedFurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE,
+            new double[]{0, 0, 0, 16, 1.2, 8}, new double[]{0, 0, 8, 16, 8, 16}), "grandstand"));
+    public static final RegistryObject<FurnitureBlock> BLEACHER_SUPPORT = BLOCKS.register("bleacher_support", () -> new FurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{0, 0, 0, 16, 16, 16})));
+    public static final RegistryObject<MultiPropBlock> CROWD_BARRIER = BLOCKS.register("crowd_barrier", () -> new MultiPropBlock(
+            furnitureProps(SoundType.CHAIN), Spec.of(true, DyeColor.WHITE, new double[]{0, 0, 7, 16, 24, 9}),
+            new int[][]{{-1, 0}, {0, 0}, {1, 0}}, true));
     public static final RegistryObject<StanchionBlock> STANCHION = BLOCKS.register("stanchion", () -> new StanchionBlock(
             furnitureProps(SoundType.METAL), Spec.of(false, DyeColor.RED, new double[]{6, 0, 6, 10, 15.5, 10})));
     public static final RegistryObject<MultiPropBlock> SHOOTING_GALLERY = BLOCKS.register("shooting_gallery", () -> new MultiPropBlock(
@@ -109,6 +115,8 @@ public final class ModRegistry {
     public static final RegistryObject<Item> BAR_COUNTER_ITEM = blockItem("bar_counter", BAR_COUNTER);
     public static final RegistryObject<Item> BLEACHER_ITEM = blockItem("bleacher", BLEACHER);
     public static final RegistryObject<Item> FOLDING_CHAIR_ITEM = blockItem("folding_chair", FOLDING_CHAIR);
+    public static final RegistryObject<Item> BLEACHER_AISLE_ITEM = blockItem("bleacher_aisle", BLEACHER_AISLE);
+    public static final RegistryObject<Item> BLEACHER_SUPPORT_ITEM = blockItem("bleacher_support", BLEACHER_SUPPORT);
     public static final RegistryObject<Item> BAR_STOOL_ITEM = blockItem("bar_stool", BAR_STOOL);
     public static final RegistryObject<Item> CROWD_BARRIER_ITEM = blockItem("crowd_barrier", CROWD_BARRIER);
     public static final RegistryObject<Item> STANCHION_ITEM = blockItem("stanchion", STANCHION);
@@ -139,6 +147,8 @@ public final class ModRegistry {
                 out.accept(BAR_STOOL_ITEM.get());
                 out.accept(FOLDING_CHAIR_ITEM.get());
                 out.accept(BLEACHER_ITEM.get());
+                out.accept(BLEACHER_AISLE_ITEM.get());
+                out.accept(BLEACHER_SUPPORT_ITEM.get());
                 out.accept(CROWD_BARRIER_ITEM.get());
                 out.accept(STANCHION_ITEM.get());
                 out.accept(SHOOTING_GALLERY_ITEM.get());

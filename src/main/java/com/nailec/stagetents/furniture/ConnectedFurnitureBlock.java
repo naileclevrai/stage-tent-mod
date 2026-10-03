@@ -20,8 +20,12 @@ public class ConnectedFurnitureBlock extends FurnitureBlock {
     /** Neighbour on the model's +x side (clockwise of the facing). */
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
 
-    public ConnectedFurnitureBlock(Properties props, Spec spec) {
+    /** Blocks of the same group continue each other's run (bleacher seats and aisles form one grandstand). */
+    public final String group;
+
+    public ConnectedFurnitureBlock(Properties props, Spec spec, String group) {
         super(props, spec);
+        this.group = group;
         registerDefaultState(defaultBlockState().setValue(LEFT, false).setValue(RIGHT, false));
     }
 
@@ -50,6 +54,6 @@ public class ConnectedFurnitureBlock extends FurnitureBlock {
     }
 
     private boolean sameRun(BlockState other, Direction facing) {
-        return other.is(this) && other.getValue(FACING) == facing;
+        return other.getBlock() instanceof ConnectedFurnitureBlock c && c.group.equals(group) && other.getValue(FACING) == facing;
     }
 }
