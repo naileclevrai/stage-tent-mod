@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=east,hidden=false": { "model": "stagetents:block/tensile" },
+    "facing=south,hidden=false": { "model": "stagetents:block/tensile", "y": 90 },
+    "facing=west,hidden=false": { "model": "stagetents:block/tensile", "y": 180 },
+    "facing=north,hidden=false": { "model": "stagetents:block/tensile", "y": 270 },
+    "facing=east,hidden=true": { "model": "stagetents:block/hidden_plate" },
+    "facing=south,hidden=true": { "model": "stagetents:block/hidden_plate" },
+    "facing=west,hidden=true": { "model": "stagetents:block/hidden_plate" },
+    "facing=north,hidden=true": { "model": "stagetents:block/hidden_plate" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": ["WWW", "III", "RTR"],
+  "key": {
+    "W": { "item": "minecraft:white_wool" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "R": { "item": "minecraft:redstone" },
+    "T": { "item": "stagetents:stage_deck" }
+  },
+  "result": { "item": "stagetents:opus_4200" }
+}
