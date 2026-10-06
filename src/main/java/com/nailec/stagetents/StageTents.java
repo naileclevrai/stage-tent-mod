@@ -12,6 +12,7 @@ public class StageTents {
     public StageTents() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModRegistry.register(modBus);
+        ModSounds.SOUNDS.register(modBus);
         ModNetwork.register();
     }
 }

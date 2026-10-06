@@ -1,0 +1,11 @@
+{
+  "generator": {
+    "subtitle": "subtitles.stagetents.generator",
+    "sounds": [
+      {
+        "name": "stagetents:generator",
+        "stream": false
+      }
+    ]
+  }
+}
