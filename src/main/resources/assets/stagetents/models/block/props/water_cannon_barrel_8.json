@@ -1,0 +1,19 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/water_cannon_barrel_8.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/paint",
+    "paint": "stagetents:block/props/paint",
+    "chrome": "stagetents:block/props/chrome",
+    "white": "stagetents:block/props/white",
+    "fan": "stagetents:block/props/fan",
+    "galvanised": "stagetents:block/props/galvanised",
+    "black": "stagetents:block/props/black",
+    "grey": "stagetents:block/props/grey"
+  }
+}
