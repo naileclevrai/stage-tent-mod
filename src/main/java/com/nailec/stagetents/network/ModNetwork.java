@@ -25,5 +25,20 @@ public final class ModNetwork {
                 .decoder(BuildGrandstandPacket::decode)
                 .consumerMainThread(BuildGrandstandPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(ConfigureTurnstilePacket.class, 2, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ConfigureTurnstilePacket::encode)
+                .decoder(ConfigureTurnstilePacket::decode)
+                .consumerMainThread(ConfigureTurnstilePacket::handle)
+                .add();
+        CHANNEL.messageBuilder(ConfigureBadgePacket.class, 3, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ConfigureBadgePacket::encode)
+                .decoder(ConfigureBadgePacket::decode)
+                .consumerMainThread(ConfigureBadgePacket::handle)
+                .add();
+        CHANNEL.messageBuilder(ConfigureDrapePacket.class, 4, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ConfigureDrapePacket::encode)
+                .decoder(ConfigureDrapePacket::decode)
+                .consumerMainThread(ConfigureDrapePacket::handle)
+                .add();
     }
 }

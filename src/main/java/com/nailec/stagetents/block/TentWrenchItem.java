@@ -40,10 +40,29 @@ public class TentWrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
-        // On a turnstile: next mode.
+        // On a turnstile: sneak opens the settings, a plain click cycles the mode.
         if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.TurnstileBlock) {
+            Player player = ctx.getPlayer();
+            if (player != null && player.isShiftKeyDown()) {
+                if (level.isClientSide) {
+                    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openTurnstileScreen(ctx.getClickedPos()));
+                }
+            } else if (!level.isClientSide && player != null) {
+                com.nailec.stagetents.furniture.TurnstileBlock.cycleMode(level, ctx.getClickedPos(), level.getBlockState(ctx.getClickedPos()), player);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        // On a stage deck: next height.
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.StageDeckBlock) {
             if (!level.isClientSide && ctx.getPlayer() != null) {
-                com.nailec.stagetents.furniture.TurnstileBlock.cycleMode(level, ctx.getClickedPos(), level.getBlockState(ctx.getClickedPos()), ctx.getPlayer());
+                com.nailec.stagetents.furniture.StageDeckBlock.cycleHeight(level, ctx.getClickedPos(), level.getBlockState(ctx.getClickedPos()), ctx.getPlayer());
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.FriseBlock
+                || level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.PendrillonBlock) {
+            if (level.isClientSide) {
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openDrapeScreen(ctx.getClickedPos()));
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -111,5 +130,8 @@ public class TentWrenchItem extends Item {
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.3").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.4").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.5").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.6").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.7").withStyle(ChatFormatting.GRAY));
     }
 }

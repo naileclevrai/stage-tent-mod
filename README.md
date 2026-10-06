@@ -55,6 +55,18 @@ The tents are rendered meshes. Thin invisible collision cells follow the canvas,
   </tr>
 </table>
 
+## Stage, site and floor
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/stage.png" alt="Stage decks, stairs, ramp, cyclorama and flight cases"><br><b>Stage</b>: decks at two heights, stairs, ramp, cyclorama, and flight cases from a single trunk up to a 2×2 case.</td>
+    <td width="50%"><img src="docs/images/site.png" alt="Queue rails, toilet, generator, site fence and feather flag"><br><b>Site</b>: queue rails (a perpendicular piece turns the end into a curved corner), toilet, generator, 3-block fence and feather flag.</td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/images/furniture.png" alt="Banquet table, bar, grandstand, stanchion, turnstile and crowd barrier"><br><b>Floor</b>: banquet table and chairs, bar with a stool, grandstand row, stanchion, turnstile and a Vauban barrier.</td>
+  </tr>
+</table>
+
 ## Features
 
 | | |
@@ -67,7 +79,9 @@ The tents are rendered meshes. Thin invisible collision cells follow the canvas,
 | **DJ roof** | Clear PVC sheet on both sides of one curved tube, on two poles. Adjustable span, depth and height; optional rigging lamps |
 | **Modular** | Pagodas, reception tents and gazebos join side by side: shared sides lose their walls and get a gutter. Joins can be detected automatically |
 | **Weather** | The canvas, valance, curtains and flags ripple gently, more in the rain and a lot in a storm |
-| **Furniture** | Round banquet tables, standing tables, banquet chairs, bar counters and bleachers. Dyeable, and the seats can be sat on |
+| **Stage** | Decks at four heights, stairs and a ramp with end rails, cyclorama, flight cases in four sizes |
+| **Site** | Generator, site toilets, 3-block fence, feather flags, queue rails that turn a corner, crowd barriers, stanchions, turnstile |
+| **Furniture** | Round banquet tables, standing tables, banquet and folding chairs, bar counters and stools, bleachers with a grandstand builder. Dyeable, and the seats can be sat on |
 | **Tools** | Rigging wrench to copy and paste settings or open the tent you stand in; `/stagetents clean` repairs collision cells |
 | **Presets** | Classic circus, concert black, wedding, cabaret, guinguette, reception, garden party, FOH control and more |
 
@@ -143,7 +157,7 @@ Requires JDK 17. The project uses ForgeGradle 6 with official mappings.
 
 - Banners and logos printed on the canvas
 - Theatrical truss rings inside big tops
-- More furniture (stage risers, crowd barriers, FOH desks)
+- FOH desks
 
 ## License
 
@@ -153,4 +167,4 @@ Stage Tents is released under the [Mozilla Public License 2.0](LICENSE).
 
 ### 🇫🇷 En bref
 
-Stage Tents ajoute de **vraies tentes en toile tendue** pour construire des scènes et des événements : chapiteau de cirque, pagode, tente de réception, barnum pliant, tente stretch, arche gonflable et toile DJ en PVC. On pose une platine, on règle tout dans le menu (dimensions, couleurs, murs, fenêtres, plancher, scène, guirlandes, barres d'accroche compatibles Theatrical), et la tente apparaît, avec des collisions fines qui suivent la toile. Du mobilier d'événement est aussi fourni : tables, mange-debout, chaises, bar et gradins.
+Stage Tents ajoute de **vraies tentes en toile tendue** pour construire des scènes et des événements : chapiteau de cirque, pagode, tente de réception, barnum pliant, tente stretch, arène tensile, arche gonflable et toile DJ en PVC. On pose une platine, on règle tout dans le menu (dimensions, couleurs, murs, fenêtres, plancher, scène, guirlandes, barres d'accroche compatibles Theatrical), et la tente apparaît, avec des collisions fines qui suivent la toile. Autour : praticables, escaliers, cyclorama, flight cases, groupe électrogène, sanitaires, clôtures, oriflammes, rambardes de file, et le mobilier de salle (tables, bar, gradins, tourniquet).

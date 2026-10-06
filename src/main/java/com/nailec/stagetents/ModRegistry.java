@@ -7,7 +7,18 @@ import com.nailec.stagetents.block.TentBlock;
 import com.nailec.stagetents.block.TentBlockEntity;
 import com.nailec.stagetents.block.TentBlockItem;
 import com.nailec.stagetents.block.TentWrenchItem;
+import com.nailec.stagetents.furniture.AccessBadgeItem;
 import com.nailec.stagetents.furniture.ConnectedFurnitureBlock;
+import com.nailec.stagetents.furniture.GeneratorBlock;
+import com.nailec.stagetents.furniture.GuideRailBlock;
+import com.nailec.stagetents.furniture.OriflammeBlock;
+import com.nailec.stagetents.furniture.PendrillonBlock;
+import com.nailec.stagetents.furniture.FriseBlock;
+import com.nailec.stagetents.furniture.DrapeBlockEntity;
+import com.nailec.stagetents.furniture.SiteFenceBlock;
+import com.nailec.stagetents.furniture.SiteToiletBlock;
+import com.nailec.stagetents.furniture.StageDeckBlock;
+import com.nailec.stagetents.furniture.TallRunBlock;
 import com.nailec.stagetents.furniture.FurnitureBlock;
 import com.nailec.stagetents.furniture.FurnitureBlock.Spec;
 import com.nailec.stagetents.furniture.MultiPropBlock;
@@ -53,6 +64,7 @@ public final class ModRegistry {
     public static final RegistryObject<TentBlock> DJ_ARCH = tent(TentType.DJ_ARCH);
     public static final RegistryObject<TentBlock> STRETCH = tent(TentType.STRETCH);
     public static final RegistryObject<TentBlock> TENSILE = tent(TentType.TENSILE);
+    public static final RegistryObject<TentBlock> OPUS_4200 = tent(TentType.OPUS_4200);
 
     public static final RegistryObject<StretchPoleBlock> STRETCH_POLE = BLOCKS.register("stretch_pole", () -> new StretchPoleBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0F).sound(SoundType.WOOD).noOcclusion()));
@@ -99,7 +111,38 @@ public final class ModRegistry {
             new int[][]{{-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}));
     public static final RegistryObject<TurnstileBlock> TURNSTILE = BLOCKS.register("turnstile", () -> new TurnstileBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
-    public static final RegistryObject<FurnitureBlock> GUIDE_RAIL = BLOCKS.register("guide_rail", () -> new FurnitureBlock(
+    public static final RegistryObject<StageDeckBlock> STAGE_DECK = BLOCKS.register("stage_deck", () -> new StageDeckBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<FurnitureBlock> STAGE_STAIRS = BLOCKS.register("stage_stairs", () -> new ConnectedFurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.YELLOW,
+            new double[]{1, 0, 0, 15, 4, 4}, new double[]{1, 0, 4, 15, 8, 8},
+            new double[]{1, 0, 8, 15, 12, 12}, new double[]{1, 0, 12, 15, 16, 16}), "stage_stairs"));
+    public static final RegistryObject<FurnitureBlock> STAGE_RAMP = BLOCKS.register("stage_ramp", () -> new ConnectedFurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.YELLOW,
+            new double[]{1, 0, 0, 15, 2, 2}, new double[]{1, 0, 2, 15, 4, 4},
+            new double[]{1, 0, 4, 15, 6, 6}, new double[]{1, 0, 6, 15, 8, 8},
+            new double[]{1, 0, 8, 15, 10, 10}, new double[]{1, 0, 10, 15, 12, 12},
+            new double[]{1, 0, 12, 15, 14, 14}, new double[]{1, 0, 14, 15, 16, 16}), "stage_ramp"));
+    public static final RegistryObject<TallRunBlock> CYCLORAMA = BLOCKS.register("cyclorama", () -> new TallRunBlock(
+            furnitureProps(SoundType.WOOL), Spec.of(true, DyeColor.WHITE,
+            new double[]{0, 0, 2, 16, 2, 9}, new double[]{0, 0, 7, 16, 16, 9}), "cyc", 2));
+    public static final RegistryObject<FurnitureBlock> FLIGHT_CASE = BLOCKS.register("flight_case", () -> new FurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.RED, new double[]{1, 0, 2, 15, 13, 14})));
+    public static final RegistryObject<MultiPropBlock> FLIGHT_CASE_TRUNK = BLOCKS.register("flight_case_trunk", () -> new MultiPropBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.BLUE, new double[]{1, 0, 2, 16, 13, 14}),
+            new int[][]{{0, 0}, {1, 0}}));
+    public static final RegistryObject<MultiPropBlock> FLIGHT_CASE_TALL = BLOCKS.register("flight_case_tall", () -> new MultiPropBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.YELLOW, new double[]{1, 0, 2, 15, 16, 14}),
+            new int[][]{{0, 0}, {0, 1}}));
+    public static final RegistryObject<MultiPropBlock> FLIGHT_CASE_XL = BLOCKS.register("flight_case_xl", () -> new MultiPropBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{1, 0, 1, 16, 16, 15}),
+            new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}));
+    public static final RegistryObject<GeneratorBlock> GENERATOR = BLOCKS.register("generator", () -> new GeneratorBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<SiteToiletBlock> SITE_TOILET = BLOCKS.register("site_toilet", () -> new SiteToiletBlock(furnitureProps(SoundType.STONE)));
+    public static final RegistryObject<SiteFenceBlock> SITE_FENCE = BLOCKS.register("site_fence", () -> new SiteFenceBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<OriflammeBlock> ORIFLAMME = BLOCKS.register("oriflamme", () -> new OriflammeBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<FriseBlock> FRISE = BLOCKS.register("frise", () -> new FriseBlock(furnitureProps(SoundType.WOOL)));
+    public static final RegistryObject<PendrillonBlock> PENDRILLON = BLOCKS.register("pendrillon", () -> new PendrillonBlock(furnitureProps(SoundType.WOOL)));
+    public static final RegistryObject<FurnitureBlock> GUIDE_RAIL = BLOCKS.register("guide_rail", () -> new GuideRailBlock(
             furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{7, 0, 0, 9, 24, 16})));
     public static final RegistryObject<PropPartBlock> PROP_PART = BLOCKS.register("prop_part", () -> new PropPartBlock(
             BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK)
@@ -117,6 +160,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> DJ_ARCH_ITEM = tentItem("dj_arch", DJ_ARCH);
     public static final RegistryObject<Item> STRETCH_ITEM = tentItem("stretch", STRETCH);
     public static final RegistryObject<Item> TENSILE_ITEM = tentItem("tensile", TENSILE);
+    public static final RegistryObject<Item> OPUS_4200_ITEM = tentItem("opus_4200", OPUS_4200);
     public static final RegistryObject<Item> STRETCH_POLE_ITEM = ITEMS.register("stretch_pole", () -> new BlockItem(STRETCH_POLE.get(), new Item.Properties()));
     public static final RegistryObject<Item> RIGGING_BAR_ITEM = ITEMS.register("rigging_bar", () -> new BlockItem(RIGGING_BAR.get(), new Item.Properties()));
     public static final RegistryObject<Item> ROUND_TABLE_ITEM = blockItem("round_table", ROUND_TABLE);
@@ -132,16 +176,35 @@ public final class ModRegistry {
     public static final RegistryObject<Item> STANCHION_ITEM = blockItem("stanchion", STANCHION);
     public static final RegistryObject<Item> TURNSTILE_ITEM = blockItem("turnstile", TURNSTILE);
     public static final RegistryObject<Item> GUIDE_RAIL_ITEM = blockItem("guide_rail", GUIDE_RAIL);
+    public static final RegistryObject<Item> STAGE_DECK_ITEM = blockItem("stage_deck", STAGE_DECK);
+    public static final RegistryObject<Item> STAGE_STAIRS_ITEM = blockItem("stage_stairs", STAGE_STAIRS);
+    public static final RegistryObject<Item> STAGE_RAMP_ITEM = blockItem("stage_ramp", STAGE_RAMP);
+    public static final RegistryObject<Item> CYCLORAMA_ITEM = blockItem("cyclorama", CYCLORAMA);
+    public static final RegistryObject<Item> FLIGHT_CASE_ITEM = blockItem("flight_case", FLIGHT_CASE);
+    public static final RegistryObject<Item> FLIGHT_CASE_TRUNK_ITEM = blockItem("flight_case_trunk", FLIGHT_CASE_TRUNK);
+    public static final RegistryObject<Item> FLIGHT_CASE_TALL_ITEM = blockItem("flight_case_tall", FLIGHT_CASE_TALL);
+    public static final RegistryObject<Item> FLIGHT_CASE_XL_ITEM = blockItem("flight_case_xl", FLIGHT_CASE_XL);
+    public static final RegistryObject<Item> GENERATOR_ITEM = blockItem("generator", GENERATOR);
+    public static final RegistryObject<Item> SITE_TOILET_ITEM = blockItem("site_toilet", SITE_TOILET);
+    public static final RegistryObject<Item> SITE_FENCE_ITEM = blockItem("site_fence", SITE_FENCE);
+    public static final RegistryObject<Item> ORIFLAMME_ITEM = blockItem("oriflamme", ORIFLAMME);
+    public static final RegistryObject<Item> FRISE_ITEM = blockItem("frise", FRISE);
+    public static final RegistryObject<Item> PENDRILLON_ITEM = blockItem("pendrillon", PENDRILLON);
     public static final RegistryObject<Item> SHOOTING_GALLERY_ITEM = ITEMS.register("shooting_gallery",
             () -> new BlockItem(SHOOTING_GALLERY.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WRENCH = ITEMS.register("tent_wrench", () -> new TentWrenchItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ACCESS_BADGE = ITEMS.register("access_badge",
+            () -> new AccessBadgeItem(new Item.Properties().stacksTo(16)));
 
     public static final RegistryObject<BlockEntityType<TentBlockEntity>> TENT_BE = BLOCK_ENTITIES.register("tent",
             () -> BlockEntityType.Builder.of(TentBlockEntity::new, BIG_TOP.get(), PAGODA.get(), FRAME_TENT.get(),
-                    GAZEBO.get(), ARCH.get(), DJ_ARCH.get(), STRETCH.get(), TENSILE.get()).build(null));
+                    GAZEBO.get(), ARCH.get(), DJ_ARCH.get(), STRETCH.get(), TENSILE.get(), OPUS_4200.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<TurnstileBlockEntity>> TURNSTILE_BE = BLOCK_ENTITIES.register("turnstile",
             () -> BlockEntityType.Builder.of(TurnstileBlockEntity::new, TURNSTILE.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<DrapeBlockEntity>> DRAPE_BE = BLOCK_ENTITIES.register("drape",
+            () -> BlockEntityType.Builder.of(DrapeBlockEntity::new, FRISE.get(), PENDRILLON.get()).build(null));
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stagetents"))
@@ -154,6 +217,7 @@ public final class ModRegistry {
                 out.accept(STRETCH_ITEM.get());
                 out.accept(STRETCH_POLE_ITEM.get());
                 out.accept(TENSILE_ITEM.get());
+                out.accept(OPUS_4200_ITEM.get());
                 out.accept(ARCH_ITEM.get());
                 out.accept(DJ_ARCH_ITEM.get());
                 out.accept(RIGGING_BAR_ITEM.get());
@@ -169,7 +233,22 @@ public final class ModRegistry {
                 out.accept(CROWD_BARRIER_ITEM.get());
                 out.accept(STANCHION_ITEM.get());
                 out.accept(TURNSTILE_ITEM.get());
+                out.accept(ACCESS_BADGE.get());
                 out.accept(GUIDE_RAIL_ITEM.get());
+                out.accept(STAGE_DECK_ITEM.get());
+                out.accept(STAGE_STAIRS_ITEM.get());
+                out.accept(STAGE_RAMP_ITEM.get());
+                out.accept(CYCLORAMA_ITEM.get());
+                out.accept(FRISE_ITEM.get());
+                out.accept(PENDRILLON_ITEM.get());
+                out.accept(FLIGHT_CASE_ITEM.get());
+                out.accept(FLIGHT_CASE_TRUNK_ITEM.get());
+                out.accept(FLIGHT_CASE_TALL_ITEM.get());
+                out.accept(FLIGHT_CASE_XL_ITEM.get());
+                out.accept(GENERATOR_ITEM.get());
+                out.accept(SITE_TOILET_ITEM.get());
+                out.accept(SITE_FENCE_ITEM.get());
+                out.accept(ORIFLAMME_ITEM.get());
                 out.accept(SHOOTING_GALLERY_ITEM.get());
                 out.accept(WRENCH.get());
             })

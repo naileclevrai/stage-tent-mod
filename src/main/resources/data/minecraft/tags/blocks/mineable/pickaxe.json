@@ -15,7 +15,22 @@
     "stagetents:bleacher_aisle",
     "stagetents:bleacher_support",
     "stagetents:tensile",
+    "stagetents:opus_4200",
     "stagetents:turnstile",
-    "stagetents:guide_rail"
+    "stagetents:guide_rail",
+    "stagetents:stage_deck",
+    "stagetents:stage_stairs",
+    "stagetents:stage_ramp",
+    "stagetents:cyclorama",
+    "stagetents:flight_case",
+    "stagetents:flight_case_trunk",
+    "stagetents:flight_case_tall",
+    "stagetents:flight_case_xl",
+    "stagetents:generator",
+    "stagetents:site_toilet",
+    "stagetents:site_fence",
+    "stagetents:oriflamme",
+    "stagetents:frise",
+    "stagetents:pendrillon"
   ]
 }
