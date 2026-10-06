@@ -1,0 +1,504 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "height": "1"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "1"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "1"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "1"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "1",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "1",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "1",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "1",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "1",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "1",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "1",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "1",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_1_end_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "2"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "2"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "2"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "2"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "2",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "2",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "2",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "2",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "2",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "2",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "2",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "2",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_2_end_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "3"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "3"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "3"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "3"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "3",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "3",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "3",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "3",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "3",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "3",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "3",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "3",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_3_end_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "4"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "4"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "4"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "4"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "4",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "4",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "4",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "4",
+        "left": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "height": "4",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "height": "4",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "height": "4",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "height": "4",
+        "right": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/stage_deck_4_end_right",
+        "y": 270
+      }
+    }
+  ]
+}

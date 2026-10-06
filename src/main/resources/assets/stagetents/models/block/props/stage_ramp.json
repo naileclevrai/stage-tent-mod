@@ -1,0 +1,17 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/stage_ramp.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/tread",
+    "tread": "stagetents:block/props/tread",
+    "metal": "stagetents:block/props/metal",
+    "rubber": "stagetents:block/props/rubber",
+    "paint": "stagetents:block/props/paint",
+    "black": "stagetents:block/props/black"
+  }
+}

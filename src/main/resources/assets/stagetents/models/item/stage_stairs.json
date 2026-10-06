@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/stage_stairs",
+    "layer1": "stagetents:item/stage_stairs_dye"
+  }
+}

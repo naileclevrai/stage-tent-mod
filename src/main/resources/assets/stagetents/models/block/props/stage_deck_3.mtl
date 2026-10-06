@@ -1,0 +1,30 @@
+newmtl metal
+Kd 1 1 1
+map_Kd #metal
+forge_TintIndex -1
+
+newmtl deck
+Kd 1 1 1
+map_Kd #deck
+forge_TintIndex -1
+
+newmtl wood_dark
+Kd 1 1 1
+map_Kd #wood_dark
+forge_TintIndex -1
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+forge_TintIndex -1
+
+newmtl velour
+Kd 1 1 1
+map_Kd #velour
+forge_TintIndex 0
+
