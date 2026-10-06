@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/cyclorama",
+    "layer1": "stagetents:item/cyclorama_dye"
+  }
+}

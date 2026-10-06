@@ -1,0 +1,16 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/cyclorama.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/muslin",
+    "muslin": "stagetents:block/props/muslin",
+    "black": "stagetents:block/props/black",
+    "chrome": "stagetents:block/props/chrome",
+    "canvas": "stagetents:block/props/canvas"
+  }
+}

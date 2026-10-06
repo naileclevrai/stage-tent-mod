@@ -1,0 +1,20 @@
+newmtl muslin
+Kd 1 1 1
+map_Kd #muslin
+forge_TintIndex 0
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+forge_TintIndex -1
+
+newmtl canvas
+Kd 1 1 1
+map_Kd #canvas
+forge_TintIndex -1
+
