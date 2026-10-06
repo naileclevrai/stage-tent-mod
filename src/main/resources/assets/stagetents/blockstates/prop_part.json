@@ -17,6 +17,20 @@
     },
     "form=pole": {
       "model": "stagetents:block/prop_part"
-    }
+    },
+    "form=table_x": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=table_z": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=cannon_side_n": { "model": "stagetents:block/prop_part" },
+    "form=cannon_side_e": { "model": "stagetents:block/prop_part" },
+    "form=cannon_side_s": { "model": "stagetents:block/prop_part" },
+    "form=cannon_side_w": { "model": "stagetents:block/prop_part" },
+    "form=cannon_nose_n": { "model": "stagetents:block/prop_part" },
+    "form=cannon_nose_e": { "model": "stagetents:block/prop_part" },
+    "form=cannon_nose_s": { "model": "stagetents:block/prop_part" },
+    "form=cannon_nose_w": { "model": "stagetents:block/prop_part" }
   }
 }
