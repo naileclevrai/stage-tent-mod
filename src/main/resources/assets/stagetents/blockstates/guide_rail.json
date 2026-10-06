@@ -2,7 +2,8 @@
   "multipart": [
     {
       "when": {
-        "facing": "north"
+        "facing": "north",
+        "corner": "false"
       },
       "apply": {
         "model": "stagetents:block/props/guide_rail"
@@ -10,7 +11,8 @@
     },
     {
       "when": {
-        "facing": "east"
+        "facing": "east",
+        "corner": "false"
       },
       "apply": {
         "model": "stagetents:block/props/guide_rail",
@@ -19,7 +21,8 @@
     },
     {
       "when": {
-        "facing": "south"
+        "facing": "south",
+        "corner": "false"
       },
       "apply": {
         "model": "stagetents:block/props/guide_rail",
@@ -28,10 +31,50 @@
     },
     {
       "when": {
-        "facing": "west"
+        "facing": "west",
+        "corner": "false"
       },
       "apply": {
         "model": "stagetents:block/props/guide_rail",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "corner": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/guide_rail_corner"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "corner": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/guide_rail_corner",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "corner": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/guide_rail_corner",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "corner": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/guide_rail_corner",
         "y": 270
       }
     }
