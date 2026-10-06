@@ -1,0 +1,20 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/site_toilet_open.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/grey",
+    "grey": "stagetents:block/props/grey",
+    "paint": "stagetents:block/props/paint",
+    "black": "stagetents:block/props/black",
+    "chrome": "stagetents:block/props/chrome",
+    "green": "stagetents:block/props/green",
+    "wc_sign": "stagetents:block/props/wc_sign",
+    "white": "stagetents:block/props/white",
+    "rubber": "stagetents:block/props/rubber"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/site_fence.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/galvanised",
+    "galvanised": "stagetents:block/props/galvanised",
+    "mesh": "stagetents:block/props/mesh",
+    "scrim": "stagetents:block/props/scrim",
+    "hem": "stagetents:block/props/hem",
+    "chrome": "stagetents:block/props/chrome",
+    "black": "stagetents:block/props/black",
+    "rubber": "stagetents:block/props/rubber"
+  }
+}

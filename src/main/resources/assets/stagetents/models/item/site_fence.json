@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/site_fence",
+    "layer1": "stagetents:item/site_fence_dye"
+  }
+}
