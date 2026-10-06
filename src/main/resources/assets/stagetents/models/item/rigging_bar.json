@@ -1,3 +1,6 @@
 {
-  "parent": "stagetents:block/rigging_bar"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/rigging_bar"
+  }
 }
