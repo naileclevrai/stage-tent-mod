@@ -9,9 +9,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -44,7 +42,8 @@ import java.util.Map;
  *     <li>{@link Mode#BADGE}: closed; using the reader opens it for one passage (or a few seconds).</li>
  *     <li>{@link Mode#LOCKED}: closed.</li>
  * </ul>
- * A redstone signal opens it in any mode. The rigging wrench cycles the mode.
+ * A redstone signal opens it in any mode. The rigging wrench cycles the mode; sneaking with it opens the settings.
+ * In badge mode the reader only accepts an {@link AccessBadgeItem} whose id matches.
  */
 public class TurnstileBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public enum Mode implements StringRepresentable {
@@ -59,6 +58,11 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
         @Override
         public String getSerializedName() {
             return name;
+        }
+
+        public static Mode byId(int id) {
+            Mode[] v = values();
+            return v[Math.floorMod(id, v.length)];
         }
     }
 
@@ -151,22 +155,54 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
         return level.getBlockEntity(pos) instanceof TurnstileBlockEntity be && be.credit() > 0;
     }
 
-    /** Using the reader: a badge in badge mode, a polite refusal when locked. */
+    /** Using the reader: a matching badge opens it, anything else is refused. */
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (player.getItemInHand(hand).getItem() instanceof com.nailec.stagetents.block.TentWrenchItem) return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(level.getBlockEntity(pos) instanceof TurnstileBlockEntity be)) return InteractionResult.CONSUME;
         Mode mode = state.getValue(MODE);
-        if (mode == Mode.BADGE && !state.getValue(OPEN) && level.getBlockEntity(pos) instanceof TurnstileBlockEntity be) {
-            be.grant(BADGE_TICKS);
+        if (mode == Mode.LOCKED || (mode == Mode.BADGE && !state.getValue(OPEN))) {
+            if (mode == Mode.LOCKED) {
+                refuse(level, pos, player, be, "message.stagetents.turnstile_locked");
+                return InteractionResult.CONSUME;
+            }
+            ItemStack stack = player.getItemInHand(hand);
+            if (!(stack.getItem() instanceof AccessBadgeItem)) {
+                refuse(level, pos, player, be, "message.stagetents.turnstile_need_badge");
+                return InteractionResult.CONSUME;
+            }
+            if (!be.accepts(stack)) {
+                refuse(level, pos, player, be, "message.stagetents.turnstile_denied");
+                return InteractionResult.CONSUME;
+            }
+            if (AccessBadgeItem.kind(stack) == AccessBadgeItem.Kind.SINGLE && !player.getAbilities().instabuild) stack.shrink(1);
+            be.grant(be.holdTicks());
             level.setBlock(pos, state.setValue(OPEN, true), Block.UPDATE_ALL);
-            level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.BLOCKS, 0.6F, 1.9F);
-        } else if (mode == Mode.LOCKED && !state.getValue(OPEN)) {
-            level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BASS.value(), SoundSource.BLOCKS, 0.6F, 0.6F);
-            player.displayClientMessage(Component.translatable("message.stagetents.turnstile_locked"), true);
+            if (be.clicks()) level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.BLOCKS, 0.6F, 1.9F);
+            player.displayClientMessage(Component.translatable("message.stagetents.turnstile_granted"), true);
         }
         return InteractionResult.CONSUME;
+    }
+
+    private static void refuse(Level level, BlockPos pos, Player player, TurnstileBlockEntity be, String key) {
+        if (be.clicks()) level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BASS.value(), SoundSource.BLOCKS, 0.6F, 0.6F);
+        player.displayClientMessage(Component.translatable(key), true);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof TurnstileBlockEntity be)) return 0;
+        if (be.emitting()) return 15;
+        return Math.min(15, be.passages());
     }
 
     /** Wrench: next mode. */
@@ -176,43 +212,6 @@ public class TurnstileBlock extends HorizontalDirectionalBlock implements Entity
         level.setBlock(pos, s.setValue(OPEN, shouldBeOpen(s)), Block.UPDATE_ALL);
         player.displayClientMessage(Component.translatable("message.stagetents.turnstile_mode",
                 Component.translatable("screen.stagetents.turnstile." + next.getSerializedName())), true);
-    }
-
-    /** Someone walking through the lane turns the rotor. */
-    @Override
-    @SuppressWarnings("deprecation")
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide || !(entity instanceof LivingEntity)) return;
-        if (!(level.getBlockEntity(pos) instanceof TurnstileBlockEntity be) || be.busy()) return;
-        Direction facing = state.getValue(FACING);
-        Vec3 off = entity.position().subtract(Vec3.atBottomCenterOf(pos));
-        // Only in the lane, not against the cabinet.
-        Direction right = facing.getClockWise();
-        double across = off.x * right.getStepX() + off.z * right.getStepZ();
-        if (across < -0.2) return;
-        double along = off.x * facing.getStepX() + off.z * facing.getStepZ();
-        // Coming from behind (negative along) means walking in the facing direction.
-        boolean forward = along < 0;
-        if (!state.getValue(OPEN)) {
-            // Pushing a locked rotor: it gives a little and knocks back.
-            if (Math.abs(along) < 0.55) {
-                level.blockEvent(pos, this, TurnstileBlockEntity.EVENT_BUMP, forward ? 1 : 0);
-                be.bumped();
-                level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.25F, 2.0F);
-            }
-            return;
-        }
-        // Turn when the body reaches the arm, not as soon as it touches the block.
-        if (Math.abs(along) > 0.4) return;
-        level.blockEvent(pos, this, TurnstileBlockEntity.EVENT_TURN, forward ? 1 : 0);
-        be.passed();
-        level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.35F, 1.6F);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
-        return level.getBlockEntity(pos) instanceof TurnstileBlockEntity be && be.triggerEvent(id, param);
     }
 
     @Override

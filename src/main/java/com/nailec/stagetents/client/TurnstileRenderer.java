@@ -75,7 +75,7 @@ public class TurnstileRenderer implements BlockEntityRenderer<TurnstileBlockEnti
         // LED displays: green arrow when open, red cross when closed. The display facing people coming the wrong
         // way always shows a cross unless the gate is free.
         boolean open = state.getValue(TurnstileBlock.OPEN);
-        boolean free = state.getValue(TurnstileBlock.MODE) == TurnstileBlock.Mode.FREE;
+        boolean free = state.getValue(TurnstileBlock.MODE) == TurnstileBlock.Mode.FREE && !be.oneWay();
         TextureAtlasSprite go = atlas.getSprite(ARROW), stop = atlas.getSprite(CROSS);
         TextureAtlasSprite entry = open ? go : stop, exit = free ? go : stop;
         int full = LightTexture.FULL_BRIGHT;
