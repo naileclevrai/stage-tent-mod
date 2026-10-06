@@ -18,9 +18,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * removes them; they can't be aimed at, so the prop is always broken through its main block.
  */
 public class PropPartBlock extends Block {
-    /** Collision of the cell: a full block, or a thin fence-high panel along x or z (crowd barriers). */
+    /** Collision of the cell: a full block, a tall barrier panel, a one-block wall, or a pole. */
     public enum Form implements StringRepresentable {
-        FULL("full"), PANEL_X("panel_x"), PANEL_Z("panel_z");
+        FULL("full"), PANEL_X("panel_x"), PANEL_Z("panel_z"), WALL_X("wall_x"), WALL_Z("wall_z"), POLE("pole");
 
         private final String name;
 
@@ -37,6 +37,9 @@ public class PropPartBlock extends Block {
     public static final EnumProperty<Form> FORM = EnumProperty.create("form", Form.class);
     private static final VoxelShape PANEL_X = Block.box(0, 0, 7, 16, 24, 9);
     private static final VoxelShape PANEL_Z = Block.box(7, 0, 0, 9, 24, 16);
+    private static final VoxelShape WALL_X = Block.box(0, 0, 6, 16, 16, 10);
+    private static final VoxelShape WALL_Z = Block.box(6, 0, 0, 10, 16, 16);
+    private static final VoxelShape POLE = Block.box(6, 0, 6, 10, 16, 10);
 
     public PropPartBlock(Properties props) {
         super(props);
@@ -66,6 +69,9 @@ public class PropPartBlock extends Block {
         return switch (state.getValue(FORM)) {
             case PANEL_X -> PANEL_X;
             case PANEL_Z -> PANEL_Z;
+            case WALL_X -> WALL_X;
+            case WALL_Z -> WALL_Z;
+            case POLE -> POLE;
             default -> Shapes.block();
         };
     }

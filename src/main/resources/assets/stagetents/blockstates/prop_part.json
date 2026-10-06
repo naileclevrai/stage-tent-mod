@@ -1,6 +1,21 @@
 {
   "variants": {
-    "": {
+    "form=full": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=panel_x": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=panel_z": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=wall_x": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=wall_z": {
+      "model": "stagetents:block/prop_part"
+    },
+    "form=pole": {
       "model": "stagetents:block/prop_part"
     }
   }

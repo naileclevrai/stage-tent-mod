@@ -36,9 +36,14 @@ public class MultiPropBlock extends FurnitureBlock {
 
     private BlockState partState(Direction facing) {
         BlockState part = ModRegistry.PROP_PART.get().defaultBlockState();
-        if (!panels) return part;
-        // The panel runs across the facing, like the barrier itself.
-        return part.setValue(PropPartBlock.FORM, facing.getAxis() == Direction.Axis.Z ? PropPartBlock.Form.PANEL_X : PropPartBlock.Form.PANEL_Z);
+        PropPartBlock.Form form = partForm(facing);
+        return form == PropPartBlock.Form.FULL ? part : part.setValue(PropPartBlock.FORM, form);
+    }
+
+    /** Collision shape of the extra cells. A wall follows the run; a pole ignores facing. */
+    protected PropPartBlock.Form partForm(Direction facing) {
+        if (!panels) return PropPartBlock.Form.FULL;
+        return facing.getAxis() == Direction.Axis.Z ? PropPartBlock.Form.PANEL_X : PropPartBlock.Form.PANEL_Z;
     }
 
     /** World positions of the extra cells for a main block at {@code pos} facing {@code facing}. */
