@@ -40,5 +40,10 @@ public final class ModNetwork {
                 .decoder(ConfigureDrapePacket::decode)
                 .consumerMainThread(ConfigureDrapePacket::handle)
                 .add();
+        CHANNEL.messageBuilder(ConfigureCannonPacket.class, 5, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ConfigureCannonPacket::encode)
+                .decoder(ConfigureCannonPacket::decode)
+                .consumerMainThread(ConfigureCannonPacket::handle)
+                .add();
     }
 }
