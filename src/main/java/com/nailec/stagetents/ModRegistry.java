@@ -13,6 +13,8 @@ import com.nailec.stagetents.furniture.GeneratorBlock;
 import com.nailec.stagetents.furniture.GuideRailBlock;
 import com.nailec.stagetents.furniture.OriflammeBlock;
 import com.nailec.stagetents.furniture.PendrillonBlock;
+import com.nailec.stagetents.furniture.PicnicTableBlock;
+import com.nailec.stagetents.furniture.PowerDistroBlock;
 import com.nailec.stagetents.furniture.FriseBlock;
 import com.nailec.stagetents.furniture.DrapeBlockEntity;
 import com.nailec.stagetents.furniture.SiteFenceBlock;
@@ -27,6 +29,8 @@ import com.nailec.stagetents.furniture.StanchionBlock;
 import com.nailec.stagetents.furniture.StandingTableBlock;
 import com.nailec.stagetents.furniture.TurnstileBlock;
 import com.nailec.stagetents.furniture.TurnstileBlockEntity;
+import com.nailec.stagetents.furniture.WaterCannonBlock;
+import com.nailec.stagetents.furniture.WaterCannonBlockEntity;
 import net.minecraft.world.item.DyeColor;
 import com.nailec.stagetents.furniture.SeatEntity;
 import net.minecraft.world.entity.EntityType;
@@ -137,9 +141,12 @@ public final class ModRegistry {
             furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{1, 0, 1, 16, 16, 15}),
             new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}));
     public static final RegistryObject<GeneratorBlock> GENERATOR = BLOCKS.register("generator", () -> new GeneratorBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<PowerDistroBlock> POWER_DISTRO = BLOCKS.register("power_distro", () -> new PowerDistroBlock(furnitureProps(SoundType.STONE)));
+    public static final RegistryObject<WaterCannonBlock> WATER_CANNON = BLOCKS.register("water_cannon", () -> new WaterCannonBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<SiteToiletBlock> SITE_TOILET = BLOCKS.register("site_toilet", () -> new SiteToiletBlock(furnitureProps(SoundType.STONE)));
     public static final RegistryObject<SiteFenceBlock> SITE_FENCE = BLOCKS.register("site_fence", () -> new SiteFenceBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<OriflammeBlock> ORIFLAMME = BLOCKS.register("oriflamme", () -> new OriflammeBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<PicnicTableBlock> PICNIC_TABLE = BLOCKS.register("picnic_table", () -> new PicnicTableBlock(furnitureProps(SoundType.WOOD)));
     public static final RegistryObject<FriseBlock> FRISE = BLOCKS.register("frise", () -> new FriseBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<PendrillonBlock> PENDRILLON = BLOCKS.register("pendrillon", () -> new PendrillonBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<FurnitureBlock> GUIDE_RAIL = BLOCKS.register("guide_rail", () -> new GuideRailBlock(
@@ -165,6 +172,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> RIGGING_BAR_ITEM = ITEMS.register("rigging_bar", () -> new BlockItem(RIGGING_BAR.get(), new Item.Properties()));
     public static final RegistryObject<Item> ROUND_TABLE_ITEM = blockItem("round_table", ROUND_TABLE);
     public static final RegistryObject<Item> STANDING_TABLE_ITEM = blockItem("standing_table", STANDING_TABLE);
+    public static final RegistryObject<Item> PICNIC_TABLE_ITEM = blockItem("picnic_table", PICNIC_TABLE);
     public static final RegistryObject<Item> BANQUET_CHAIR_ITEM = blockItem("banquet_chair", BANQUET_CHAIR);
     public static final RegistryObject<Item> BAR_COUNTER_ITEM = blockItem("bar_counter", BAR_COUNTER);
     public static final RegistryObject<Item> BLEACHER_ITEM = blockItem("bleacher", BLEACHER);
@@ -185,6 +193,8 @@ public final class ModRegistry {
     public static final RegistryObject<Item> FLIGHT_CASE_TALL_ITEM = blockItem("flight_case_tall", FLIGHT_CASE_TALL);
     public static final RegistryObject<Item> FLIGHT_CASE_XL_ITEM = blockItem("flight_case_xl", FLIGHT_CASE_XL);
     public static final RegistryObject<Item> GENERATOR_ITEM = blockItem("generator", GENERATOR);
+    public static final RegistryObject<Item> POWER_DISTRO_ITEM = blockItem("power_distro", POWER_DISTRO);
+    public static final RegistryObject<Item> WATER_CANNON_ITEM = blockItem("water_cannon", WATER_CANNON);
     public static final RegistryObject<Item> SITE_TOILET_ITEM = blockItem("site_toilet", SITE_TOILET);
     public static final RegistryObject<Item> SITE_FENCE_ITEM = blockItem("site_fence", SITE_FENCE);
     public static final RegistryObject<Item> ORIFLAMME_ITEM = blockItem("oriflamme", ORIFLAMME);
@@ -205,6 +215,8 @@ public final class ModRegistry {
 
     public static final RegistryObject<BlockEntityType<DrapeBlockEntity>> DRAPE_BE = BLOCK_ENTITIES.register("drape",
             () -> BlockEntityType.Builder.of(DrapeBlockEntity::new, FRISE.get(), PENDRILLON.get()).build(null));
+    public static final RegistryObject<BlockEntityType<WaterCannonBlockEntity>> WATER_CANNON_BE = BLOCK_ENTITIES.register("water_cannon",
+            () -> BlockEntityType.Builder.of(WaterCannonBlockEntity::new, WATER_CANNON.get()).build(null));
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stagetents"))
@@ -224,6 +236,7 @@ public final class ModRegistry {
                 out.accept(ROUND_TABLE_ITEM.get());
                 out.accept(BANQUET_CHAIR_ITEM.get());
                 out.accept(STANDING_TABLE_ITEM.get());
+                out.accept(PICNIC_TABLE_ITEM.get());
                 out.accept(BAR_COUNTER_ITEM.get());
                 out.accept(BAR_STOOL_ITEM.get());
                 out.accept(FOLDING_CHAIR_ITEM.get());
@@ -246,6 +259,8 @@ public final class ModRegistry {
                 out.accept(FLIGHT_CASE_TALL_ITEM.get());
                 out.accept(FLIGHT_CASE_XL_ITEM.get());
                 out.accept(GENERATOR_ITEM.get());
+                out.accept(POWER_DISTRO_ITEM.get());
+                out.accept(WATER_CANNON_ITEM.get());
                 out.accept(SITE_TOILET_ITEM.get());
                 out.accept(SITE_FENCE_ITEM.get());
                 out.accept(ORIFLAMME_ITEM.get());
