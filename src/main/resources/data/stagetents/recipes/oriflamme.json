@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "W",
+    "I",
+    "S"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:white_banner"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "stagetents:oriflamme",
+    "count": 1
+  }
+}
