@@ -1,0 +1,20 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/power_distro.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "rubber": "stagetents:block/props/rubber",
+    "red": "stagetents:block/props/red",
+    "white": "stagetents:block/props/white",
+    "grey": "stagetents:block/props/grey",
+    "blue": "stagetents:block/props/blue",
+    "yellow": "stagetents:block/props/yellow",
+    "chrome": "stagetents:block/props/chrome"
+  }
+}
