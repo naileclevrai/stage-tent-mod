@@ -36,6 +36,7 @@ public abstract class TentShape {
             case FRAME -> new FrameShape(p, facing);
             case GAZEBO -> new GazeboShape(p, facing);
             case ARCH -> new ArchShape(p, facing);
+            case DJ_ARCH -> new DjArchShape(p, facing);
             case STRETCH -> new StretchShape(p, facing);
             case TENSILE -> new TensileShape(p, facing);
         };

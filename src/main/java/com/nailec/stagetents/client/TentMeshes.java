@@ -1,6 +1,7 @@
 package com.nailec.stagetents.client;
 
 import com.nailec.stagetents.tent.ArchShape;
+import com.nailec.stagetents.tent.DjArchShape;
 import com.nailec.stagetents.tent.BigTopShape;
 import com.nailec.stagetents.tent.FloorMode;
 import com.nailec.stagetents.tent.FrameShape;
@@ -40,6 +41,7 @@ final class TentMeshes {
         else if (g instanceof FrameShape f) frame(m, f);
         else if (g instanceof GazeboShape gz) gazebo(m, gz);
         else if (g instanceof ArchShape a) arch(m, a);
+        else if (g instanceof DjArchShape a) DjArchMeshes.build(m, a);
         else if (g instanceof StretchShape st) stretch(m, st);
         if (g.params.type.hasInterior()) {
             floor(m, g);

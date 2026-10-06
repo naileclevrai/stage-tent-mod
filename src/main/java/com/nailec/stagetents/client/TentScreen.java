@@ -119,13 +119,14 @@ public class TentScreen extends Screen {
         addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "width." + t, r.minWidth(), r.maxWidth(), 1,
                 () -> edit.width, v -> edit.width = v, null));
         if (r.maxLength() > 0) {
-            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, (type == TentType.FRAME || type == TentType.GAZEBO || type == TentType.TENSILE) ? "length" : "length_extra",
+            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, type == TentType.DJ_ARCH ? "depth.dj_arch" : (type == TentType.FRAME || type == TentType.GAZEBO || type == TentType.TENSILE) ? "length" : "length_extra",
                     r.minLength(), r.maxLength(), r.lengthStep(), () -> edit.length, v -> edit.length = v, null));
         }
         addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "height." + t, r.minHeight(), r.maxHeight(), 1,
                 () -> edit.height, v -> edit.height = v, null));
-        addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "wall_height." + t, r.minWall(), r.maxWall(), 1,
-                () -> edit.wallHeight, v -> edit.wallHeight = v, null));
+        if (type != TentType.DJ_ARCH)
+            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "wall_height." + t, r.minWall(), r.maxWall(), 1,
+                    () -> edit.wallHeight, v -> edit.wallHeight = v, null));
         if (type != TentType.ARCH) {
             addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "spacing." + t, r.minSpacing(), r.maxSpacing(), 1,
                     () -> edit.poleSpacing, v -> edit.poleSpacing = v, null));
@@ -165,6 +166,14 @@ public class TentScreen extends Screen {
     }
 
     private void style(int x1, int x2, int x3, int y) {
+        if (type == TentType.DJ_ARCH) {
+            colorRow(x1, y, "dj_frame", false, () -> edit.colorA, v -> edit.colorA = v);
+            colorRow(x1, y + ROW_H, "dj_canopy", false, () -> edit.colorB, v -> edit.colorB = v);
+            addRenderableWidget(CycleButton.onOffBuilder(edit.rigging)
+                    .create(x2, y, COL_W, 20, tr("rigging"), (b, v) -> { edit.rigging = v; preview(); }));
+            djArchPresets(x3, y);
+            return;
+        }
         int row = 0;
         colorRow(x1, y + ROW_H * row++, "color_a", false, () -> edit.colorA, v -> edit.colorA = v);
         colorRow(x1, y + ROW_H * row++, "color_b", false, () -> edit.colorB, v -> edit.colorB = v);
@@ -205,6 +214,8 @@ public class TentScreen extends Screen {
             edit.height = d.height;
             edit.wallHeight = d.wallHeight;
             edit.poleSpacing = d.poleSpacing;
+            edit.rigging = d.rigging;
+            edit.showPlate = d.showPlate;
             edit.masts = d.masts;
             presetIndex = -1;
             preview();
@@ -212,6 +223,32 @@ public class TentScreen extends Screen {
         }).bounds(x3, y + ROW_H * row++, COL_W, 20).build());
         addRenderableWidget(CycleButton.onOffBuilder(edit.showPlate)
                 .create(x3, y + ROW_H * row++, COL_W, 20, tr("show_plate"), (b, v) -> { edit.showPlate = v; preview(); }));
+    }
+
+    private void djArchPresets(int x, int y) {
+        Component presetName = presetIndex < 0 ? tr("preset.choose") : tr("preset." + presets.get(presetIndex).key());
+        addRenderableWidget(Button.builder(Component.translatable("screen.stagetents.preset", presetName), b -> {
+            presetIndex = (presetIndex + (hasShiftDown() ? presets.size() - 1 : 1)) % presets.size();
+            presets.get(presetIndex).apply().accept(edit);
+            preview();
+            rebuildWidgets();
+        }).bounds(x, y, COL_W, 20).build());
+        addRenderableWidget(Button.builder(tr("reset"), b -> {
+            TentParams d = type.defaults();
+            edit.copyStyle(d);
+            edit.width = d.width;
+            edit.length = d.length;
+            edit.height = d.height;
+            edit.wallHeight = d.wallHeight;
+            edit.poleSpacing = d.poleSpacing;
+            edit.rigging = d.rigging;
+            edit.showPlate = d.showPlate;
+            presetIndex = -1;
+            preview();
+            rebuildWidgets();
+        }).bounds(x, y + ROW_H, COL_W, 20).build());
+        addRenderableWidget(CycleButton.onOffBuilder(edit.showPlate)
+                .create(x, y + ROW_H * 2, COL_W, 20, tr("show_plate"), (b, v) -> { edit.showPlate = v; preview(); }));
     }
 
     private void fittings(int x1, int x2, int x3, int y) {
@@ -406,7 +443,7 @@ public class TentScreen extends Screen {
         g.fill(l, PAD, right, bottom, 0xB0101418);
         g.drawString(font, title, l + 4, PAD + 7, 0xFFFFFF);
         String size = switch (type) {
-            case FRAME, GAZEBO -> edit.width + " x " + Math.max(edit.length, type == TentType.GAZEBO ? edit.width : 0) + "  h" + edit.height;
+            case FRAME, GAZEBO, DJ_ARCH -> edit.width + " x " + Math.max(edit.length, type == TentType.GAZEBO ? edit.width : 0) + "  h" + edit.height;
             case ARCH -> edit.width + "  h" + edit.height;
             case STRETCH -> "h" + edit.height + "  +" + edit.stretchPoles.size();
             default -> edit.width + " x " + (edit.width + edit.length) + "  h" + edit.height;

@@ -50,6 +50,7 @@ public final class ModRegistry {
     public static final RegistryObject<TentBlock> FRAME_TENT = tent(TentType.FRAME);
     public static final RegistryObject<TentBlock> GAZEBO = tent(TentType.GAZEBO);
     public static final RegistryObject<TentBlock> ARCH = tent(TentType.ARCH);
+    public static final RegistryObject<TentBlock> DJ_ARCH = tent(TentType.DJ_ARCH);
     public static final RegistryObject<TentBlock> STRETCH = tent(TentType.STRETCH);
     public static final RegistryObject<TentBlock> TENSILE = tent(TentType.TENSILE);
 
@@ -113,6 +114,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> FRAME_TENT_ITEM = tentItem("frame", FRAME_TENT);
     public static final RegistryObject<Item> GAZEBO_ITEM = tentItem("gazebo", GAZEBO);
     public static final RegistryObject<Item> ARCH_ITEM = tentItem("arch", ARCH);
+    public static final RegistryObject<Item> DJ_ARCH_ITEM = tentItem("dj_arch", DJ_ARCH);
     public static final RegistryObject<Item> STRETCH_ITEM = tentItem("stretch", STRETCH);
     public static final RegistryObject<Item> TENSILE_ITEM = tentItem("tensile", TENSILE);
     public static final RegistryObject<Item> STRETCH_POLE_ITEM = ITEMS.register("stretch_pole", () -> new BlockItem(STRETCH_POLE.get(), new Item.Properties()));
@@ -136,7 +138,7 @@ public final class ModRegistry {
 
     public static final RegistryObject<BlockEntityType<TentBlockEntity>> TENT_BE = BLOCK_ENTITIES.register("tent",
             () -> BlockEntityType.Builder.of(TentBlockEntity::new, BIG_TOP.get(), PAGODA.get(), FRAME_TENT.get(),
-                    GAZEBO.get(), ARCH.get(), STRETCH.get(), TENSILE.get()).build(null));
+                    GAZEBO.get(), ARCH.get(), DJ_ARCH.get(), STRETCH.get(), TENSILE.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<TurnstileBlockEntity>> TURNSTILE_BE = BLOCK_ENTITIES.register("turnstile",
             () -> BlockEntityType.Builder.of(TurnstileBlockEntity::new, TURNSTILE.get()).build(null));
@@ -153,6 +155,7 @@ public final class ModRegistry {
                 out.accept(STRETCH_POLE_ITEM.get());
                 out.accept(TENSILE_ITEM.get());
                 out.accept(ARCH_ITEM.get());
+                out.accept(DJ_ARCH_ITEM.get());
                 out.accept(RIGGING_BAR_ITEM.get());
                 out.accept(ROUND_TABLE_ITEM.get());
                 out.accept(BANQUET_CHAIR_ITEM.get());

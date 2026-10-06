@@ -40,6 +40,11 @@ public final class Presets {
                     new Preset("arch_classic", p -> style(p, Palette.RED, Palette.WHITE, true, -1, WallMode.OPEN, LightMode.OFF)),
                     new Preset("arch_start", p -> style(p, BLACK, Palette.WHITE, true, -1, WallMode.OPEN, LightMode.OFF)),
                     new Preset("arch_blue", p -> style(p, BLUE, YELLOW, true, -1, WallMode.OPEN, LightMode.OFF)));
+            case DJ_ARCH -> List.of(
+                    new Preset("dj_clear_black", p -> style(p, 0x252B31, 0xC5D8E4, false, -1, WallMode.OPEN, LightMode.OFF)),
+                    new Preset("dj_clear_silver", p -> style(p, 0xAEB5BA, 0xDFEAF0, false, -1, WallMode.OPEN, LightMode.OFF)),
+                    new Preset("dj_smoke", p -> style(p, 0x15191D, 0x56667A, false, -1, WallMode.OPEN, LightMode.OFF)),
+                    new Preset("dj_blue", p -> style(p, 0x263E62, 0x9CC2E0, false, -1, WallMode.OPEN, LightMode.OFF)));
             case STRETCH -> List.of(
                     new Preset("stretch_sand", p -> style(p, 0xD2BC8F, 0xD2BC8F, false, -1, WallMode.OPEN, LightMode.OFF)),
                     new Preset("stretch_white", p -> style(p, Palette.WHITE, Palette.WHITE, false, -1, WallMode.OPEN, LightMode.WARM)),

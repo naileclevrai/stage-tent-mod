@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=east,hidden=false": {"model": "stagetents:block/dj_arch"},
+    "facing=east,hidden=true": {"model": "stagetents:block/hidden_plate"},
+    "facing=south,hidden=false": {"model": "stagetents:block/dj_arch", "y": 90},
+    "facing=south,hidden=true": {"model": "stagetents:block/hidden_plate"},
+    "facing=west,hidden=false": {"model": "stagetents:block/dj_arch", "y": 180},
+    "facing=west,hidden=true": {"model": "stagetents:block/hidden_plate"},
+    "facing=north,hidden=false": {"model": "stagetents:block/dj_arch", "y": 270},
+    "facing=north,hidden=true": {"model": "stagetents:block/hidden_plate"}
+  }
+}

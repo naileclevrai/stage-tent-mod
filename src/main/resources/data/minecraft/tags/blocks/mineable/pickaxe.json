@@ -5,6 +5,7 @@
     "stagetents:frame",
     "stagetents:gazebo",
     "stagetents:arch",
+    "stagetents:dj_arch",
     "stagetents:stretch",
     "stagetents:rigging_bar",
     "stagetents:folding_chair",

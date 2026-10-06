@@ -80,3 +80,14 @@ tasks.register('dumpScene', JavaExec) {
     mainClass = 'com.nailec.stagetents.client.SceneDump'
     args = [project.findProperty('dumpDir') ?: "${buildDir}/scenedump"]
 }
+
+tasks.register('checkDjArch', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.DjArchCheck'
+}
+
+tasks.register('dumpDjArch', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.DjArchDump'
+    args = [project.findProperty('dumpDir') ?: "${buildDir}/djarch"]
+}

@@ -41,6 +41,9 @@ The tents are rendered meshes. Thin invisible collision cells follow the canvas,
     <td><img src="docs/images/stretch.png" alt="Stretch tent"><br><b>Stretch tent</b>: one membrane over the poles you place yourself, solved as tensioned fabric, with edge poles and ratchet straps.</td>
     <td><img src="docs/images/arch.png" alt="Inflatable arch"><br><b>Inflatable arch</b>: puffed chambers in two colours, ballast feet and guy ropes. Start lines and entrances.</td>
   </tr>
+  <tr>
+    <td colspan="2"><img src="docs/images/dj_arch.png" alt="Transparent DJ roof"><br><b>DJ PVC canopy</b>: a clear sheet on both sides of one curved tube, held by two upright poles and open underneath. Set the span, depth and height in the plate menu; choose a frame finish and canopy tint.</td>
+  </tr>
 </table>
 
 ## Inside
@@ -61,6 +64,7 @@ The tents are rendered meshes. Thin invisible collision cells follow the canvas,
 | **Fittings** | Floors (light/dark wood, red/black carpet, dance floor) up to 1 block high, stage with height, depth and back drape |
 | **Lights** | Warm or multicolour festoons that place real light sources |
 | **Rigging** | Bars under the ridge, around the masts or under the eave. They become **Theatrical** pipes when Theatrical is installed, so fixtures hang from them |
+| **DJ roof** | Clear PVC sheet on both sides of one curved tube, on two poles. Adjustable span, depth and height; optional rigging lamps |
 | **Modular** | Pagodas, reception tents and gazebos join side by side: shared sides lose their walls and get a gutter. Joins can be detected automatically |
 | **Weather** | The canvas, valance, curtains and flags ripple gently, more in the rain and a lot in a storm |
 | **Furniture** | Round banquet tables, standing tables, banquet chairs, bar counters and bleachers. Dyeable, and the seats can be sat on |
@@ -149,4 +153,4 @@ Stage Tents is released under the [Mozilla Public License 2.0](LICENSE).
 
 ### 🇫🇷 En bref
 
-Stage Tents ajoute de **vraies tentes en toile tendue** pour construire des scènes et des événements : chapiteau de cirque, pagode, tente de réception, barnum pliant, tente stretch et arche gonflable. On pose une platine, on règle tout dans le menu (dimensions, couleurs, murs, fenêtres, plancher, scène, guirlandes, barres d'accroche compatibles Theatrical), et la tente apparaît, avec des collisions fines qui suivent la toile. Du mobilier d'événement est aussi fourni : tables, mange-debout, chaises, bar et gradins.
+Stage Tents ajoute de **vraies tentes en toile tendue** pour construire des scènes et des événements : chapiteau de cirque, pagode, tente de réception, barnum pliant, tente stretch, arche gonflable et toile DJ en PVC. On pose une platine, on règle tout dans le menu (dimensions, couleurs, murs, fenêtres, plancher, scène, guirlandes, barres d'accroche compatibles Theatrical), et la tente apparaît, avec des collisions fines qui suivent la toile. Du mobilier d'événement est aussi fourni : tables, mange-debout, chaises, bar et gradins.

@@ -83,6 +83,20 @@ public final class TentParams {
         colorB &= 0xFFFFFF;
         if (lining != -1) lining &= 0xFFFFFF;
         if (type == TentType.GAZEBO && length < width) length = width;
+        if (type == TentType.DJ_ARCH) {
+            guyRopes = false;
+            walls = WallMode.OPEN;
+            entrance = Entrance.NONE;
+            floor = FloorMode.NONE;
+            stage = false;
+            lights = LightMode.OFF;
+            flags = false;
+            stripes = false;
+            valance = false;
+            sign = false;
+            poleCurtains = false;
+            joined = 0;
+        }
         floorHeight = Mth.clamp(floorHeight, 0, MAX_FLOOR);
         stageHeight = Mth.clamp(stageHeight, MIN_STAGE, MAX_STAGE);
         stageDepth = Mth.clamp(stageDepth, MIN_STAGE_DEPTH, MAX_STAGE_DEPTH);

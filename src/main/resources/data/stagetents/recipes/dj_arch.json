@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": ["IGI", "I I", "S S"],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "G": {"item": "minecraft:glass_pane"},
+    "S": {"item": "minecraft:smooth_stone_slab"}
+  },
+  "result": {"item": "stagetents:dj_arch", "count": 1}
+}

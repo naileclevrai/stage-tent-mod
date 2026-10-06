@@ -94,6 +94,7 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof TentBlockEntity be) {
             be.placeCells();
+            if (!be.params().showPlate) level.setBlock(pos, state.setValue(HIDDEN, true), Block.UPDATE_ALL);
         }
     }
 
