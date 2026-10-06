@@ -97,6 +97,22 @@ public final class TentParams {
             poleCurtains = false;
             joined = 0;
         }
+        if (type == TentType.OPUS_4200) {
+            walls = WallMode.CLOSED;
+            entrance = Entrance.OPEN_FRONT;
+            floor = FloorMode.BLACK;
+            floorHeight = 4;
+            stage = false;
+            rigging = false;
+            lights = LightMode.OFF;
+            flags = false;
+            sign = false;
+            poleCurtains = false;
+            joined = 0;
+            showPlate = false;
+            guyRopes = false;
+            valance = false;
+        }
         floorHeight = Mth.clamp(floorHeight, 0, MAX_FLOOR);
         stageHeight = Mth.clamp(stageHeight, MIN_STAGE, MAX_STAGE);
         stageDepth = Mth.clamp(stageDepth, MIN_STAGE_DEPTH, MAX_STAGE_DEPTH);

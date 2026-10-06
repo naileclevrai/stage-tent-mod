@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -61,6 +62,7 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
     @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         if (!state.getValue(HIDDEN)) return SHAPE;
+        if (type == TentType.OPUS_4200) return Shapes.block(); // centre of the deck stays buildable
         return ctx instanceof EntityCollisionContext ec && ec.getEntity() != null && ctx.isHoldingItem(ModRegistry.WRENCH.get())
                 ? SHAPE : Shapes.empty();
     }
@@ -111,6 +113,7 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (player.getItemInHand(hand).getItem() instanceof TentWrenchItem) return InteractionResult.PASS;
+        if (type == TentType.OPUS_4200 && player.getItemInHand(hand).getItem() instanceof BlockItem) return InteractionResult.PASS;
         if (level.isClientSide) {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openTentScreen(pos));
         }

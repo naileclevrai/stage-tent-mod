@@ -81,6 +81,12 @@ tasks.register('dumpScene', JavaExec) {
     args = [project.findProperty('dumpDir') ?: "${buildDir}/scenedump"]
 }
 
+// Dev only: validate the fixed mobile-stage geometry and collision layout without starting a world.
+tasks.register('checkMobileStage', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.MobileStageCheck'
+}
+
 tasks.register('checkDjArch', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.nailec.stagetents.client.DjArchCheck'

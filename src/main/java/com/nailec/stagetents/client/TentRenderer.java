@@ -93,7 +93,10 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         draw.layer(MeshBuilder.SOLID, canvas);
         if (!inside) draw.layer(MeshBuilder.OUTER, canvas);
         // From far away the inside only shows through rolled-up walls.
-        if (inside || beyond < INNER_RANGE || be.params().walls == com.nailec.stagetents.tent.WallMode.OPEN) {
+        // The entity render type does not cull the reverse side of the arena canvas. Drawing its lining from
+        // outside overlays the white roof in navy, so show that layer only once the camera is under the membrane.
+        boolean arenaExterior = shape instanceof com.nailec.stagetents.tent.TensileShape && !inside;
+        if (inside || (!arenaExterior && (beyond < INNER_RANGE || be.params().walls == com.nailec.stagetents.tent.WallMode.OPEN))) {
             draw.layer(MeshBuilder.INNER, canvas);
         }
         if (beyond < DETAIL_RANGE) draw.layer(MeshBuilder.DETAIL, canvas);
@@ -113,6 +116,10 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         }
         if (mesh.hasLayer(MeshBuilder.DECK)) {
             draw.layer(MeshBuilder.DECK, RenderType.entityCutout(CARPET_TEXTURE));
+        }
+        for (int i = 0; i < MobileStageMeshes.TEXTURES.length; i++) {
+            int layer = MeshBuilder.MATERIAL + i;
+            if (mesh.hasLayer(layer)) draw.layer(layer, RenderType.entityCutout(MobileStageMeshes.TEXTURES[i]));
         }
         // Glass stays on the batched path: translucent panes must be drawn after everything behind them.
         if (mesh.hasLayer(MeshBuilder.GLASS)) {

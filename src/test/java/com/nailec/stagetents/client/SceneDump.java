@@ -39,6 +39,8 @@ public final class SceneDump {
         dump(out, "arch", TentType.ARCH, p -> { p.width = 10; p.height = 7; });
         dump(out, "dj_arch", TentType.DJ_ARCH, p -> { });
         dump(out, "arena", TentType.TENSILE, p -> { });
+        dump(out, "arena_epicdude", TentType.TENSILE, p -> Presets.forType(TentType.TENSILE).get(1).apply().accept(p));
+        dump(out, "mobile_stage", TentType.OPUS_4200, p -> { });
         dump(out, "bar_mid", TentType.PAGODA, p -> { p.width = 5; p.height = 7; Presets.forType(TentType.PAGODA).get(1).apply().accept(p); p.joined = (1 << 0) | (1 << 2); });
         dump(out, "bar_end", TentType.PAGODA, p -> { p.width = 5; p.height = 7; Presets.forType(TentType.PAGODA).get(1).apply().accept(p); p.joined = 1 << 0; });
         dump(out, "bar_end2", TentType.PAGODA, p -> { p.width = 5; p.height = 7; Presets.forType(TentType.PAGODA).get(1).apply().accept(p); p.joined = 1 << 2; });
@@ -62,7 +64,8 @@ public final class SceneDump {
                 int count = field(c, "count").getInt(l);
                 for (int i = 0; i < count; i++) {
                     int o = i * 8;
-                    int kind = li == MeshBuilder.GLASS ? 1 : emissive[i] ? 2 : li == MeshBuilder.FLOOR ? 3 : 0;
+                    int kind = li == MeshBuilder.GLASS ? 1 : emissive[i] ? 2 : li == MeshBuilder.FLOOR ? 3
+                            : li == MeshBuilder.OUTER ? 4 : li == MeshBuilder.INNER ? 5 : 0;
                     w.printf(Locale.ROOT, "%d %.3f %.3f %.3f %d %.3f %.3f %.3f%n", kind, data[o], data[o + 1], data[o + 2], color[i], data[o + 5], data[o + 6], data[o + 7]);
                 }
             }

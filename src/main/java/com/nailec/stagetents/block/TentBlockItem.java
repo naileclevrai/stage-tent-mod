@@ -36,7 +36,12 @@ public class TentBlockItem extends BlockItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         CompoundTag tag = storedParams(stack);
         TentParams p = tag != null ? TentParams.load(tag, type) : type.defaults();
-        int len = type == TentType.FRAME || type == TentType.DJ_ARCH ? p.length : p.width + p.length;
+        if (type == TentType.OPUS_4200) {
+            tooltip.add(Component.translatable("tooltip.stagetents.size", "16.40", "13.20", "11.28").withStyle(ChatFormatting.GRAY));
+            if (tag == null) tooltip.add(Component.translatable("tooltip.stagetents.hint").withStyle(ChatFormatting.DARK_GRAY));
+            return;
+        }
+        int len = type == TentType.FRAME || type == TentType.DJ_ARCH || type == TentType.OPUS_4200 ? p.length : p.width + p.length;
         tooltip.add(Component.translatable("tooltip.stagetents.size", p.width, len, p.height).withStyle(ChatFormatting.GRAY));
         if (tag == null) {
             tooltip.add(Component.translatable("tooltip.stagetents.hint").withStyle(ChatFormatting.DARK_GRAY));

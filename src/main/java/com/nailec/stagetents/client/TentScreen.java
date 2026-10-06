@@ -113,6 +113,7 @@ public class TentScreen extends Screen {
     // ------------------------------------------------------------------ tabs
 
     private void structure(int x1, int x2, int x3, int y) {
+        if (type == TentType.OPUS_4200) return;
         TentType.Ranges r = type.ranges;
         String t = type.id;
         int row = 0;
@@ -166,6 +167,11 @@ public class TentScreen extends Screen {
     }
 
     private void style(int x1, int x2, int x3, int y) {
+        if (type == TentType.OPUS_4200) {
+            colorRow(x1, y, "color_a", false, () -> edit.colorA, v -> edit.colorA = v);
+            colorRow(x1, y + ROW_H, "lining", true, () -> edit.lining, v -> edit.lining = v);
+            return;
+        }
         if (type == TentType.DJ_ARCH) {
             colorRow(x1, y, "dj_frame", false, () -> edit.colorA, v -> edit.colorA = v);
             colorRow(x1, y + ROW_H, "dj_canopy", false, () -> edit.colorB, v -> edit.colorB = v);
@@ -176,7 +182,8 @@ public class TentScreen extends Screen {
         }
         int row = 0;
         colorRow(x1, y + ROW_H * row++, "color_a", false, () -> edit.colorA, v -> edit.colorA = v);
-        colorRow(x1, y + ROW_H * row++, "color_b", false, () -> edit.colorB, v -> edit.colorB = v);
+        colorRow(x1, y + ROW_H * row++, type == TentType.TENSILE ? "tower_tips" : "color_b", false,
+                () -> edit.colorB, v -> edit.colorB = v);
         if (type != TentType.ARCH) colorRow(x1, y + ROW_H * row++, "lining", true, () -> edit.lining, v -> edit.lining = v);
 
         row = 0;
@@ -252,6 +259,7 @@ public class TentScreen extends Screen {
     }
 
     private void fittings(int x1, int x2, int x3, int y) {
+        if (type == TentType.OPUS_4200) return;
         int row = 0;
         addRenderableWidget(CycleButton.<FloorMode>builder(m -> tr("floor." + lower(m)))
                 .withValues(FloorMode.values()).withInitialValue(edit.floor)
@@ -443,6 +451,7 @@ public class TentScreen extends Screen {
         g.fill(l, PAD, right, bottom, 0xB0101418);
         g.drawString(font, title, l + 4, PAD + 7, 0xFFFFFF);
         String size = switch (type) {
+            case OPUS_4200 -> "16.40 x 13.20 m";
             case FRAME, GAZEBO, DJ_ARCH -> edit.width + " x " + Math.max(edit.length, type == TentType.GAZEBO ? edit.width : 0) + "  h" + edit.height;
             case ARCH -> edit.width + "  h" + edit.height;
             case STRETCH -> "h" + edit.height + "  +" + edit.stretchPoles.size();

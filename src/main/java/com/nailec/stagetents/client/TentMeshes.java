@@ -9,6 +9,7 @@ import com.nailec.stagetents.tent.GazeboShape;
 import com.nailec.stagetents.tent.RectShape;
 import com.nailec.stagetents.tent.StretchShape;
 import com.nailec.stagetents.tent.TensileShape;
+import com.nailec.stagetents.tent.MobileStageShape;
 import com.nailec.stagetents.tent.LightMode;
 import com.nailec.stagetents.tent.PagodaShape;
 import com.nailec.stagetents.tent.TentParams;
@@ -43,7 +44,8 @@ final class TentMeshes {
         else if (g instanceof ArchShape a) arch(m, a);
         else if (g instanceof DjArchShape a) DjArchMeshes.build(m, a);
         else if (g instanceof StretchShape st) stretch(m, st);
-        if (g.params.type.hasInterior()) {
+        else if (g instanceof MobileStageShape st) MobileStageMeshes.build(m, st);
+        if (g.params.type.hasInterior() && !(g instanceof MobileStageShape)) {
             floor(m, g);
             stage(m, g);
         }
@@ -278,6 +280,10 @@ final class TentMeshes {
         int nt = Mth.clamp((int) Math.round(g.footprint() * 0.45), 22, 56);
         double cx = g.centreX(), cz = g.centreZ();
         double[][] gx = new double[ns + 1][nt + 1], gy = new double[ns + 1][nt + 1], gz = new double[ns + 1][nt + 1];
+        double[][] flex = new double[ns + 1][nt + 1];
+        boolean coloredTips = g instanceof TensileShape && m.p.colorB != m.p.colorA;
+        double[][] tipDistance = coloredTips ? new double[ns + 1][nt + 1] : null;
+        double tipRadius = Math.max(1.5, Math.min(3.0, g.params.width * 0.03));
         double[] per = new double[5];
         for (int i = 0; i <= ns; i++) {
             double s = P * i / ns;
@@ -288,6 +294,18 @@ final class TentMeshes {
                 gx[i][j] = x;
                 gz[i][j] = z;
                 gy[i][j] = j == nt ? g.eaveHeight(s) : g.surfaceHeight(x, z);
+                double movement = 0.8 * Math.sin(Math.PI * t);
+                if (g instanceof TensileShape) {
+                    // The canvas is fixed to each crown ring; wind must not peel it away from a tower.
+                    double nearest = Double.POSITIVE_INFINITY;
+                    for (double[] mast : g.masts) {
+                        double distance = Math.hypot(x - mast[0], z - mast[1]);
+                        nearest = Math.min(nearest, distance);
+                    }
+                    movement = Math.min(movement, 0.8 * Mth.clamp((nearest - 1.1) / 2.5, 0, 1));
+                    if (coloredTips) tipDistance[i][j] = nearest;
+                }
+                flex[i][j] = movement;
             }
         }
         double[][][] nn = gridNormals(gx, gy, gz, ns, nt);
@@ -299,11 +317,16 @@ final class TentMeshes {
                 double[][] q = new double[4][];
                 for (int k = 0; k < 4; k++) {
                     double[] v = nn[ii[k]][jj[k]];
-                    double t = jj[k] / (double) nt;
                     q[k] = MeshBuilder.vf(gx[ii[k]][jj[k]], gy[ii[k]][jj[k]], gz[ii[k]][jj[k]],
-                            gx[ii[k]][jj[k]] / 2, gz[ii[k]][jj[k]] / 2, v[0], v[1], v[2], 0.8 * Math.sin(Math.PI * t));
+                            gx[ii[k]][jj[k]] / 2, gz[ii[k]][jj[k]] / 2, v[0], v[1], v[2], flex[ii[k]][jj[k]]);
                 }
-                m.twoSided(q, col);
+                if (coloredTips) {
+                    double[] d = new double[4];
+                    for (int k = 0; k < 4; k++) d[k] = tipDistance[ii[k]][jj[k]];
+                    clippedTip(m, q, d, tipRadius, col);
+                } else {
+                    m.twoSided(q, col);
+                }
             }
         }
         edgeRope(m, g);
@@ -354,15 +377,48 @@ final class TentMeshes {
         }
     }
 
+    /** Split crossing panels at the ring, so the blue cap ends at a clean seam instead of pixel-sized steps. */
+    private static void clippedTip(MeshBuilder m, double[][] q, double[] distance, double radius, int canvas) {
+        boolean in = false, out = false;
+        for (double d : distance) { in |= d <= radius; out |= d >= radius; }
+        if (!in) { m.twoSided(q, canvas); return; }
+        int blue = MeshBuilder.opaque(m.p.colorB);
+        if (!out) { m.twoSided(q, blue, m.inner(canvas), MeshBuilder.SOLID); return; }
+        emitClipped(m, q, distance, radius, true, blue, m.inner(canvas));
+        emitClipped(m, q, distance, radius, false, canvas, m.inner(canvas));
+    }
+
+    private static void emitClipped(MeshBuilder m, double[][] q, double[] distance, double radius,
+                                    boolean inside, int outer, int inner) {
+        java.util.ArrayList<double[]> polygon = new java.util.ArrayList<>(6);
+        for (int i = 0; i < 4; i++) {
+            int prev = (i + 3) % 4;
+            boolean a = inside ? distance[prev] <= radius : distance[prev] >= radius;
+            boolean b = inside ? distance[i] <= radius : distance[i] >= radius;
+            if (a != b) {
+                double t = (radius - distance[prev]) / (distance[i] - distance[prev]);
+                double[] v = new double[q[i].length];
+                for (int k = 0; k < v.length; k++) v[k] = q[prev][k] + (q[i][k] - q[prev][k]) * t;
+                polygon.add(v);
+            }
+            if (b) polygon.add(q[i]);
+        }
+        for (int i = 1; i + 1 < polygon.size(); i++) {
+            double[] a = polygon.get(0), b = polygon.get(i), c = polygon.get(i + 1);
+            m.twoSided(new double[][]{a, b, c, c}, outer, inner, MeshBuilder.SOLID);
+        }
+    }
+
     /**
      * Arena structure: square lattice masts with a crown ring holding the membrane, guy cables on the end masts,
      * and a grid of box trusses hung between the masts over the floor.
      */
     private static void tensileStructure(MeshBuilder m, TensileShape g) {
         double crown = 1.1;
+        int tipColor = m.p.colorB != m.p.colorA ? MeshBuilder.opaque(m.p.colorB) : ALU;
         for (double[] mast : g.masts) {
             double top = mast[2];
-            lattice(m, mast[0], 0, mast[1], mast[0], top + 1.6, mast[1], 0.32, true);
+            lattice(m, mast[0], 0, mast[1], mast[0], top + 1.6, mast[1], 0.32, true, tipColor);
             // Crown: ring the membrane is laced to, struts up to the mast head, and a cap.
             int n = 16;
             double ry = top - 0.05;
@@ -372,9 +428,10 @@ final class TentMeshes {
                 px[k] = mast[0] + crown * Math.cos(a);
                 pz[k] = mast[1] + crown * Math.sin(a);
             }
-            for (int k = 0; k < n; k++) m.tube(px[k], ry, pz[k], px[k + 1], ry, pz[k + 1], 0.07, 6, ALU);
-            for (int k = 0; k < n; k += 4) m.tube(px[k], ry, pz[k], mast[0], top + 1.4, mast[1], 0.035, 4, ALU);
-            m.box(mast[0], top + 1.55, mast[1], 0.28, top + 1.75, RING, false);
+            for (int k = 0; k < n; k++) m.tube(px[k], ry, pz[k], px[k + 1], ry, pz[k + 1], 0.07, 6, tipColor);
+            for (int k = 0; k < n; k += 4) m.tube(px[k], ry, pz[k], mast[0], top + 1.4, mast[1], 0.035, 4, tipColor);
+            // The cap must cover the four chords, not just the hollow centre of the lattice.
+            m.box(mast[0], top + 1.53, mast[1], 0.42, top + 1.76, tipColor, false);
         }
         // Guy cables from the end masts out past the membrane.
         if (m.p.guyRopes) {
@@ -404,6 +461,11 @@ final class TentMeshes {
      * builds a mast with a base plate.
      */
     private static void lattice(MeshBuilder m, double ax, double ay, double az, double bx, double by, double bz, double half, boolean vertical) {
+        lattice(m, ax, ay, az, bx, by, bz, half, vertical, ALU);
+    }
+
+    private static void lattice(MeshBuilder m, double ax, double ay, double az, double bx, double by, double bz,
+                                double half, boolean vertical, int tipColor) {
         double dx = bx - ax, dy = by - ay, dz = bz - az, len = Math.sqrt(dx * dx + dy * dy + dz * dz);
         if (len < 1e-6) return;
         dx /= len; dy /= len; dz /= len;
@@ -420,23 +482,28 @@ final class TentMeshes {
         }
         double[][] corners = {{1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
         double chord = Math.max(0.035, half * 0.16), lace = chord * 0.45;
+        double tipStart = vertical && tipColor != ALU ? Math.max(0, len - 3.0) : len;
         for (double[] c : corners) {
             double ox = (ux * c[0] + wx * c[1]) * half, oy = (uy * c[0] + wy * c[1]) * half, oz = (uz * c[0] + wz * c[1]) * half;
-            m.tube(ax + ox, ay + oy, az + oz, bx + ox, by + oy, bz + oz, chord, 6, ALU);
+            if (tipStart > 0) m.tube(ax + ox, ay + oy, az + oz,
+                    ax + dx * tipStart + ox, ay + dy * tipStart + oy, az + dz * tipStart + oz, chord, 6, ALU);
+            if (tipStart < len) m.tube(ax + dx * tipStart + ox, ay + dy * tipStart + oy, az + dz * tipStart + oz,
+                    bx + ox, by + oy, bz + oz, chord, 6, tipColor);
         }
         int bays = Math.max(1, (int) Math.round(len / (half * 2.2)));
         for (int b = 0; b <= bays; b++) {
             double t0 = len * b / bays;
+            int bayColor = t0 >= tipStart ? tipColor : ALU;
             for (int f = 0; f < 4; f++) {
                 double[] c0 = corners[f], c1 = corners[(f + 1) % 4];
                 double[] p0 = corner(ax, ay, az, dx, dy, dz, ux, uy, uz, wx, wy, wz, half, c0, t0);
                 double[] p1 = corner(ax, ay, az, dx, dy, dz, ux, uy, uz, wx, wy, wz, half, c1, t0);
-                m.tube(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], lace, 4, ALU);
+                m.tube(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], lace, 4, bayColor);
                 if (b < bays) {
                     double t1 = len * (b + 1) / bays;
                     double[] q = corner(ax, ay, az, dx, dy, dz, ux, uy, uz, wx, wy, wz, half, (b + f) % 2 == 0 ? c1 : c0, t1);
                     double[] p = (b + f) % 2 == 0 ? p0 : p1;
-                    m.tube(p[0], p[1], p[2], q[0], q[1], q[2], lace, 4, ALU);
+                    m.tube(p[0], p[1], p[2], q[0], q[1], q[2], lace, 4, bayColor);
                 }
             }
         }

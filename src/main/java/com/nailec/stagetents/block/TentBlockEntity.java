@@ -1,10 +1,12 @@
 package com.nailec.stagetents.block;
 
 import com.nailec.stagetents.ModRegistry;
+import com.nailec.stagetents.WorldRepairQueue;
 import com.nailec.stagetents.tent.TentParams;
 import com.nailec.stagetents.tent.TentPart;
 import com.nailec.stagetents.tent.TentShape;
 import com.nailec.stagetents.tent.TentType;
+import com.nailec.stagetents.tent.MobileStageShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,6 +37,8 @@ public class TentBlockEntity extends BlockEntity {
      */
     private TentParams placed;
     private Direction placedFacing;
+    /** 1 = prototype, 2 = first detailed model, 3 = large festival model. */
+    private int mobileCellsVersion = 3;
 
     /** Bumped whenever the client copy of the params changes so the renderer rebuilds its mesh. */
     private int clientVersion;
@@ -102,6 +106,7 @@ public class TentBlockEntity extends BlockEntity {
         if (level == null || level.isClientSide) return;
         placed = params.copy();
         placedFacing = facing();
+        if (type() == TentType.OPUS_4200) mobileCellsVersion = 3;
         setChanged();
         BlockPos.MutableBlockPos mp = new BlockPos.MutableBlockPos();
         BlockState canvas = ModRegistry.CANVAS.get().defaultBlockState();
@@ -141,7 +146,7 @@ public class TentBlockEntity extends BlockEntity {
     void clearCells() {
         if (level == null || level.isClientSide) return;
         BlockPos.MutableBlockPos mp = new BlockPos.MutableBlockPos();
-        placedShape().forEachCell(new TentShape.CellSink() {
+        TentShape.CellSink cleanup = new TentShape.CellSink() {
             @Override
             public void cell(int dx, int dy, int dz, TentPart part, int lvl, int shift) {
                 at(dx, dy, dz);
@@ -170,13 +175,22 @@ public class TentBlockEntity extends BlockEntity {
             private void at(int dx, int dy, int dz) {
                 mp.set(worldPosition.getX() + dx, worldPosition.getY() + dy, worldPosition.getZ() + dz);
             }
-        });
+        };
+        if (type() == TentType.OPUS_4200 && mobileCellsVersion == 1) {
+            MobileStageShape.legacyCells(placedFacing == null ? facing() : placedFacing, cleanup);
+            mobileCellsVersion = 3;
+        } else if (type() == TentType.OPUS_4200 && mobileCellsVersion == 2) {
+            MobileStageShape.previousCells(placed == null ? params : placed,
+                    placedFacing == null ? facing() : placedFacing, cleanup);
+            mobileCellsVersion = 3;
+        } else placedShape().forEachCell(cleanup);
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put("Tent", params.save());
+        if (type() == TentType.OPUS_4200) tag.putInt("MobileStageCells", mobileCellsVersion);
         if (placed != null) {
             tag.put("Placed", placed.save());
             tag.putString("PlacedFacing", (placedFacing == null ? facing() : placedFacing).getSerializedName());
@@ -194,8 +208,20 @@ public class TentBlockEntity extends BlockEntity {
             placed = TentParams.load(tag.getCompound("Placed"), type());
             Direction d = Direction.byName(tag.getString("PlacedFacing"));
             placedFacing = d != null && d.getAxis().isHorizontal() ? d : null;
+            if (type() == TentType.OPUS_4200) mobileCellsVersion = Math.max(1, tag.getInt("MobileStageCells"));
         }
         clientVersion++;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (type() == TentType.OPUS_4200 && mobileCellsVersion < 3
+                && level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            WorldRepairQueue.submit(serverLevel, () -> {
+                if (!isRemoved() && level.getBlockEntity(worldPosition) == this && mobileCellsVersion < 3) rebuildCells();
+            });
+        }
     }
 
     private static final ResourceLocation THEATRICAL_PIPE = new ResourceLocation("theatrical", "pipe");

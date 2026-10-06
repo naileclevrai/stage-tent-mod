@@ -14,7 +14,9 @@ public enum TentType {
     /** Stretch tent: free canvas over masts. Width = overhang past the masts, wall height = edge pole height. */
     STRETCH("stretch", new Ranges(2, 10, 0, 0, 1, 4, 16, 1, 5, 3, 8)),
     /** Tensile arena: membrane on two lines of lattice masts. Width = span, length = full length, wall = edge arch. */
-    TENSILE("tensile", new Ranges(24, 90, 24, 160, 2, 12, 40, 3, 14, 8, 24));
+    TENSILE("tensile", new Ranges(24, 90, 24, 160, 2, 12, 40, 3, 14, 8, 24)),
+    /** Ready to use mobile concert stage, shown only in its deployed position. */
+    OPUS_4200("opus_4200", new Ranges(16, 16, 13, 13, 1, 12, 12, 10, 10, 3, 3));
 
     public record Ranges(int minWidth, int maxWidth, int minLength, int maxLength, int lengthStep,
                          int minHeight, int maxHeight, int minWall, int maxWall, int minSpacing, int maxSpacing) {}
@@ -87,6 +89,16 @@ public enum TentType {
                 p.stripes = false; p.guyRopes = true; p.flags = false;
                 p.colorA = Palette.WHITE; p.colorB = Palette.WHITE; p.lining = 0x1C2541;
                 p.stage = true; p.stageDepth = 12; p.stageHeight = 2; p.rigging = true;
+            }
+            case OPUS_4200 -> {
+                p.width = 16; p.length = 13; p.height = 12; p.wallHeight = 10; p.poleSpacing = 3;
+                p.walls = WallMode.CLOSED; p.entrance = Entrance.OPEN_FRONT;
+                p.stripes = false; p.valance = false; p.guyRopes = false; p.flags = false;
+                p.colorA = Palette.WHITE; p.colorB = Palette.WHITE; p.lining = 0x24262A;
+                p.floor = FloorMode.BLACK; p.floorHeight = 4;
+                p.lights = LightMode.OFF;
+                p.rigging = false;
+                p.showPlate = false;
             }
         }
         return p;

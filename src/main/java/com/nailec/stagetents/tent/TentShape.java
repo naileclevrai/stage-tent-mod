@@ -39,6 +39,7 @@ public abstract class TentShape {
             case DJ_ARCH -> new DjArchShape(p, facing);
             case STRETCH -> new StretchShape(p, facing);
             case TENSILE -> new TensileShape(p, facing);
+            case OPUS_4200 -> new MobileStageShape(p, facing);
         };
     }
 

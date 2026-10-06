@@ -49,7 +49,9 @@ final class MeshBuilder implements AutoCloseable {
     static final int INNER = 5;
     /** Thin parts (ropes, wires, bulbs, stakes) that vanish at a distance anyway. */
     static final int DETAIL = 6;
-    static final int LAYERS = 7;
+    /** Individually textured materials of the detailed mobile stage. */
+    static final int MATERIAL = 7;
+    static final int LAYERS = MATERIAL + 12;
 
     /** Below this size (blocks) a tube or box counts as a detail. */
     private static final double DETAIL_SIZE = 0.05;
@@ -168,6 +170,10 @@ final class MeshBuilder implements AutoCloseable {
     void twoSided(double[][] q, int outer, int inner, int layer) {
         int outLayer = layer == SOLID ? OUTER : layer, inLayer = layer == SOLID ? INNER : layer;
         quad(q, outer, outLayer, false);
+        insideFace(q, inner, inLayer);
+    }
+
+    private void insideFace(double[][] q, int inner, int inLayer) {
         double[][] r = new double[4][];
         double fx = 0, fy = 0, fz = 0;
         for (int k = 0; k < 4; k++) {
