@@ -55,6 +55,10 @@ public final class ClientHooks {
         }
     }
 
+    public static void openCannonScreen(BlockPos pos) {
+        Minecraft.getInstance().setScreen(new CannonScreen(pos));
+    }
+
     public static void openDrapeScreen(BlockPos pos) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
