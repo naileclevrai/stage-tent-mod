@@ -49,6 +49,17 @@ def blockstate(name, parts):
         f.write("\n")
 
 
+def water_cannon_states():
+    """Skid only. The barrel is drawn by the block entity so it can pan as well as tilt."""
+    parts = []
+    for f, y in FACINGS.items():
+        base = {"model": "stagetents:block/props/water_cannon_base"}
+        if y:
+            base["y"] = y
+        parts.append({"when": {"facing": f}, "apply": base})
+    return parts
+
+
 def facing_parts(model_name, extra_when=None):
     parts = []
     for f, y in FACINGS.items():
@@ -104,10 +115,16 @@ def main():
                       ("flight_case_xl", 2, 1.62)):
         report[n] = model(props.flight_case(w, top), n, tinted=("paint",))
     report["generator"] = model(props.generator(), "generator", tinted=("paint",))
+    report["power_distro"] = model(props.power_distro(), "power_distro", gui_scale=0.42, gui_offset=(0, -0.15, 0))
     report["site_toilet"] = model(props.site_toilet(False), "site_toilet", tinted=("paint",), gui_scale=0.4, gui_offset=(0, -0.4, 0))
     report["site_toilet_open"] = model(props.site_toilet(True), "site_toilet_open", tinted=("paint",))
     report["site_fence"] = model(props.site_fence(), "site_fence", tinted=("scrim", "hem"))
     report["oriflamme"] = model(props.oriflamme(), "oriflamme", tinted=("cloth", "hem"))
+    report["picnic_table"] = model(props.picnic_table(), "picnic_table", gui_scale=0.22, gui_offset=(-0.4, 0, 0))
+    report["water_cannon"] = model(props.water_cannon(), "water_cannon", tinted=("paint",), gui_scale=0.28, gui_offset=(-0.35, -0.15, 0))
+    report["water_cannon_base"] = model(props.water_cannon_base(), "water_cannon_base", tinted=("paint",))
+    for i, elev in enumerate(range(20, 75, 5)):
+        report["water_cannon_barrel_%d" % i] = model(props.water_cannon_aimed(elev), "water_cannon_barrel_%d" % i, tinted=("paint",))
 
     # Models of the earlier fence ends are gone.
     for n in ("site_fence_end_left", "site_fence_end_right", "site_fence_joint", "site_fence_end"):
@@ -118,8 +135,8 @@ def main():
 
     # The connecting parts are not items.
     extra_items = ["guide_rail_corner", "site_toilet_open", "site_fence_end_left", "site_fence_end_right", "site_fence_joint", "site_fence_end",
-                   "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
-                   "stage_ramp_end_left", "stage_ramp_end_right"]
+                   "water_cannon_base", "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
+                   "stage_ramp_end_left", "stage_ramp_end_right"] + ["water_cannon_barrel_%d" % i for i in range(11)]
     for level in range(1, 5):
         extra_items += [f"stage_deck_{level}_end_left", f"stage_deck_{level}_end_right"]
         if level < 4:
@@ -170,9 +187,12 @@ def main():
     for n in ("flight_case", "flight_case_trunk", "flight_case_tall", "flight_case_xl"):
         blockstate(n, facing_parts(n))
     blockstate("generator", facing_parts("generator"))
+    blockstate("power_distro", facing_parts("power_distro"))
     blockstate("site_toilet", facing_parts("site_toilet", {"open": "false"}) + facing_parts("site_toilet_open", {"open": "true"}))
     blockstate("site_fence", facing_parts("site_fence"))
     blockstate("oriflamme", facing_parts("oriflamme"))
+    blockstate("picnic_table", facing_parts("picnic_table"))
+    blockstate("water_cannon", water_cannon_states())
     # The inventory icon is the full-height deck; the height variants are not items.
     deck_item = os.path.join(ASSETS, "models", "item", "stage_deck_4.json")
     deck_icon = os.path.join(ASSETS, "models", "item", "stage_deck.json")
@@ -181,7 +201,9 @@ def main():
     # Stage and site props show a pixel-art icon in the inventory instead of the 3D model.
     print("icons:", ", ".join(icons.write_all(ASSETS)))
     # Invisible collision cells of multi-block props.
-    forms = ["full", "panel_x", "panel_z", "wall_x", "wall_z", "pole"]
+    forms = ["full", "panel_x", "panel_z", "wall_x", "wall_z", "pole", "table_x", "table_z",
+             "cannon_side_n", "cannon_side_e", "cannon_side_s", "cannon_side_w",
+             "cannon_nose_n", "cannon_nose_e", "cannon_nose_s", "cannon_nose_w"]
     with open(os.path.join(ASSETS, "blockstates", "prop_part.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump({"variants": {f"form={form}": {"model": "stagetents:block/prop_part"} for form in forms}}, f, indent=2)
         f.write("\n")

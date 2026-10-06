@@ -1387,3 +1387,275 @@ def oriflamme():
     m.tube("black", [(c[0], c[1] - 0.02, c[2]), (0.75, 0.70, 0.5), (0.52, 0.64, 0.5)], 0.004, segs=4)
     k = FLAG_SCALE
     return m.transformed(lambda p: (0.5 + (p[0] - 0.5) * k, p[1] * k, 0.5 + (p[2] - 0.5) * k))
+
+
+def _yz_board(m, mat, x, z0, y0, z1, y1, thick, wide):
+    """A plank standing in the YZ plane: `thick` along the table, `wide` across its face."""
+    dz, dy = z1 - z0, y1 - y0
+    length = math.hypot(dz, dy) or 1.0
+    pz, py = -dy / length, dz / length
+    board = Mesh()
+    board.box(mat, x - thick / 2, -wide / 2, 0.0, x + thick / 2, wide / 2, length)
+
+    def xf(p):
+        return (p[0], y0 + p[2] * dy / length + p[1] * py, z0 + p[2] * dz / length + p[1] * pz)
+
+    m.merge(board, xf)
+
+
+def picnic_table():
+    """Two-metre pine picnic table: plank top, two plank benches, A-frames and the tie beams of the photos."""
+    m = Mesh()
+    top, frame = "wood", "wood_dark"
+    # Tabletop: five boards, a little longer than the frames, with a small gap so the planks read separately.
+    z0, z1, gap, n = 0.22, 0.78, 0.008, 5
+    w = (z1 - z0 - gap * (n - 1)) / n
+    for i in range(n):
+        a = z0 + i * (w + gap)
+        m.bevel_box(top, 0.05, 0.714, a, 1.95, 0.752, a + w, 0.007)
+    # Benches are shorter than the top and sit outside it, one on each long side.
+    benches = ((-0.10, 0.14), (0.86, 1.10))
+    for a, b in benches:
+        bw = (b - a - gap * 2) / 3
+        for i in range(3):
+            u = a + i * (bw + gap)
+            m.bevel_box(top, 0.16, 0.418, u, 1.84, 0.450, u + bw, 0.006)
+    for x in (0.28, 1.72):
+        # Splayed legs, a low tie and the seat rail that carries the benches.
+        _yz_board(m, frame, x, -0.02, 0.02, 0.46, 0.70, 0.045, 0.09)
+        _yz_board(m, frame, x, 1.02, 0.02, 0.54, 0.70, 0.045, 0.09)
+        m.bevel_box(frame, x - 0.022, 0.11, 0.10, x + 0.022, 0.17, 0.90, 0.004)
+        m.bevel_box(frame, x - 0.022, 0.36, -0.02, x + 0.022, 0.418, 1.02, 0.004)
+        for z in (0.02, 0.98):
+            m.box("black", x - 0.012, 0.40, z - 0.012, x + 0.012, 0.424, z + 0.012)
+    # Beams running the length: under the top, and under each bench.
+    m.bevel_box(frame, 0.28, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
+    m.bevel_box(frame, 0.28, 0.385, -0.02, 1.72, 0.418, 0.06, 0.004)
+    m.bevel_box(frame, 0.28, 0.385, 0.94, 1.72, 0.418, 1.02, 0.004)
+    # Half again as long, wide and tall: about three metres, benches included.
+    return m.transformed(lambda p: (p[0] * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+
+
+# Water cannon, facing north (the jet leaves towards -z). The barrel is built on Y, then pitched up.
+# Pivot sits in the main block so the whole mouth stays in that column and the block in front of it.
+CANNON_PIVOT = (0.5, 1.08, 0.37)
+CANNON_PITCH = -36.0
+CANNON_NOZZLE = 0.84
+
+
+def _inward(mesh, mat):
+    """Flip one material so it is seen from inside (the bore of the barrel)."""
+    flipped = []
+    for (a, na, ua), (b, nb, ub), (c, nc, uc) in mesh.groups.get(mat, []):
+        flipped.append((
+            (a, (-na[0], -na[1], -na[2]), ua),
+            (c, (-nc[0], -nc[1], -nc[2]), uc),
+            (b, (-nb[0], -nb[1], -nb[2]), ub),
+        ))
+    mesh.groups[mat] = flipped
+
+
+def _cannon_wheel(m, x, z, axle_to):
+    """Solid road wheel: closed sidewalls and a rim, axle along X."""
+    w = Mesh()
+    w.lathe("rubber", [
+        (0.055, -0.064), (0.13, -0.060), (0.175, -0.040), (0.192, -0.012),
+        (0.192, 0.012), (0.175, 0.040), (0.13, 0.060), (0.055, 0.064),
+    ], cx=0, cz=0, segs=20)
+    w.disc("rubber", 0.13, -0.058, cx=0, cz=0, segs=20, up=False)
+    w.disc("rubber", 0.13, 0.058, cx=0, cz=0, segs=20, up=True)
+    w.lathe("galvanised", [
+        (0.040, -0.042), (0.118, -0.034), (0.130, -0.010),
+        (0.130, 0.010), (0.118, 0.034), (0.040, 0.042),
+    ], cx=0, cz=0, segs=16)
+    w.disc("galvanised", 0.115, -0.028, cx=0, cz=0, segs=16, up=False)
+    w.disc("galvanised", 0.115, 0.028, cx=0, cz=0, segs=16, up=True)
+    w.cylinder("black", 0.034, -0.048, 0.048, cx=0, cz=0, segs=10)
+    m.merge(w.transformed(chain(rot_z(90, 0, 0), translate(x, 0.192, z))))
+    m.tube("galvanised", [(x, 0.192, z), (axle_to, 0.192, z)], 0.022, segs=8, caps=False)
+
+
+def _cannon_barrel():
+    """Barrel along +Y: fan at the back (negative Y), mouth and spray ring at the front."""
+    b = Mesh()
+    b.lathe("paint", [
+        (0.30, -0.58), (0.36, -0.54), (0.40, -0.48), (0.405, -0.40),
+        (0.348, -0.355), (0.322, -0.28), (0.312, -0.02), (0.318, 0.22),
+        (0.340, 0.42), (0.390, 0.58), (0.440, 0.70), (0.470, 0.78),
+        (0.485, 0.82), (0.440, 0.855), (0.390, 0.835),
+    ], cx=0, cz=0, segs=32)
+    # Bands and the stainless lip the nozzles sit on.
+    b.lathe("chrome", [(0.334, -0.01), (0.352, 0.012), (0.352, 0.09), (0.334, 0.112)], cx=0, cz=0, segs=32)
+    b.lathe("white", [(0.328, 0.16), (0.338, 0.175), (0.338, 0.235), (0.328, 0.25)], cx=0, cz=0, segs=32)
+    b.lathe("chrome", [
+        (0.400, 0.74), (0.470, 0.765), (0.510, 0.805), (0.518, 0.835),
+        (0.490, 0.868), (0.415, 0.875),
+    ], cx=0, cz=0, segs=32)
+    # Intake: grille, hub, blades.
+    b.disc("fan", 0.29, -0.575, cx=0, cz=0, segs=28, up=False)
+    b.lathe("chrome", [(0.30, -0.60), (0.345, -0.575), (0.345, -0.545), (0.30, -0.53)], cx=0, cz=0, segs=28)
+    b.cylinder("galvanised", 0.055, -0.595, -0.545, cx=0, cz=0, segs=12)
+    for k in range(7):
+        blade = Mesh()
+        blade.box("black", 0.06, -0.568, -0.006, 0.27, -0.552, 0.006)
+        b.merge(blade.transformed(rot_y(k * (360 / 7), 0, 0)))
+    # Bore closed onto the grille: the liner flares out until it meets the fan, so no ring of sky between them.
+    b.disc("fan", 0.40, -0.47, cx=0, cz=0, segs=32, up=True)
+    liner = Mesh()
+    liner.lathe("white", [
+        (0.39, -0.455), (0.36, -0.20), (0.30, 0.15), (0.32, 0.48), (0.40, 0.74), (0.44, 0.84),
+    ], cx=0, cz=0, segs=32)
+    _inward(liner, "white")
+    b.merge(liner)
+    for k in range(6):
+        vane = Mesh()
+        vane.box("white", 0.04, 0.20, -0.012, 0.20, 0.72, 0.012)
+        b.merge(vane.transformed(rot_y(k * 60 + 8, 0, 0)))
+    return b
+
+
+def _cannon_base():
+    """Skid, wheels, pedestal and control box. The barrel is a separate mesh so its tilt can change."""
+    m = Mesh()
+    # Skid: galvanised skirt, diamond-plate tank, filler, feet and the two rear wheels.
+    m.box("galvanised", 0.22, 0.05, 0.04, 1.58, 0.14, 0.92)
+    m.box("tread", 0.18, 0.14, 0.02, 1.62, 0.36, 0.94)
+    m.cylinder("black", 0.040, 0.36, 0.42, cx=1.28, cz=0.28, segs=12)
+    m.cylinder("chrome", 0.026, 0.42, 0.455, cx=1.28, cz=0.28, segs=12)
+    for x in (0.34, 1.42):
+        m.box("galvanised", x - 0.05, 0.0, 0.10, x + 0.05, 0.07, 0.22)
+        m.box("rubber", x - 0.07, 0.0, 0.08, x + 0.07, 0.025, 0.24)
+    _cannon_wheel(m, 0.10, 0.74, 0.36)
+    _cannon_wheel(m, 1.70, 0.74, 1.40)
+    # Pedestal and the yoke the barrel pivots in. The barrel is centred on the main block.
+    m.cylinder("galvanised", 0.20, 0.36, 0.43, cx=0.5, cz=0.38, segs=20)
+    m.cylinder("galvanised", 0.100, 0.43, 0.98, cx=0.5, cz=0.38, segs=16)
+    m.box("galvanised", 0.10, 0.94, 0.24, 0.90, 1.02, 0.52)
+    for x in (0.08, 0.86):
+        m.box("galvanised", x, 0.90, 0.20, x + 0.06, 1.26, 0.52)
+    px, py, pz = CANNON_PIVOT
+    m.tube("chrome", [(0.06, py, pz), (0.94, py, pz)], 0.038, segs=12)
+    m.cylinder("chrome", 0.038, 0.36, 0.45, cx=1.05, cz=0.55, segs=10)
+    # Control box on the right of the deck, buttons facing out.
+    m.bevel_box("grey", 1.18, 0.36, 0.48, 1.56, 0.76, 0.86, 0.008)
+    m.box("black", 1.56, 0.46, 0.54, 1.572, 0.70, 0.80, faces="e")
+    m.box("green", 1.56, 0.60, 0.72, 1.586, 0.66, 0.78, faces="e")
+    m.box("red", 1.56, 0.50, 0.58, 1.592, 0.56, 0.64, faces="e")
+    m.tube("yellow", [(1.38, 0.76, 0.66), (1.38, 0.82, 0.66)], 0.012, segs=6)
+    return m
+
+
+def water_cannon_aimed(elevation):
+    """Barrel, ram and feed hose. ``elevation`` is degrees above the horizontal (0 lies flat, 90 points up)."""
+    tilt = elevation - 90.0
+    xf = chain(rot_x(tilt, 0, 0), translate(*CANNON_PIVOT))
+    m = _cannon_barrel().transformed(xf)
+    lug = xf((0.0, 0.18, -0.36))
+    foot = (0.5, 0.46, 0.10)
+    mid = tuple((a + b) * 0.5 for a, b in zip(foot, lug))
+    m.tube("grey", [foot, mid], 0.032, segs=8)
+    m.tube("chrome", [mid, lug], 0.016, segs=8)
+    m.tube("chrome", [(0.42, 0.46, 0.10), (0.58, 0.46, 0.10)], 0.012, segs=6)
+    inlet = xf((-0.34, -0.08, 0.0))
+    m.tube("black", [(1.05, 0.45, 0.55), (1.05, 0.62, 0.48), (0.78, 0.88, 0.42), inlet], 0.018, segs=7)
+    return m
+
+
+def water_cannon_base():
+    return _cannon_base()
+
+
+def water_cannon():
+    """Whole cannon at the default elevation, used for the item."""
+    m = _cannon_base()
+    m.merge(water_cannon_aimed(55))
+    return m
+
+
+def _distro_outlet(m, x, y, z, mat, r):
+    """CEE outlet on a face looking toward -z: square flange, closed lid, blank label. No brand."""
+    flange = r + 0.014
+    m.box(mat, x - flange, y - flange, z - 0.010, x + flange, y + flange, z, faces="nsewd")
+    cap = Mesh()
+    cap.cylinder(mat, r * 0.82, -0.016, 0.0, cx=0, cz=0, segs=12, caps=False)
+    cap.disc(mat, r * 0.82, 0.0, cx=0, cz=0, segs=12, up=False)
+    cap.disc(mat, r * 0.78, -0.016, cx=0, cz=0, segs=12, up=True)
+    cap.box("white", -r * 0.32, -0.022, r * 0.08, r * 0.32, -0.012, r * 0.48, faces="u")
+    cap.box(mat, -r * 0.55, -0.006, r * 0.72, r * 0.55, 0.012, r * 1.05, faces="nsewud")
+    m.merge(cap.transformed(chain(rot_x(-90, 0, 0), translate(x, y, z - 0.010))))
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            m.box("grey", x + sx * (flange - 0.008) - 0.004, y + sy * (flange - 0.008) - 0.004, z - 0.014,
+                  x + sx * (flange - 0.008) + 0.004, y + sy * (flange - 0.008) + 0.004, z - 0.010, faces="n")
+
+
+def _distro_plug(m, x, y, z):
+    """5-pin inlet plug lying on the coiled lead. Red body, grey collar, plain pins."""
+    p = Mesh()
+    p.cylinder("grey", 0.026, 0.0, 0.04, cx=0, cz=0, segs=12)
+    p.cylinder("red", 0.042, 0.035, 0.095, cx=0, cz=0, segs=14)
+    p.lathe("red", [(0.040, 0.095), (0.044, 0.10), (0.044, 0.112), (0.030, 0.122)], cx=0, cz=0, segs=14)
+    p.disc("red", 0.028, 0.122, cx=0, cz=0, segs=14, up=True)
+    for k in range(5):
+        a = k * math.tau / 5 - 0.4
+        p.cylinder("chrome", 0.0045, 0.122, 0.145, cx=math.cos(a) * 0.016, cz=math.sin(a) * 0.016, segs=5)
+    m.merge(p.transformed(chain(rot_x(-58, 0, 0), rot_y(-25, 0, 0), translate(x, y, z))))
+
+
+def power_distro():
+    """Portable stage power distro. Black moulded case, two large outlets and twelve small ones in the front bay,
+    breakers on the back, input lead coiled on the lid. Deliberately unbranded."""
+    m = Mesh()
+    x0, x1, z0, z1, top = 0.06, 0.94, 0.12, 0.90, 0.70
+    # Body, then a shallow lip. The outlets sit just behind that lip, not at the back of a deep bay.
+    m.bevel_box("black", x0, 0.02, 0.28, x1, top, z1, 0.014)
+    m.bevel_box("black", x0, 0.08, z0, x0 + 0.07, top, 0.30, 0.008)
+    m.bevel_box("black", x1 - 0.07, 0.08, z0, x1, top, 0.30, 0.008)
+    m.bevel_box("black", x0, top - 0.07, z0, x1, top, 0.30, 0.008)
+    m.bevel_box("black", x0, 0.02, z0, x1, 0.09, z1, 0.008)
+    for fx, fz in ((0.16, 0.22), (0.84, 0.22), (0.16, 0.80), (0.84, 0.80)):
+        m.box("rubber", fx - 0.045, 0.0, fz - 0.04, fx + 0.045, 0.028, fz + 0.04)
+    pz = 0.22
+    m.box("black", 0.15, 0.14, pz, 0.85, 0.60, 0.30)
+    _distro_outlet(m, 0.26, 0.47, pz, "red", 0.055)
+    _distro_outlet(m, 0.26, 0.28, pz, "red", 0.055)
+    for y in (0.50, 0.38, 0.26):
+        for col in range(4):
+            _distro_outlet(m, 0.42 + col * 0.105, y, pz, "blue", 0.036)
+    # Grip slots on the sides of the body.
+    m.box("grey", x0 - 0.001, 0.40, 0.46, x0 + 0.018, 0.56, 0.70, faces="w")
+    m.box("black", x0 + 0.008, 0.44, 0.50, x0 + 0.026, 0.52, 0.66, faces="w")
+    m.box("grey", x1 - 0.018, 0.40, 0.46, x1 + 0.001, 0.56, 0.70, faces="e")
+    m.box("black", x1 - 0.026, 0.44, 0.50, x1 - 0.008, 0.52, 0.66, faces="e")
+    # Breakers on the back: one long row, a test button, a shorter row, the cable gland.
+    m.box("grey", 0.18, 0.40, z1, 0.70, 0.58, z1 + 0.008)
+    m.box("white", 0.70, 0.40, z1, 0.82, 0.58, z1 + 0.008)
+    for i in range(9):
+        x = 0.20 + i * 0.054
+        m.box("white", x, 0.48, z1 + 0.008, x + 0.040, 0.55, z1 + 0.016)
+        m.box("grey", x + 0.012, 0.50, z1 + 0.016, x + 0.028, 0.545, z1 + 0.022)
+        m.box("red", x + 0.014, 0.44, z1 + 0.010, x + 0.026, 0.455, z1 + 0.016)
+    m.tube("yellow", [(0.76, 0.50, z1 + 0.008), (0.76, 0.50, z1 + 0.026)], 0.016, segs=8)
+    m.box("black", 0.735, 0.445, z1 + 0.010, 0.785, 0.458, z1 + 0.018)
+    m.box("grey", 0.22, 0.22, z1, 0.52, 0.36, z1 + 0.008)
+    for i in range(4):
+        x = 0.24 + i * 0.065
+        m.box("white", x, 0.28, z1 + 0.008, x + 0.046, 0.34, z1 + 0.016)
+        m.box("grey", x + 0.014, 0.30, z1 + 0.016, x + 0.032, 0.335, z1 + 0.022)
+    m.tube("black", [(0.70, 0.28, z1 - 0.01), (0.70, 0.28, z1 + 0.04)], 0.026, segs=10, caps=False)
+    m.tube("grey", [(0.70, 0.28, z1 + 0.028), (0.70, 0.28, z1 + 0.05)], 0.016, segs=8)
+    # Input lead: out of the gland, up the back, coiled on the lid, ending at the plug.
+    cx, cz, cy = 0.50, 0.52, 0.735
+    pts = [(0.70, 0.28, z1 + 0.045), (0.70, 0.52, z1 + 0.07), (0.70, top + 0.02, z1 + 0.02), (0.62, cy, 0.70)]
+    steps = 40
+    for i in range(steps + 1):
+        t = i / steps
+        a = t * math.tau * 2.15 + 0.6
+        rr = 0.20 * (1.0 - 0.62 * t)
+        pts.append((cx + math.cos(a) * rr, cy + 0.006 * math.sin(a * 3), cz + math.sin(a) * rr * 0.75))
+    pts += [(0.38, 0.76, 0.40), (0.34, 0.78, 0.36)]
+    m.tube("black", pts, 0.011, segs=6, caps=False)
+    m.box("red", 0.55, 0.74, 0.60, 0.64, 0.755, 0.615)
+    m.box("red", 0.55, 0.755, 0.58, 0.64, 0.77, 0.64)
+    _distro_plug(m, 0.34, 0.78, 0.36)
+    return m

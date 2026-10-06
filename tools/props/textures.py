@@ -209,6 +209,25 @@ def make_all(folder):
         return (_clamp(58 + r.uniform(-3, 3)), _clamp(60 + r.uniform(-3, 3)), _clamp(66 + r.uniform(-3, 3)), 255)
     tex["gen_panel"] = _img(gen_panel, 35)
 
+    # Rear intake of the water cannon: a ring, a hub and radial blades.
+    def fan(x, y, r):
+        dx, dy = x - 15.5, y - 15.5
+        d = math.hypot(dx, dy)
+        if d > 15.2:
+            return (28, 30, 34, 255)
+        ang = math.atan2(dy, dx)
+        blade = (ang / (math.tau / 7)) % 1.0
+        if d > 13.5:
+            return (176, 180, 186, 255)
+        if d < 3.3:
+            return (148, 152, 158, 255)
+        if blade < 0.20:
+            return _grey(78 + 50 * (1 - abs(blade - 0.10) / 0.10))
+        if abs(d - 6.6) < 0.55 or abs(d - 10.4) < 0.5:
+            return (96, 100, 106, 255)
+        return (20, 22, 26, 255)
+    tex["fan"] = _img(fan, 37)
+
     # Card in a label holder / rating plate.
     def label(x, y, r):
         if x < 1 or y < 1 or x > 30 or y > 30:
