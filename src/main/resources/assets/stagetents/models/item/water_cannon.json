@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/water_cannon",
+    "layer1": "stagetents:item/water_cannon_dye"
+  }
+}
