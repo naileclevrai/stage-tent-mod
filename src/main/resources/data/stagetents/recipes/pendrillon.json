@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "BB",
+    "BB",
+    "II"
+  ],
+  "key": {
+    "B": { "item": "minecraft:black_wool" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": { "item": "stagetents:pendrillon", "count": 2 }
+}

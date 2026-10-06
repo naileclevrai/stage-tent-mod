@@ -1,0 +1,15 @@
+{
+  "textures": {
+    "particle": "minecraft:black_wool"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 5],
+      "to": [16, 16, 11],
+      "faces": {
+        "north": { "texture": "#particle" },
+        "south": { "texture": "#particle" }
+      }
+    }
+  ]
+}

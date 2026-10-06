@@ -1,0 +1,5 @@
+{
+  "multipart": [
+    { "apply": { "model": "stagetents:block/pendrillon" } }
+  ]
+}

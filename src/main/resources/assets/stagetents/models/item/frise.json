@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/frise",
+    "layer1": "stagetents:item/frise_dye"
+  }
+}
