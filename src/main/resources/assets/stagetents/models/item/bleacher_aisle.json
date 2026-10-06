@@ -1,7 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "stagetents:item/bleacher_aisle",
-    "layer1": "stagetents:item/bleacher_aisle_dye"
+    "layer0": "stagetents:item/bleacher_aisle"
   }
 }

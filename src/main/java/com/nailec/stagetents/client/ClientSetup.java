@@ -48,7 +48,7 @@ public final class ClientSetup {
                 ModRegistry.CYCLORAMA.get(), ModRegistry.FLIGHT_CASE.get(), ModRegistry.FLIGHT_CASE_TRUNK.get(),
                 ModRegistry.FLIGHT_CASE_TALL.get(), ModRegistry.FLIGHT_CASE_XL.get(), ModRegistry.GENERATOR.get(),
                 ModRegistry.SITE_TOILET.get(), ModRegistry.SITE_FENCE.get(), ModRegistry.ORIFLAMME.get(),
-                ModRegistry.WATER_CANNON.get());
+                ModRegistry.WATER_CANNON.get(), ModRegistry.POWER_RACK.get());
     }
 
     /** Pixel-art icons of the stage and site props: layer 1 is the dyed part, shown in the block's default colour. */
@@ -62,7 +62,7 @@ public final class ClientSetup {
                 ModRegistry.ROUND_TABLE_ITEM.get(), ModRegistry.STANDING_TABLE_ITEM.get(), ModRegistry.BANQUET_CHAIR_ITEM.get(),
                 ModRegistry.FOLDING_CHAIR_ITEM.get(), ModRegistry.BAR_STOOL_ITEM.get(), ModRegistry.BAR_COUNTER_ITEM.get(),
                 ModRegistry.BLEACHER_ITEM.get(), ModRegistry.BLEACHER_AISLE_ITEM.get(), ModRegistry.STANCHION_ITEM.get(),
-                ModRegistry.WATER_CANNON_ITEM.get()};
+                ModRegistry.WATER_CANNON_ITEM.get(), ModRegistry.POWER_RACK_ITEM.get()};
         event.register((stack, tint) -> {
             if (tint != 1 || !(stack.getItem() instanceof BlockItem block)) return -1;
             return dyeTint(block.getBlock().defaultBlockState());

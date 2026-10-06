@@ -1659,3 +1659,397 @@ def power_distro():
     m.box("red", 0.55, 0.755, 0.58, 0.64, 0.77, 0.64)
     _distro_plug(m, 0.34, 0.78, 0.36)
     return m
+
+
+def _rack_case(m, x0, x1, y0, y1, z0, z1):
+    """Flight-case shell with no grabs and no latches. The front and back stay open for the fascias."""
+    e = 0.030
+    m.box("case", x0 + e, y0 + e, z0 + e, x1 - e, y1 - e, z1 - e)
+    for y in (y0, y1 - e):
+        for z in (z0, z1 - e):
+            m.bevel_box("metal", x0 + e, y, z, x1 - e, y + e, z + e, 0.003)
+    for x in (x0, x1 - e):
+        for z in (z0, z1 - e):
+            m.bevel_box("metal", x, y0 + e, z, x + e, y1 - e, z + e, 0.003)
+    for x in (x0, x1 - e):
+        for y in (y0, y1 - e):
+            m.bevel_box("metal", x, y, z0 + e, x + e, y + e, z1 - e, 0.003)
+    for x in (x0 + 0.014, x1 - 0.014):
+        for y in (y0 + 0.014, y1 - 0.014):
+            for z in (z0 + 0.014, z1 - 0.014):
+                m.sphere("chrome", 0.030, x, y, z, segs=10, rings=6)
+    # Dyeable band on the cheeks and the lid only, so it never crosses a fascia.
+    m.box("paint", x0 + 0.001, y1 - 0.090, z0 + e + 0.01, x0 + e - 0.001, y1 - e - 0.012, z1 - e - 0.01, faces="w")
+    m.box("paint", x1 - e + 0.001, y1 - 0.090, z0 + e + 0.01, x1 - 0.001, y1 - e - 0.012, z1 - e - 0.01, faces="e")
+    m.box("paint", x0 + 0.10, y1 - 0.001, z0 + 0.10, x1 - 0.10, y1 + 0.004, z0 + 0.16, faces="u")
+    # Rivets on the vertical corner extrusions, front and back.
+    for x in (x0 + e * 0.42, x1 - e * 0.42):
+        for z, face in ((z0 - 0.001, "n"), (z1 + 0.001, "s")):
+            for i in range(5):
+                y = y0 + 0.08 + (y1 - y0 - 0.16) * i / 4
+                dz = -0.005 if face == "n" else 0.005
+                m.box("chrome", x - 0.0035, y - 0.0035, min(z, z + dz), x + 0.0035, y + 0.0035, max(z, z + dz), faces=face)
+
+
+def _out_front(part, x, y, z):
+    """Local +Y sticks out of the front face, toward -z. Origin sits on the panel."""
+    return part.transformed(chain(rot_x(-90, 0, 0), translate(x, y, z)))
+
+
+def _cee_cap(m, x, y, z, color, r, tag=False, mark=False):
+    """Closed CEE cap proud of a front panel. Optional blank yellow plate above it."""
+    cap = Mesh()
+    cap.cylinder(color, r * 0.96, 0.0, 0.008, cx=0, cz=0, segs=12, caps=False)
+    cap.cylinder("black", r * 0.99, -0.003, 0.002, cx=0, cz=0, segs=12, caps=False)
+    cap.cylinder(color, r * 0.78, 0.006, 0.018, cx=0, cz=0, segs=12, caps=False)
+    cap.disc(color, r * 0.78, 0.018, cx=0, cz=0, segs=12, up=True)
+    cap.cylinder("grey", r * 0.11, 0.008, 0.016, cx=0, cz=r * 0.70, segs=6)
+    cap.box(color, -r * 0.20, 0.010, -r * 1.05, r * 0.20, 0.020, -r * 0.68)
+    cap.box("grey", -r * 0.09, 0.014, -r * 1.16, r * 0.09, 0.022, -r * 0.96)
+    if mark:
+        cap.box("white", -r * 0.26, 0.017, -r * 0.22, r * 0.26, 0.023, r * 0.22)
+    m.merge(_out_front(cap, x, y, z))
+    if tag:
+        tw, th = r * 0.92, max(0.012, r * 0.36)
+        top = y + r * 0.92
+        m.box("yellow", x - tw, top, z - 0.014, x + tw, top + th, z - 0.005)
+
+
+def _earth_pip(m, x, y, z):
+    """Small green/yellow earth sticker, no symbol drawn on it."""
+    p = Mesh()
+    p.cylinder("green", 0.013, 0.0, 0.005, cx=0, cz=0, segs=10)
+    p.box("yellow", -0.004, 0.003, -0.009, 0.004, 0.008, 0.009)
+    m.merge(_out_front(p, x, y, z))
+
+
+def _inlet(m, x, y, z):
+    """63 A 5-pin inlet: grey flange, red bowl, lid flipped up, pins toward the viewer."""
+    fl = 0.056
+    m.box("grey", x - fl, y - fl, z - 0.016, x + fl, y + fl, z - 0.003)
+    m.box("black", x - fl + 0.007, y - fl + 0.007, z - 0.018, x + fl - 0.007, y + fl - 0.007, z - 0.014, faces="n")
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            bx, by = x + sx * (fl - 0.012), y + sy * (fl - 0.012)
+            m.box("chrome", bx - 0.0045, by - 0.0045, z - 0.022, bx + 0.0045, by + 0.0045, z - 0.015, faces="nsew")
+    bowl = Mesh()
+    bowl.cylinder("red", 0.040, 0.0, 0.014, cx=0, cz=0, segs=14, caps=False)
+    bowl.disc("red", 0.040, 0.0, cx=0, cz=0, segs=14, up=False)
+    bowl.cylinder("black", 0.028, 0.008, 0.018, cx=0, cz=0, segs=14, caps=False)
+    bowl.disc("black", 0.026, 0.018, cx=0, cz=0, segs=14, up=True)
+    # Earth at the bottom, thicker and longer. Four smaller pins around the clock.
+    for ang, rad, pr, plen in (
+        (-math.pi / 2, 0.015, 0.0070, 0.024),
+        (math.radians(-18), 0.014, 0.0044, 0.017),
+        (math.radians(54), 0.014, 0.0044, 0.017),
+        (math.radians(126), 0.014, 0.0044, 0.017),
+        (math.radians(198), 0.014, 0.0044, 0.017),
+    ):
+        bowl.cylinder("chrome", pr, 0.016, 0.016 + plen, cx=math.cos(ang) * rad, cz=math.sin(ang) * rad, segs=6)
+    m.merge(_out_front(bowl, x, y, z - 0.014))
+    m.box("grey", x - 0.030, y + fl - 0.012, z - 0.018, x + 0.030, y + fl + 0.004, z - 0.006)
+    lid = Mesh()
+    lid.box("red", -0.044, 0.004, -0.020, 0.044, 0.070, -0.009)
+    lid.box("black", -0.028, 0.012, -0.023, 0.028, 0.058, -0.020)
+    lid.box("grey", -0.010, 0.052, -0.026, 0.010, 0.068, -0.020)
+    m.merge(lid.transformed(chain(rot_x(18, 0, 0), translate(x, y + fl - 0.006, z - 0.006))))
+    _earth_pip(m, x + fl + 0.022, y + 0.016, z)
+
+
+def _mcb_row(m, x0, x1, y, z, groups=(4, 4, 4)):
+    """One DIN strip on the back face: a ticked legend, then grouped white breakers."""
+    h = 0.062
+    gap, split = 0.0032, 0.014
+    n = sum(groups)
+    inner = (x1 - x0) - split * (len(groups) - 1)
+    w = (inner - gap * (n - len(groups))) / n
+    m.box("grey", x0 - 0.006, y - 0.004, z, x1 + 0.006, y + h + 0.002, z + 0.006)
+    m.box("white", x0, y + h + 0.006, z + 0.005, x1, y + h + 0.020, z + 0.012)
+    x = x0
+    i = 0
+    for gi, count in enumerate(groups):
+        if gi:
+            x += split
+        for k in range(count):
+            on = (i % 5) != 3
+            m.box("white", x, y, z + 0.006, x + w, y + h, z + 0.016)
+            m.box("grey", x + 0.001, y + h - 0.008, z + 0.015, x + w - 0.001, y + h - 0.005, z + 0.018, faces="s")
+            m.box("black", x + w * 0.18, y + 0.016, z + 0.015, x + w * 0.82, y + h - 0.014, z + 0.018, faces="s")
+            ly0, ly1 = (y + 0.034, y + 0.052) if on else (y + 0.012, y + 0.030)
+            m.box("grey", x + w * 0.22, ly0, z + 0.017, x + w * 0.78, ly1, z + 0.026)
+            m.box("red", x + w * 0.28, ly1 - 0.007, z + 0.024, x + w * 0.72, ly1, z + 0.030, faces="s")
+            # A tick on the legend, lined up with this module. No writing.
+            tx = x + w * 0.35
+            m.box("grey", tx, y + h + 0.009, z + 0.012, tx + w * 0.30, y + h + 0.013, z + 0.015, faces="s")
+            x += w
+            if k != count - 1:
+                x += gap
+            i += 1
+
+
+def _green_button(m, x, y, z):
+    b = Mesh()
+    b.cylinder("chrome", 0.030, 0.0, 0.004, cx=0, cz=0, segs=14)
+    b.cylinder("grey", 0.024, 0.002, 0.007, cx=0, cz=0, segs=14)
+    b.cylinder("green", 0.018, 0.005, 0.014, cx=0, cz=0, segs=14)
+    b.disc("green", 0.012, 0.015, cx=0, cz=0, segs=12, up=True)
+    b.cylinder("white", 0.004, 0.014, 0.017, cx=0, cz=0, segs=8)
+    m.merge(b.transformed(chain(rot_x(90, 0, 0), translate(x, y, z))))
+
+
+def _rating_plate(m, x, y, z):
+    """Blank white plate with ruling lines and four screws. No logo, no words."""
+    w, h = 0.155, 0.175
+    m.box("grey", x, y, z, x + w, y + h, z + 0.005)
+    m.box("white", x + 0.008, y + 0.008, z + 0.005, x + w - 0.008, y + h - 0.008, z + 0.011)
+    for i in range(6):
+        yy = y + 0.026 + i * 0.022
+        m.box("grey", x + 0.020, yy, z + 0.011, x + w - 0.020, yy + 0.0035, z + 0.014, faces="s")
+    for sx in (x + 0.012, x + w - 0.012):
+        for sy in (y + 0.012, y + h - 0.012):
+            m.box("chrome", sx - 0.004, sy - 0.004, z + 0.010, sx + 0.004, sy + 0.004, z + 0.016, faces="s")
+
+
+def _blue_caster(m, x, z):
+    """Swivel caster parked so the blue hub faces the front, grey tyre around it."""
+    m.box("metal", x - 0.022, 0.116, z - 0.020, x + 0.022, 0.150, z + 0.020)
+    m.box("metal", x - 0.034, 0.100, z - 0.012, x + 0.034, 0.118, z + 0.012)
+    w = Mesh()
+    w.cylinder("blue", 0.048, -0.007, 0.007, cx=0, cz=0, segs=16, caps=True)
+    w.lathe("grey", [(0.046, -0.009), (0.057, -0.003), (0.057, 0.003), (0.046, 0.009)], cx=0, cz=0, segs=16)
+    w.cylinder("chrome", 0.014, -0.010, 0.010, cx=0, cz=0, segs=8)
+    m.merge(w.transformed(chain(rot_x(90, 0, 0), translate(x, 0.060, z))))
+
+
+def _fascia(m, x0, x1, y0, y1, z, sign):
+    """Black instrument panel sitting on the case face, not down a hole. sign -1 = front."""
+    if sign < 0:
+        m.box("black", x0, y0, z - 0.007, x1, y1, z + 0.012)
+        t = 0.008
+        m.box("metal", x0 - t, y0 - t, z - 0.003, x1 + t, y0, z + 0.006)
+        m.box("metal", x0 - t, y1, z - 0.003, x1 + t, y1 + t, z + 0.006)
+        m.box("metal", x0 - t, y0, z - 0.003, x0, y1, z + 0.006)
+        m.box("metal", x1, y0, z - 0.003, x1 + t, y1, z + 0.006)
+    else:
+        m.box("black", x0, y0, z - 0.012, x1, y1, z + 0.007)
+        t = 0.008
+        m.box("metal", x0 - t, y0 - t, z - 0.006, x1 + t, y0, z + 0.003)
+        m.box("metal", x0 - t, y1, z - 0.006, x1 + t, y1 + t, z + 0.003)
+        m.box("metal", x0 - t, y0, z - 0.006, x0, y1, z + 0.003)
+        m.box("metal", x1, y0, z - 0.006, x1 + t, y1, z + 0.003)
+    for sx in (x0 + 0.012, x1 - 0.012):
+        for sy in (y0 + 0.012, y1 - 0.012):
+            if sign < 0:
+                m.box("chrome", sx - 0.004, sy - 0.004, z - 0.012, sx + 0.004, sy + 0.004, z - 0.006, faces="n")
+            else:
+                m.box("chrome", sx - 0.004, sy - 0.004, z + 0.006, sx + 0.004, sy + 0.004, z + 0.012, faces="s")
+
+
+def power_rack():
+    """One flight case on four blue casters. Sockets on -z, breakers on +z. No handles, no latches, no logo."""
+    m = Mesh()
+    x0, x1, y0, y1, z0, z1 = 0.045, 0.955, 0.158, 0.972, 0.22, 0.78
+    _rack_case(m, x0, x1, y0, y1, z0, z1)
+    # Thin galvanised dolly, four wheels. The cheeks stay bare.
+    m.box("metal", 0.10, 0.136, 0.28, 0.90, 0.154, 0.72)
+    m.box("metal", 0.08, 0.124, 0.26, 0.92, 0.140, 0.30)
+    m.box("metal", 0.08, 0.124, 0.70, 0.92, 0.140, 0.74)
+    m.box("metal", 0.08, 0.124, 0.26, 0.14, 0.140, 0.74)
+    m.box("metal", 0.86, 0.124, 0.26, 0.92, 0.140, 0.74)
+    for x, z in ((0.16, 0.30), (0.84, 0.30), (0.16, 0.70), (0.84, 0.70)):
+        _blue_caster(m, x, z)
+
+    # Front fascia fills the frame. Blues and the open inlet on the left,
+    # reds with blank yellow plates in three rows (4 / 4 / 3) on the right.
+    px0, px1, py0, py1 = 0.090, 0.910, 0.204, 0.926
+    _fascia(m, px0, px1, py0, py1, z0 + 0.010, -1)
+    zf = z0 + 0.003
+    for y, r in ((0.800, 0.032), (0.690, 0.026), (0.590, 0.026)):
+        _cee_cap(m, 0.210, y, zf, "blue", r)
+    _inlet(m, 0.210, 0.345, zf)
+    for x in (0.430, 0.545, 0.660, 0.775):
+        for y in (0.790, 0.630):
+            _cee_cap(m, x, y, zf, "red", 0.040, tag=True)
+    _cee_cap(m, 0.455, 0.450, zf, "red", 0.050, tag=True, mark=True)
+    _cee_cap(m, 0.640, 0.458, zf, "red", 0.034, tag=True)
+    _cee_cap(m, 0.760, 0.458, zf, "red", 0.034, tag=True)
+
+    # Back fascia. Facing this side, the strips sit on the left and the button
+    # plus the ruled plate sit on the right.
+    _fascia(m, px0, px1, py0, py1, z1 - 0.010, +1)
+    zb = z1 - 0.003
+    for y in (0.640, 0.470, 0.300):
+        _mcb_row(m, 0.115, 0.690, y, zb)
+    _green_button(m, 0.800, 0.760, zb)
+    _rating_plate(m, 0.722, 0.300, zb)
+    return m
+
+
+# Cable ramp. One block is one module: channels run along Z (the facing axis).
+# The profile below is the five-channel ramp, which fills the block. Fewer channels
+# keep the same groove width and scale that profile about x=0.5 (see cable_ramp).
+# Closed lid sits on the bay. Open lid swings up around the hinge on +X.
+# These numbers are the full-width layout. CableRampBlock scales them the same way.
+CABLE_LID = (0.264, 0.156, 0.010, 0.742, 0.222, 0.990)  # x0 y0 z0 x1 y1 z1
+CABLE_HINGE = (0.742, 0.189)
+CABLE_OPEN_DEG = -70.0
+# Black plastic repeat, in blocks. Block textures do not wrap, so those faces are cut on this grid.
+PLATE_TILE = 0.25
+# One molded "CABLE" along the lid. The word runs with the ramp, not across it as a single stretched glyph.
+LABEL_PITCH = 0.5
+
+
+def _solid_prism(m, mat, poly, z0, z1, skip=()):
+    """Convex counter-clockwise polygon in the XY plane, extruded from z0 to z1."""
+    n = len(poly)
+    cx = sum(p[0] for p in poly) / n
+    cy = sum(p[1] for p in poly) / n
+    for i in range(n):
+        a, b = poly[i], poly[(i + 1) % n]
+        m.tri(mat, (cx, cy, z0), (b[0], b[1], z0), (a[0], a[1], z0), (0, 0, -1), (0, 0, -1), (0, 0, -1))
+        m.tri(mat, (cx, cy, z1), (a[0], a[1], z1), (b[0], b[1], z1), (0, 0, 1), (0, 0, 1), (0, 0, 1))
+        if i in skip:
+            continue
+        nrm = _norm((b[1] - a[1], -(b[0] - a[0]), 0.0))
+        m.quad(mat, (a[0], a[1], z0), (a[0], a[1], z1), (b[0], b[1], z1), (b[0], b[1], z0), nrm)
+
+
+def _tile_splits(a, b, tile):
+    """a..b split on the texture grid, so each piece spans at most one repeat."""
+    lo, hi = (a, b) if a <= b else (b, a)
+    pts = [lo]
+    k = math.floor(lo / tile) + 1
+    while k * tile < hi - 1e-6:
+        pts.append(k * tile)
+        k += 1
+    if hi - pts[-1] > 1e-6:
+        pts.append(hi)
+    return pts
+
+
+def _plate_flat(m, mat, x0, x1, z0, z1, y, nrm=(0.0, 1.0, 0.0)):
+    """Horizontal plastic. UVs follow world X/Z, one tile at a time."""
+    xs = _tile_splits(x0, x1, PLATE_TILE)
+    zs = _tile_splits(z0, z1, PLATE_TILE)
+    for i in range(len(xs) - 1):
+        for j in range(len(zs) - 1):
+            xa, xb = xs[i], xs[i + 1]
+            za, zb = zs[j], zs[j + 1]
+            m.quad(mat, (xa, y, za), (xa, y, zb), (xb, y, zb), (xb, y, za), nrm,
+                   ((xa / PLATE_TILE, za / PLATE_TILE), (xa / PLATE_TILE, zb / PLATE_TILE),
+                    (xb / PLATE_TILE, zb / PLATE_TILE), (xb / PLATE_TILE, za / PLATE_TILE)))
+
+
+def _plate_slope(m, mat, p0, p1, z0, z1, nrm):
+    """Plastic on a straight slope from p0 to p1 (x, y). Tiled along the slope and along Z."""
+    length = math.hypot(p1[0] - p0[0], p1[1] - p0[1])
+    if length < 1e-6:
+        return
+    steps = max(1, math.ceil(length / PLATE_TILE - 1e-9))
+    zs = _tile_splits(z0, z1, PLATE_TILE)
+    for i in range(steps):
+        ta, tb = i / steps, (i + 1) / steps
+        ax = p0[0] + (p1[0] - p0[0]) * ta
+        ay = p0[1] + (p1[1] - p0[1]) * ta
+        bx = p0[0] + (p1[0] - p0[0]) * tb
+        by = p0[1] + (p1[1] - p0[1]) * tb
+        ua, ub = length * ta / PLATE_TILE, length * tb / PLATE_TILE
+        for j in range(len(zs) - 1):
+            za, zb = zs[j], zs[j + 1]
+            m.quad(mat, (ax, ay, za), (ax, ay, zb), (bx, by, zb), (bx, by, za), nrm,
+                   ((ua, za / PLATE_TILE), (ua, zb / PLATE_TILE),
+                    (ub, zb / PLATE_TILE), (ub, za / PLATE_TILE)))
+
+
+def _plate_label(m, mat, x0, x1, z0, z1, y, nrm=(0.0, 1.0, 0.0)):
+    """Lid top. The molded word repeats along Z and spans the lid, so it is not one giant letter."""
+    zs = _tile_splits(z0, z1, LABEL_PITCH)
+    for j in range(len(zs) - 1):
+        za, zb = zs[j], zs[j + 1]
+        ua, ub = za / LABEL_PITCH, zb / LABEL_PITCH
+        m.quad(mat, (x0, y, za), (x0, y, zb), (x1, y, zb), (x1, y, za), nrm,
+               ((ua, 0.0), (ub, 0.0), (ub, 1.0), (ua, 1.0)))
+
+
+def _cyl_z(m, mat, r, z0, z1, x, y, segs=8):
+    part = Mesh()
+    part.cylinder(mat, r, 0.0, max(1e-4, z1 - z0), cx=0.0, cz=0.0, segs=segs, caps=True)
+    m.merge(part.transformed(chain(rot_x(90, 0, 0), translate(x, y, z0))))
+
+
+def cable_ramp(channels, open_lid=False):
+    """Rubber cable ramp. ``channels`` is 1..5 grooves under the yellow lid.
+
+    Five grooves fill the block. Fewer grooves keep about the same groove width, so the
+    whole ramp (wings, lid, dogs) gets narrower and stays centred. No brand.
+    """
+    m = Mesh()
+    n = max(1, min(5, int(channels)))
+    s = n / 5.0
+
+    def X(x):
+        return 0.5 + (x - 0.5) * s
+
+    # Left slope, outer low to inner high. Right is the mirror. X() is the centred width.
+    lx0, ly0, lx1, ly1 = X(0.010), 0.012, X(0.198), 0.148
+    rx0, ry0, rx1, ry1 = X(0.802), 0.148, X(0.990), 0.012
+    sh_y = 0.148
+    # Shoulders: flat black bands the lid rests on. Inner edge is the channel wall.
+    sh_l0, sh_l1 = X(0.198), X(0.270)
+    sh_r0, sh_r1 = X(0.730), X(0.802)
+    bay0, bay1 = sh_l1, sh_r0
+    floor0, floor1 = 0.022, 0.044
+    rib_top = 0.132
+    # Body stops a hair inside the block so two modules don't flicker on the shared face.
+    bz0, bz1 = 0.002, 0.998
+
+    # Bottom and top edges stay off the prism: the ground would flicker, and the top is smooth plastic.
+    _solid_prism(m, "black", [(lx0, 0.0), (lx1, 0.0), (lx1, ly1), (lx0, ly0)], bz0, bz1, skip=(0, 1, 2))
+    _solid_prism(m, "black", [(rx0, 0.0), (rx1, 0.0), (rx1, ry1), (rx0, ry0)], bz0, bz1, skip=(0, 2, 3))
+    _plate_slope(m, "black_plate", (lx1, ly1), (lx0, ly0), bz0, bz1, _norm((ly0 - ly1, lx1 - lx0, 0.0)))
+    _plate_slope(m, "black_plate", (rx1, ry1), (rx0, ry0), bz0, bz1, _norm((ry0 - ry1, rx1 - rx0, 0.0)))
+    # Flat shoulders. The face against the slope stays open; the top is plate.
+    m.box("black", sh_l0, 0.030, bz0, sh_l1, sh_y, bz1, faces="nse")
+    m.box("black", sh_r0, 0.030, bz0, sh_r1, sh_y, bz1, faces="nsw")
+    _plate_flat(m, "black_plate", sh_l0, sh_l1, bz0, bz1, sh_y)
+    _plate_flat(m, "black_plate", sh_r0, sh_r1, bz0, bz1, sh_y)
+    # Sill under the grooves. The north end is a socket; the south end carries the dogs.
+    m.box("black", bay0, 0.001, 0.082, bay1, floor0, 0.948, faces="nsew")
+    m.box("rubber", bay0, floor0, 0.078, bay1, floor1, bz1, faces="nsewu")
+    # Ribs scale with the ramp so each groove stays about the same width.
+    rib_w = (0.016 if n >= 4 else 0.022) * s
+    if n > 1 and rib_w > 1e-4:
+        span = bay1 - bay0
+        ch_w = (span - rib_w * (n - 1)) / n
+        x = bay0 + ch_w
+        for _ in range(n - 1):
+            m.box("black", x, floor1 - 0.002, bz0, x + rib_w, rib_top, bz1)
+            x += rib_w + ch_w
+    # Three dogs on the south end. They sit in the next module's north socket.
+    for x0p, x1p in ((0.292, 0.392), (0.442, 0.558), (0.608, 0.708)):
+        m.box("black", X(x0p), 0.0, 0.952, X(x1p), 0.020, 1.060, faces="nsewu")
+
+    # Bolt holes on the black wings. Radius follows the wing so a single groove stays readable.
+    for sx in (X(0.232), X(0.768)):
+        for sz in (0.24, 0.50, 0.76):
+            m.cylinder("grey", 0.018 * s, sh_y, sh_y + 0.004, cx=sx, cz=sz, segs=8, caps=False)
+            m.cylinder("rubber", 0.010 * s, sh_y + 0.002, sh_y + 0.008, cx=sx, cz=sz, segs=8)
+
+    lid = Mesh()
+    x0, y0, lz0, x1, y1, lz1 = CABLE_LID
+    x0, x1 = X(x0), X(x1)
+    lid.box("yellow", x0, y0, lz0, x1, y1, lz1, faces="nsewd")
+    _plate_label(lid, "yellow_plate", x0, x1, lz0, lz1, y1)
+    hx, hy = X(CABLE_HINGE[0]), CABLE_HINGE[1]
+    knuckle = 0.55 + 0.45 * s
+    # Hinge barrel: black knuckles stay on the base, yellow ones travel with the lid.
+    for i, hz in enumerate([0.08 + k * 0.052 for k in range(17)]):
+        if i % 2 == 0:
+            _cyl_z(m, "black", 0.020 * knuckle, hz, hz + 0.046, hx, hy, segs=8)
+        else:
+            _cyl_z(lid, "yellow", 0.024 * knuckle, hz, hz + 0.046, hx, hy, segs=8)
+    if open_lid:
+        m.merge(lid.transformed(rot_z(CABLE_OPEN_DEG, hx, hy)))
+    else:
+        m.merge(lid)
+    return m

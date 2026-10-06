@@ -1,0 +1,434 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "channels": "1",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "1",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "1",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "1",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "1",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "1",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "1",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "1",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_1_open",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "2",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "2",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "2",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "2",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "2",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "2",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "2",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "2",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_2_open",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "3",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "3",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "3",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "3",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "3",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "3",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "3",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "3",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_3_open",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "4",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "4",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "4",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "4",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "4",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "4",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "4",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "4",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_4_open",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "5",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "5",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "5",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "5",
+        "open": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "channels": "5",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "channels": "5",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "channels": "5",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "channels": "5",
+        "open": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/cable_ramp_5_open",
+        "y": 270
+      }
+    }
+  ]
+}

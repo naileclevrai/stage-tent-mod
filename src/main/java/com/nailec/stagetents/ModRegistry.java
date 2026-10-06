@@ -8,6 +8,7 @@ import com.nailec.stagetents.block.TentBlockEntity;
 import com.nailec.stagetents.block.TentBlockItem;
 import com.nailec.stagetents.block.TentWrenchItem;
 import com.nailec.stagetents.furniture.AccessBadgeItem;
+import com.nailec.stagetents.furniture.CableRampBlock;
 import com.nailec.stagetents.furniture.ConnectedFurnitureBlock;
 import com.nailec.stagetents.furniture.GeneratorBlock;
 import com.nailec.stagetents.furniture.GuideRailBlock;
@@ -142,6 +143,10 @@ public final class ModRegistry {
             new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}));
     public static final RegistryObject<GeneratorBlock> GENERATOR = BLOCKS.register("generator", () -> new GeneratorBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PowerDistroBlock> POWER_DISTRO = BLOCKS.register("power_distro", () -> new PowerDistroBlock(furnitureProps(SoundType.STONE)));
+    public static final RegistryObject<FurnitureBlock> POWER_RACK = BLOCKS.register("power_rack", () -> new FurnitureBlock(
+            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.BLACK, new double[]{0.2, 0, 1.6, 15.8, 15.9, 13.8})));
+    public static final RegistryObject<CableRampBlock> CABLE_RAMP = BLOCKS.register("cable_ramp", () -> new CableRampBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(1.0F).sound(SoundType.WOOL).noOcclusion()));
     public static final RegistryObject<WaterCannonBlock> WATER_CANNON = BLOCKS.register("water_cannon", () -> new WaterCannonBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<SiteToiletBlock> SITE_TOILET = BLOCKS.register("site_toilet", () -> new SiteToiletBlock(furnitureProps(SoundType.STONE)));
     public static final RegistryObject<SiteFenceBlock> SITE_FENCE = BLOCKS.register("site_fence", () -> new SiteFenceBlock(furnitureProps(SoundType.METAL)));
@@ -194,6 +199,8 @@ public final class ModRegistry {
     public static final RegistryObject<Item> FLIGHT_CASE_XL_ITEM = blockItem("flight_case_xl", FLIGHT_CASE_XL);
     public static final RegistryObject<Item> GENERATOR_ITEM = blockItem("generator", GENERATOR);
     public static final RegistryObject<Item> POWER_DISTRO_ITEM = blockItem("power_distro", POWER_DISTRO);
+    public static final RegistryObject<Item> POWER_RACK_ITEM = blockItem("power_rack", POWER_RACK);
+    public static final RegistryObject<Item> CABLE_RAMP_ITEM = blockItem("cable_ramp", CABLE_RAMP);
     public static final RegistryObject<Item> WATER_CANNON_ITEM = blockItem("water_cannon", WATER_CANNON);
     public static final RegistryObject<Item> SITE_TOILET_ITEM = blockItem("site_toilet", SITE_TOILET);
     public static final RegistryObject<Item> SITE_FENCE_ITEM = blockItem("site_fence", SITE_FENCE);
@@ -260,6 +267,8 @@ public final class ModRegistry {
                 out.accept(FLIGHT_CASE_XL_ITEM.get());
                 out.accept(GENERATOR_ITEM.get());
                 out.accept(POWER_DISTRO_ITEM.get());
+                out.accept(POWER_RACK_ITEM.get());
+                out.accept(CABLE_RAMP_ITEM.get());
                 out.accept(WATER_CANNON_ITEM.get());
                 out.accept(SITE_TOILET_ITEM.get());
                 out.accept(SITE_FENCE_ITEM.get());

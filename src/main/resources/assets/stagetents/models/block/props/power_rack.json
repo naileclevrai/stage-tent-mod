@@ -1,0 +1,23 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/power_rack.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/case",
+    "case": "stagetents:block/props/case",
+    "metal": "stagetents:block/props/metal",
+    "chrome": "stagetents:block/props/chrome",
+    "paint": "stagetents:block/props/paint",
+    "blue": "stagetents:block/props/blue",
+    "grey": "stagetents:block/props/grey",
+    "black": "stagetents:block/props/black",
+    "red": "stagetents:block/props/red",
+    "green": "stagetents:block/props/green",
+    "yellow": "stagetents:block/props/yellow",
+    "white": "stagetents:block/props/white"
+  }
+}

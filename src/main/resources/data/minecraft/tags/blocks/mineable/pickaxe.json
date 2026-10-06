@@ -28,6 +28,8 @@
     "stagetents:flight_case_xl",
     "stagetents:generator",
     "stagetents:power_distro",
+    "stagetents:power_rack",
+    "stagetents:cable_ramp",
     "stagetents:water_cannon",
     "stagetents:site_toilet",
     "stagetents:site_fence",

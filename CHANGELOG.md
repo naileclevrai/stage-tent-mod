@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Opus 4200 mobile stage, border curtains and leg curtains.
+- Picnic table, water cannon, power distro, distro rack and cable ramps.
+- Inventory icons redrawn.
+
 ## 0.4.0
 
 - Rendering engine reworked for performance:
