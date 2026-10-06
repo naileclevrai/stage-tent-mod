@@ -1,0 +1,24 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/water_cannon.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/galvanised",
+    "galvanised": "stagetents:block/props/galvanised",
+    "tread": "stagetents:block/props/tread",
+    "black": "stagetents:block/props/black",
+    "chrome": "stagetents:block/props/chrome",
+    "rubber": "stagetents:block/props/rubber",
+    "grey": "stagetents:block/props/grey",
+    "green": "stagetents:block/props/green",
+    "red": "stagetents:block/props/red",
+    "yellow": "stagetents:block/props/yellow",
+    "paint": "stagetents:block/props/paint",
+    "white": "stagetents:block/props/white",
+    "fan": "stagetents:block/props/fan"
+  }
+}

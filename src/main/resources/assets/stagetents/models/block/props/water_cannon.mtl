@@ -1,0 +1,60 @@
+newmtl galvanised
+Kd 1 1 1
+map_Kd #galvanised
+forge_TintIndex -1
+
+newmtl tread
+Kd 1 1 1
+map_Kd #tread
+forge_TintIndex -1
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+forge_TintIndex -1
+
+newmtl rubber
+Kd 1 1 1
+map_Kd #rubber
+forge_TintIndex -1
+
+newmtl grey
+Kd 1 1 1
+map_Kd #grey
+forge_TintIndex -1
+
+newmtl green
+Kd 1 1 1
+map_Kd #green
+forge_TintIndex -1
+
+newmtl red
+Kd 1 1 1
+map_Kd #red
+forge_TintIndex -1
+
+newmtl yellow
+Kd 1 1 1
+map_Kd #yellow
+forge_TintIndex -1
+
+newmtl paint
+Kd 1 1 1
+map_Kd #paint
+forge_TintIndex 0
+
+newmtl white
+Kd 1 1 1
+map_Kd #white
+forge_TintIndex -1
+
+newmtl fan
+Kd 1 1 1
+map_Kd #fan
+forge_TintIndex -1
+
