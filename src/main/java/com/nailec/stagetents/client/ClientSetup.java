@@ -9,7 +9,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import com.nailec.stagetents.furniture.FurnitureBlock;
+import com.nailec.stagetents.furniture.WaterCannonBlock;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,6 +26,15 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModRegistry.SEAT.get(), NoopRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.TURNSTILE_BE.get(), TurnstileRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.DRAPE_BE.get(), DrapeRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.WATER_CANNON_BE.get(), WaterCannonRenderer::new);
+    }
+
+    /** The barrel is not in the blockstate: it is turned by {@link WaterCannonRenderer}. */
+    @SubscribeEvent
+    public static void registerModels(ModelEvent.RegisterAdditional event) {
+        for (int pitch = 0; pitch <= WaterCannonBlock.MAX; pitch++) {
+            event.register(WaterCannonRenderer.barrelModel(pitch));
+        }
     }
 
     /** Furniture: tint index 0 is the dyed part (tablecloth, cushion, front panel). */
@@ -36,7 +47,8 @@ public final class ClientSetup {
                 ModRegistry.STAGE_DECK.get(), ModRegistry.STAGE_STAIRS.get(), ModRegistry.STAGE_RAMP.get(),
                 ModRegistry.CYCLORAMA.get(), ModRegistry.FLIGHT_CASE.get(), ModRegistry.FLIGHT_CASE_TRUNK.get(),
                 ModRegistry.FLIGHT_CASE_TALL.get(), ModRegistry.FLIGHT_CASE_XL.get(), ModRegistry.GENERATOR.get(),
-                ModRegistry.SITE_TOILET.get(), ModRegistry.SITE_FENCE.get(), ModRegistry.ORIFLAMME.get());
+                ModRegistry.SITE_TOILET.get(), ModRegistry.SITE_FENCE.get(), ModRegistry.ORIFLAMME.get(),
+                ModRegistry.WATER_CANNON.get());
     }
 
     /** Pixel-art icons of the stage and site props: layer 1 is the dyed part, shown in the block's default colour. */
@@ -46,7 +58,11 @@ public final class ClientSetup {
                 ModRegistry.CYCLORAMA_ITEM.get(), ModRegistry.FLIGHT_CASE_ITEM.get(), ModRegistry.FLIGHT_CASE_TRUNK_ITEM.get(),
                 ModRegistry.FLIGHT_CASE_TALL_ITEM.get(), ModRegistry.FLIGHT_CASE_XL_ITEM.get(), ModRegistry.GENERATOR_ITEM.get(),
                 ModRegistry.SITE_TOILET_ITEM.get(), ModRegistry.SITE_FENCE_ITEM.get(), ModRegistry.ORIFLAMME_ITEM.get(),
-                ModRegistry.FRISE_ITEM.get(), ModRegistry.PENDRILLON_ITEM.get()};
+                ModRegistry.FRISE_ITEM.get(), ModRegistry.PENDRILLON_ITEM.get(),
+                ModRegistry.ROUND_TABLE_ITEM.get(), ModRegistry.STANDING_TABLE_ITEM.get(), ModRegistry.BANQUET_CHAIR_ITEM.get(),
+                ModRegistry.FOLDING_CHAIR_ITEM.get(), ModRegistry.BAR_STOOL_ITEM.get(), ModRegistry.BAR_COUNTER_ITEM.get(),
+                ModRegistry.BLEACHER_ITEM.get(), ModRegistry.BLEACHER_AISLE_ITEM.get(), ModRegistry.STANCHION_ITEM.get(),
+                ModRegistry.WATER_CANNON_ITEM.get()};
         event.register((stack, tint) -> {
             if (tint != 1 || !(stack.getItem() instanceof BlockItem block)) return -1;
             return dyeTint(block.getBlock().defaultBlockState());
