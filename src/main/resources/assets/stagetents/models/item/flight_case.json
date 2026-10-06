@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/flight_case",
+    "layer1": "stagetents:item/flight_case_dye"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/flight_case_trunk.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/case",
+    "case": "stagetents:block/props/case",
+    "metal": "stagetents:block/props/metal",
+    "chrome": "stagetents:block/props/chrome",
+    "paint": "stagetents:block/props/paint",
+    "black": "stagetents:block/props/black",
+    "label": "stagetents:block/props/label",
+    "rubber": "stagetents:block/props/rubber",
+    "red": "stagetents:block/props/red"
+  }
+}

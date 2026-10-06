@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "FF",
+    "FF"
+  ],
+  "key": {
+    "F": {
+      "item": "stagetents:flight_case"
+    }
+  },
+  "result": {
+    "item": "stagetents:flight_case_xl",
+    "count": 1
+  }
+}
