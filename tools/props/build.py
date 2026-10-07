@@ -141,7 +141,8 @@ def main():
 
     # The connecting parts are not items.
     extra_items = ["guide_rail_corner", "site_toilet_open", "site_fence_end_left", "site_fence_end_right", "site_fence_joint", "site_fence_end",
-                   "water_cannon_base", "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
+                   "water_cannon_base", "light_tower_section", "light_tower_yoke", "light_tower_lamp",
+                   "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
                    "stage_ramp_end_left", "stage_ramp_end_right"] + ["water_cannon_barrel_%d" % i for i in range(11)]
     for level in range(1, 5):
         extra_items += [f"stage_deck_{level}_end_left", f"stage_deck_{level}_end_right"]

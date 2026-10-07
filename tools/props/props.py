@@ -1436,13 +1436,6 @@ def picnic_table():
     return m.transformed(lambda p: (p[0] * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
 
 
-# Water cannon, facing north (the jet leaves towards -z). The barrel is built on Y, then pitched up.
-# Pivot sits in the main block so the whole mouth stays in that column and the block in front of it.
-CANNON_PIVOT = (0.5, 1.08, 0.37)
-CANNON_PITCH = -36.0
-CANNON_NOZZLE = 0.84
-
-
 def _fold_frame(m, hinge_x, foot_x):
     """One U-shaped folding leg and its diagonal stay. The foot sits toward the end of the top."""
     z_top, z_bot = (0.32, 0.68), (0.22, 0.78)
@@ -2092,6 +2085,16 @@ def cable_ramp(channels, open_lid=False):
     else:
         m.merge(lid)
     return m
+
+
+# Mobile light tower. Length runs along +x across two blocks: the mast rises in the main block,
+# the hitch sits in the next one. The telescopic mast and the lamp bank are separate meshes.
+LT_X0, LT_X1 = 0.36, 1.76
+LT_Z0, LT_Z1 = 0.16, 0.84
+LT_BASE, LT_TOP = 0.26, 1.16
+LT_MAST = (0.62, 0.50)
+LT_EXHAUST = (1.50, 0.68)
+
 
 def _tower_wheel(m, x, z):
     """Trailer wheel, axle along Z, standing on the ground."""
