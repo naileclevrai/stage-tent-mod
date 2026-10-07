@@ -27,6 +27,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModRegistry.TURNSTILE_BE.get(), TurnstileRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.DRAPE_BE.get(), DrapeRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.WATER_CANNON_BE.get(), WaterCannonRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.LIGHT_TOWER_BE.get(), LightTowerRenderer::new);
     }
 
     /** The barrel is not in the blockstate: it is turned by {@link WaterCannonRenderer}. */
@@ -35,6 +36,9 @@ public final class ClientSetup {
         for (int pitch = 0; pitch <= WaterCannonBlock.MAX; pitch++) {
             event.register(WaterCannonRenderer.barrelModel(pitch));
         }
+        event.register(LightTowerRenderer.sectionModel());
+        event.register(LightTowerRenderer.yokeModel());
+        event.register(LightTowerRenderer.lampModel());
     }
 
     /** Furniture: tint index 0 is the dyed part (tablecloth, cushion, front panel). */
@@ -48,7 +52,7 @@ public final class ClientSetup {
                 ModRegistry.CYCLORAMA.get(), ModRegistry.FLIGHT_CASE.get(), ModRegistry.FLIGHT_CASE_TRUNK.get(),
                 ModRegistry.FLIGHT_CASE_TALL.get(), ModRegistry.FLIGHT_CASE_XL.get(), ModRegistry.GENERATOR.get(),
                 ModRegistry.SITE_TOILET.get(), ModRegistry.SITE_FENCE.get(), ModRegistry.ORIFLAMME.get(),
-                ModRegistry.WATER_CANNON.get(), ModRegistry.POWER_RACK.get());
+                ModRegistry.WATER_CANNON.get(), ModRegistry.POWER_RACK.get(), ModRegistry.LIGHT_TOWER.get());
     }
 
     /** Pixel-art icons of the stage and site props: layer 1 is the dyed part, shown in the block's default colour. */
@@ -62,7 +66,7 @@ public final class ClientSetup {
                 ModRegistry.ROUND_TABLE_ITEM.get(), ModRegistry.STANDING_TABLE_ITEM.get(), ModRegistry.BANQUET_CHAIR_ITEM.get(),
                 ModRegistry.FOLDING_CHAIR_ITEM.get(), ModRegistry.BAR_STOOL_ITEM.get(), ModRegistry.BAR_COUNTER_ITEM.get(),
                 ModRegistry.BLEACHER_ITEM.get(), ModRegistry.BLEACHER_AISLE_ITEM.get(), ModRegistry.STANCHION_ITEM.get(),
-                ModRegistry.WATER_CANNON_ITEM.get(), ModRegistry.POWER_RACK_ITEM.get()};
+                ModRegistry.WATER_CANNON_ITEM.get(), ModRegistry.POWER_RACK_ITEM.get(), ModRegistry.LIGHT_TOWER_ITEM.get()};
         event.register((stack, tint) -> {
             if (tint != 1 || !(stack.getItem() instanceof BlockItem block)) return -1;
             return dyeTint(block.getBlock().defaultBlockState());

@@ -2,6 +2,7 @@ package com.nailec.stagetents.client;
 
 import com.nailec.stagetents.ModSounds;
 import com.nailec.stagetents.furniture.GeneratorBlock;
+import com.nailec.stagetents.furniture.LightTowerBlock;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
@@ -32,6 +33,7 @@ public class GeneratorSoundInstance extends AbstractTickableSoundInstance {
     public void tick() {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof GeneratorBlock && state.getValue(GeneratorBlock.RUNNING) && !isStopped()) return;
+        if (state.getBlock() instanceof LightTowerBlock && state.getValue(LightTowerBlock.RUNNING) && !isStopped()) return;
         ClientHooks.stopGenerator(pos);
         stop();
     }
