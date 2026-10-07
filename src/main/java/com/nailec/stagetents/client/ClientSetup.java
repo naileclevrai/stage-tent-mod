@@ -28,6 +28,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModRegistry.DRAPE_BE.get(), DrapeRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.WATER_CANNON_BE.get(), WaterCannonRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.LIGHT_TOWER_BE.get(), LightTowerRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.CONTROL_TOWER_BE.get(), ControlTowerRenderer::new);
     }
 
     /** The barrel is not in the blockstate: it is turned by {@link WaterCannonRenderer}. */
