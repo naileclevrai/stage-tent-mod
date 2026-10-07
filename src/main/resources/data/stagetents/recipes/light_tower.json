@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "GGG",
+    "IFI",
+    "IRI"
+  ],
+  "key": {
+    "G": { "item": "minecraft:glowstone" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "F": { "item": "minecraft:furnace" },
+    "R": { "item": "minecraft:redstone" }
+  },
+  "result": { "item": "stagetents:light_tower", "count": 1 }
+}
