@@ -34,9 +34,9 @@ public class MultiPropBlock extends FurnitureBlock {
         this.panels = panels;
     }
 
-    private BlockState partState(Direction facing) {
+    private BlockState partState(Direction facing, int[] cell) {
         BlockState part = ModRegistry.PROP_PART.get().defaultBlockState();
-        PropPartBlock.Form form = partForm(facing);
+        PropPartBlock.Form form = partForm(facing, cell);
         return form == PropPartBlock.Form.FULL ? part : part.setValue(PropPartBlock.FORM, form);
     }
 
@@ -44,6 +44,11 @@ public class MultiPropBlock extends FurnitureBlock {
     protected PropPartBlock.Form partForm(Direction facing) {
         if (!panels) return PropPartBlock.Form.FULL;
         return facing.getAxis() == Direction.Axis.Z ? PropPartBlock.Form.PANEL_X : PropPartBlock.Form.PANEL_Z;
+    }
+
+    /** Per-cell collision. The default uses the same form for every extra cell. */
+    protected PropPartBlock.Form partForm(Direction facing, int[] cell) {
+        return partForm(facing);
     }
 
     /** World positions of the extra cells for a main block at {@code pos} facing {@code facing}. */
@@ -72,8 +77,12 @@ public class MultiPropBlock extends FurnitureBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.isClientSide) return;
-        BlockState part = partState(state.getValue(FACING));
-        for (BlockPos p : parts(pos, state.getValue(FACING))) level.setBlock(p, part, Block.UPDATE_ALL);
+        Direction facing = state.getValue(FACING);
+        Direction right = facing.getClockWise();
+        for (int[] c : cells) {
+            if (c[0] == 0 && c[1] == 0) continue;
+            level.setBlock(pos.relative(right, c[0]).above(c[1]), partState(facing, c), Block.UPDATE_ALL);
+        }
     }
 
     @Override

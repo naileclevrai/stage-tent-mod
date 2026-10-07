@@ -205,6 +205,7 @@ def main():
     print("icons:", ", ".join(icons.write_all(ASSETS)))
     # Invisible collision cells of multi-block props.
     forms = ["full", "panel_x", "panel_z", "wall_x", "wall_z", "pole", "table_x", "table_z",
+             "fold_x", "fold_z", "fold_end_x", "fold_end_z",
              "cannon_side_n", "cannon_side_e", "cannon_side_s", "cannon_side_w",
              "cannon_nose_n", "cannon_nose_e", "cannon_nose_s", "cannon_nose_w"]
     with open(os.path.join(ASSETS, "blockstates", "prop_part.json"), "w", encoding="utf-8", newline="\n") as f:

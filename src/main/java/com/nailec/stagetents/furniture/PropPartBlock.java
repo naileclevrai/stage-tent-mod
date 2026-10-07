@@ -23,6 +23,8 @@ public class PropPartBlock extends Block {
     public enum Form implements StringRepresentable {
         FULL("full"), PANEL_X("panel_x"), PANEL_Z("panel_z"), WALL_X("wall_x"), WALL_Z("wall_z"), POLE("pole"),
         TABLE_X("table_x"), TABLE_Z("table_z"),
+        FOLD_X("fold_x"), FOLD_Z("fold_z"),
+        FOLD_END_X("fold_end_x"), FOLD_END_Z("fold_end_z"),
         CANNON_SIDE_N("cannon_side_n"), CANNON_SIDE_E("cannon_side_e"),
         CANNON_SIDE_S("cannon_side_s"), CANNON_SIDE_W("cannon_side_w"),
         CANNON_NOSE_N("cannon_nose_n"), CANNON_NOSE_E("cannon_nose_e"),
@@ -51,6 +53,18 @@ public class PropPartBlock extends Block {
             Block.box(0, 16.8, 0.8, 16, 18.3, 15.2),
             Block.box(0, 9.9, -6.4, 16, 11.0, -0.7),
             Block.box(0, 9.9, 16.7, 16, 11.0, 22.4));
+    /** Middle block of the folding table: the top only. Length along X. */
+    private static final VoxelShape FOLD_X = Block.box(0, 16.85, -0.4, 16, 17.76, 16.4);
+    /** End block: the rest of the top and that end's legs. Length along X. */
+    private static final VoxelShape FOLD_END_X = Shapes.or(
+            Block.box(0, 16.85, -0.4, 13.6, 17.76, 16.4),
+            Block.box(5.9, 0, 1.3, 12.6, 16.85, 14.7));
+    /** Middle block with the length running along Z. */
+    private static final VoxelShape FOLD_Z = Block.box(-0.4, 16.85, 0, 16.4, 17.76, 16);
+    /** End block with the length running along Z. */
+    private static final VoxelShape FOLD_END_Z = Shapes.or(
+            Block.box(-0.4, 16.85, 0, 16.4, 17.76, 13.6),
+            Block.box(1.3, 0, 5.9, 14.7, 16.85, 12.6));
     /** Same slice with the length running along Z. */
     private static final VoxelShape TABLE_Z = Shapes.or(
             Block.box(0.8, 16.8, 0, 15.2, 18.3, 16),
@@ -101,6 +115,10 @@ public class PropPartBlock extends Block {
             case POLE -> POLE;
             case TABLE_X -> TABLE_X;
             case TABLE_Z -> TABLE_Z;
+            case FOLD_X -> FOLD_X;
+            case FOLD_Z -> FOLD_Z;
+            case FOLD_END_X -> FOLD_END_X;
+            case FOLD_END_Z -> FOLD_END_Z;
             case CANNON_SIDE_N -> CANNON_SIDE_N;
             case CANNON_SIDE_E -> CANNON_SIDE_E;
             case CANNON_SIDE_S -> CANNON_SIDE_S;
