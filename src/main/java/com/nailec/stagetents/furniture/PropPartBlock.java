@@ -25,6 +25,7 @@ public class PropPartBlock extends Block {
         TABLE_X("table_x"), TABLE_Z("table_z"),
         FOLD_X("fold_x"), FOLD_Z("fold_z"),
         FOLD_END_X("fold_end_x"), FOLD_END_Z("fold_end_z"),
+        TOWER_X("tower_x"), TOWER_Z("tower_z"),
         CANNON_SIDE_N("cannon_side_n"), CANNON_SIDE_E("cannon_side_e"),
         CANNON_SIDE_S("cannon_side_s"), CANNON_SIDE_W("cannon_side_w"),
         CANNON_NOSE_N("cannon_nose_n"), CANNON_NOSE_E("cannon_nose_e"),
@@ -65,6 +66,8 @@ public class PropPartBlock extends Block {
     private static final VoxelShape FOLD_END_Z = Shapes.or(
             Block.box(-0.4, 16.85, 0, 16.4, 17.76, 13.6),
             Block.box(1.3, 0, 5.9, 14.7, 16.85, 12.6));
+    /** Hitch half of the light tower. The canopy fills the cell. */
+    private static final VoxelShape TOWER = Block.box(0, 0, 0, 16, 22, 16);
     /** Same slice with the length running along Z. */
     private static final VoxelShape TABLE_Z = Shapes.or(
             Block.box(0.8, 16.8, 0, 15.2, 18.3, 16),
@@ -119,6 +122,7 @@ public class PropPartBlock extends Block {
             case FOLD_Z -> FOLD_Z;
             case FOLD_END_X -> FOLD_END_X;
             case FOLD_END_Z -> FOLD_END_Z;
+            case TOWER_X, TOWER_Z -> TOWER;
             case CANNON_SIDE_N -> CANNON_SIDE_N;
             case CANNON_SIDE_E -> CANNON_SIDE_E;
             case CANNON_SIDE_S -> CANNON_SIDE_S;

@@ -11,6 +11,8 @@ import com.nailec.stagetents.furniture.AccessBadgeItem;
 import com.nailec.stagetents.furniture.CableRampBlock;
 import com.nailec.stagetents.furniture.ConnectedFurnitureBlock;
 import com.nailec.stagetents.furniture.GeneratorBlock;
+import com.nailec.stagetents.furniture.LightTowerBlock;
+import com.nailec.stagetents.furniture.LightTowerBlockEntity;
 import com.nailec.stagetents.furniture.GuideRailBlock;
 import com.nailec.stagetents.furniture.OriflammeBlock;
 import com.nailec.stagetents.furniture.PendrillonBlock;
@@ -144,6 +146,7 @@ public final class ModRegistry {
             furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{1, 0, 1, 16, 16, 15}),
             new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}));
     public static final RegistryObject<GeneratorBlock> GENERATOR = BLOCKS.register("generator", () -> new GeneratorBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<LightTowerBlock> LIGHT_TOWER = BLOCKS.register("light_tower", () -> new LightTowerBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PowerDistroBlock> POWER_DISTRO = BLOCKS.register("power_distro", () -> new PowerDistroBlock(furnitureProps(SoundType.STONE)));
     public static final RegistryObject<FurnitureBlock> POWER_RACK = BLOCKS.register("power_rack", () -> new FurnitureBlock(
             furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.BLACK, new double[]{0.2, 0, 1.6, 15.8, 15.9, 13.8})));
@@ -203,6 +206,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> FLIGHT_CASE_TALL_ITEM = blockItem("flight_case_tall", FLIGHT_CASE_TALL);
     public static final RegistryObject<Item> FLIGHT_CASE_XL_ITEM = blockItem("flight_case_xl", FLIGHT_CASE_XL);
     public static final RegistryObject<Item> GENERATOR_ITEM = blockItem("generator", GENERATOR);
+    public static final RegistryObject<Item> LIGHT_TOWER_ITEM = blockItem("light_tower", LIGHT_TOWER);
     public static final RegistryObject<Item> POWER_DISTRO_ITEM = blockItem("power_distro", POWER_DISTRO);
     public static final RegistryObject<Item> POWER_RACK_ITEM = blockItem("power_rack", POWER_RACK);
     public static final RegistryObject<Item> CABLE_RAMP_ITEM = blockItem("cable_ramp", CABLE_RAMP);
@@ -228,6 +232,8 @@ public final class ModRegistry {
 
     public static final RegistryObject<BlockEntityType<DrapeBlockEntity>> DRAPE_BE = BLOCK_ENTITIES.register("drape",
             () -> BlockEntityType.Builder.of(DrapeBlockEntity::new, FRISE.get(), PENDRILLON.get(), CURTAIN.get()).build(null));
+    public static final RegistryObject<BlockEntityType<LightTowerBlockEntity>> LIGHT_TOWER_BE = BLOCK_ENTITIES.register("light_tower",
+            () -> BlockEntityType.Builder.of(LightTowerBlockEntity::new, LIGHT_TOWER.get()).build(null));
     public static final RegistryObject<BlockEntityType<WaterCannonBlockEntity>> WATER_CANNON_BE = BLOCK_ENTITIES.register("water_cannon",
             () -> BlockEntityType.Builder.of(WaterCannonBlockEntity::new, WATER_CANNON.get()).build(null));
 
@@ -274,6 +280,7 @@ public final class ModRegistry {
                 out.accept(FLIGHT_CASE_TALL_ITEM.get());
                 out.accept(FLIGHT_CASE_XL_ITEM.get());
                 out.accept(GENERATOR_ITEM.get());
+                out.accept(LIGHT_TOWER_ITEM.get());
                 out.accept(POWER_DISTRO_ITEM.get());
                 out.accept(POWER_RACK_ITEM.get());
                 out.accept(CABLE_RAMP_ITEM.get());

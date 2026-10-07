@@ -28,6 +28,8 @@
     "form=fold_z": { "model": "stagetents:block/prop_part" },
     "form=fold_end_x": { "model": "stagetents:block/prop_part" },
     "form=fold_end_z": { "model": "stagetents:block/prop_part" },
+    "form=tower_x": { "model": "stagetents:block/prop_part" },
+    "form=tower_z": { "model": "stagetents:block/prop_part" },
     "form=cannon_side_n": { "model": "stagetents:block/prop_part" },
     "form=cannon_side_e": { "model": "stagetents:block/prop_part" },
     "form=cannon_side_s": { "model": "stagetents:block/prop_part" },
