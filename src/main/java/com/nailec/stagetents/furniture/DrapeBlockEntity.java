@@ -28,7 +28,9 @@ public class DrapeBlockEntity extends BlockEntity {
         List<BlockPos> run = Drapes.run(level, worldPosition, state);
         if (run.isEmpty()) return new AABB(worldPosition).inflate(1);
         int height = state.getBlock() instanceof PendrillonBlock ? state.getValue(PendrillonBlock.HEIGHT) : 1;
-        double drop = state.getBlock() instanceof FriseBlock ? FriseBlock.length(state.getValue(FriseBlock.DROP)) : 0;
+        double drop = 0;
+        if (state.getBlock() instanceof FriseBlock) drop = FriseBlock.length(state.getValue(FriseBlock.DROP));
+        else if (state.getBlock() instanceof CurtainBlock) drop = CurtainBlock.length(state.getValue(CurtainBlock.DROP));
         int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
         for (BlockPos p : run) {
