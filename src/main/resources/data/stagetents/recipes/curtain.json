@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "RRR",
+    "RGR",
+    "RRR"
+  ],
+  "key": {
+    "R": { "item": "minecraft:red_wool" },
+    "G": { "item": "minecraft:gold_nugget" }
+  },
+  "result": { "item": "stagetents:curtain", "count": 4 }
+}
