@@ -1443,6 +1443,45 @@ CANNON_PITCH = -36.0
 CANNON_NOZZLE = 0.84
 
 
+def _fold_frame(m, hinge_x, foot_x):
+    """One U-shaped folding leg and its diagonal stay. The foot sits toward the end of the top."""
+    z_top, z_bot = (0.32, 0.68), (0.22, 0.78)
+    for zt, zb in zip(z_top, z_bot):
+        m.tube("black", [(hinge_x, 0.68, zt), (foot_x, 0.015, zb)], 0.016, segs=8)
+        m.box("grey", hinge_x - 0.022, 0.652, zt - 0.022, hinge_x + 0.022, 0.700, zt + 0.022)
+    m.tube("black", [(foot_x, 0.015, z_bot[0]), (foot_x, 0.015, z_bot[1])], 0.014, segs=8)
+    # Stay from under the middle of the leaf out to a slider on the leg.
+    stay_x = hinge_x + (1.0 - hinge_x) * 0.85
+    slide_x = foot_x + (hinge_x - foot_x) * 0.42
+    m.tube("black", [(stay_x, 0.655, 0.50), (slide_x, 0.30, 0.50)], 0.011, segs=6)
+    m.box("grey", slide_x - 0.018, 0.282, 0.482, slide_x + 0.018, 0.318, 0.518)
+
+
+def folding_table():
+    """180 × 70 × 74 cm white plastic folding table, shown open. Length runs along +x across two blocks."""
+    m = Mesh()
+    # Two moulded leaves and the hairline seam between them.
+    m.bevel_box("white", 0.10, 0.702, 0.15, 0.993, 0.740, 0.85, 0.006)
+    m.bevel_box("white", 1.007, 0.702, 0.15, 1.90, 0.740, 0.85, 0.006)
+    m.box("grey", 0.14, 0.668, 0.18, 1.86, 0.702, 0.82)
+    for x in (0.16, 1.84):
+        for z in (0.20, 0.80):
+            m.box("grey", x - 0.012, 0.734, z - 0.012, x + 0.012, 0.746, z + 0.012)
+    # Carry handle under one long edge, at the seam.
+    m.tube("black", [(0.93, 0.64, 0.82), (0.93, 0.58, 0.90), (1.07, 0.58, 0.90), (1.07, 0.64, 0.82)], 0.011, segs=6)
+    _fold_frame(m, 0.42, 0.14)
+    _fold_frame(m, 1.58, 1.86)
+    # One and a half times the 180 cm table: about 2.7 m long and 1.11 m tall.
+    return m.transformed(lambda p: (p[0] * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+
+
+# Water cannon, facing north (the jet leaves towards -z). The barrel is built on Y, then pitched up.
+# Pivot sits in the main block so the whole mouth stays in that column and the block in front of it.
+CANNON_PIVOT = (0.5, 1.08, 0.37)
+CANNON_PITCH = -36.0
+CANNON_NOZZLE = 0.84
+
+
 def _inward(mesh, mat):
     """Flip one material so it is seen from inside (the bore of the barrel)."""
     flipped = []

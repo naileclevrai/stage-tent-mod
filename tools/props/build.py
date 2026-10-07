@@ -122,6 +122,7 @@ def main():
     report["site_fence"] = model(props.site_fence(), "site_fence", tinted=("scrim", "hem"))
     report["oriflamme"] = model(props.oriflamme(), "oriflamme", tinted=("cloth", "hem"))
     report["picnic_table"] = model(props.picnic_table(), "picnic_table", gui_scale=0.22, gui_offset=(-0.4, 0, 0))
+    report["folding_table"] = model(props.folding_table(), "folding_table", gui_scale=0.26, gui_offset=(-0.7, -0.15, 0))
     report["water_cannon"] = model(props.water_cannon(), "water_cannon", tinted=("paint",), gui_scale=0.28, gui_offset=(-0.35, -0.15, 0))
     report["water_cannon_base"] = model(props.water_cannon_base(), "water_cannon_base", tinted=("paint",))
     for i, elev in enumerate(range(20, 75, 5)):
