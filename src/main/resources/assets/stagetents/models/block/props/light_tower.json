@@ -1,0 +1,24 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/light_tower.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "chrome": "stagetents:block/props/chrome",
+    "galvanised": "stagetents:block/props/galvanised",
+    "rubber": "stagetents:block/props/rubber",
+    "yellow": "stagetents:block/props/yellow",
+    "paint": "stagetents:block/props/paint",
+    "white": "stagetents:block/props/white",
+    "green": "stagetents:block/props/green",
+    "red": "stagetents:block/props/red",
+    "grey": "stagetents:block/props/grey",
+    "blue": "stagetents:block/props/blue",
+    "metal": "stagetents:block/props/metal"
+  }
+}

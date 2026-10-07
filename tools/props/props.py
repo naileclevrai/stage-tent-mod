@@ -2092,3 +2092,183 @@ def cable_ramp(channels, open_lid=False):
     else:
         m.merge(lid)
     return m
+
+def _tower_wheel(m, x, z):
+    """Trailer wheel, axle along Z, standing on the ground."""
+    w = Mesh()
+    w.lathe("rubber", [
+        (0.045, -0.048), (0.12, -0.042), (0.175, -0.028), (0.198, -0.010),
+        (0.198, 0.010), (0.175, 0.028), (0.12, 0.042), (0.045, 0.048),
+    ], cx=0, cz=0, segs=16)
+    w.disc("rubber", 0.11, -0.040, cx=0, cz=0, segs=16, up=False)
+    w.disc("rubber", 0.11, 0.040, cx=0, cz=0, segs=16, up=True)
+    w.lathe("galvanised", [
+        (0.035, -0.030), (0.10, -0.024), (0.115, -0.008),
+        (0.115, 0.008), (0.10, 0.024), (0.035, 0.030),
+    ], cx=0, cz=0, segs=12)
+    w.cylinder("black", 0.028, -0.034, 0.034, cx=0, cz=0, segs=8)
+    m.merge(w.transformed(chain(rot_x(90, 0, 0), translate(x, 0.20, z))))
+
+
+def _tower_jack(m, x, z):
+    """Drop leg with a round foot, a crank and a yellow/black sleeve."""
+    m.tube("galvanised", [(x, 0.015, z), (x, 0.34, z)], 0.016, segs=8)
+    m.cylinder("galvanised", 0.055, 0.0, 0.016, cx=x, cz=z, segs=10)
+    m.cylinder("black", 0.028, 0.016, 0.05, cx=x, cz=z, segs=8)
+    for i, mat in enumerate(("yellow", "black", "yellow")):
+        y = 0.10 + i * 0.06
+        m.cylinder(mat, 0.022, y, y + 0.055, cx=x, cz=z, segs=8, caps=False)
+    m.tube("black", [(x, 0.30, z), (x + 0.07, 0.30, z), (x + 0.07, 0.30, z + 0.04)], 0.007, segs=5)
+
+
+def _tower_stripes(m, x, z, outward):
+    """Hazard band on a long face. outward is -1 for the -z side."""
+    for i, mat in enumerate(("yellow", "black", "yellow", "black")):
+        y0 = 0.28 + i * 0.07
+        if outward < 0:
+            m.box(mat, x, y0, z - 0.006, x + 0.07, y0 + 0.07, z, faces="n")
+        else:
+            m.box(mat, x, y0, z, x + 0.07, y0 + 0.07, z + 0.006, faces="s")
+
+
+def light_tower():
+    """Site light tower on its own generator: black trailer, dyed canopy, hitch, jacks, sockets and an e-stop.
+    The mast and the lamp bank are drawn separately so the height and the aim can move."""
+    m = Mesh()
+    x0, x1, z0, z1 = LT_X0, LT_X1, LT_Z0, LT_Z1
+    base, top = LT_BASE, LT_TOP
+    # Chassis, hitch and axle.
+    m.bevel_box("black", 0.30, 0.10, 0.12, 1.86, 0.24, 0.88, 0.012)
+    m.box("black", 0.34, 0.16, 0.20, 1.80, 0.26, 0.80)
+    m.tube("black", [(1.62, 0.20, 0.34), (1.94, 0.16, 0.50)], 0.018, segs=8)
+    m.tube("black", [(1.62, 0.20, 0.66), (1.94, 0.16, 0.50)], 0.018, segs=8)
+    m.tube("black", [(1.90, 0.16, 0.50), (2.02, 0.16, 0.50)], 0.028, segs=8)
+    cup = Mesh()
+    cup.cylinder("black", 0.04, 0.0, 0.10, cx=0, cz=0, segs=10)
+    cup.lathe("chrome", [(0.045, 0.08), (0.058, 0.11), (0.058, 0.15), (0.02, 0.17)], cx=0, cz=0, segs=10)
+    m.merge(cup.transformed(chain(rot_z(90, 0, 0), translate(1.92, 0.16, 0.50))))
+    m.tube("galvanised", [(1.84, 0.14, 0.42), (1.96, 0.08, 0.38)], 0.006, segs=5)
+    m.tube("galvanised", [(1.84, 0.14, 0.58), (1.96, 0.08, 0.62)], 0.006, segs=5)
+    m.tube("galvanised", [(1.78, 0.05, 0.50), (1.78, 0.20, 0.50)], 0.012, segs=6)
+    jw = Mesh()
+    jw.lathe("rubber", [(0.018, -0.016), (0.04, -0.012), (0.048, 0.0), (0.04, 0.012), (0.018, 0.016)], cx=0, cz=0, segs=10)
+    m.merge(jw.transformed(chain(rot_x(90, 0, 0), translate(1.78, 0.048, 0.50))))
+    mx, mz = LT_MAST
+    m.tube("galvanised", [(mx - 0.28, 0.18, mz), (mx + 0.28, 0.18, mz)], 0.02, segs=8, caps=False)
+    _tower_wheel(m, mx + 0.06, 0.06)
+    _tower_wheel(m, mx + 0.06, 0.94)
+    m.box("black", mx - 0.02, 0.10, 0.02, mx + 0.10, 0.22, 0.10)
+    m.box("black", mx - 0.02, 0.10, 0.90, mx + 0.10, 0.22, 0.98)
+    for (jx, jz) in ((0.42, 0.20), (0.42, 0.80), (1.58, 0.20), (1.58, 0.80)):
+        _tower_jack(m, jx, jz)
+    # Canopy.
+    m.bevel_box("paint", x0, base, z0, x1, top, z1, 0.02)
+    m.bevel_box("paint", x0 + 0.02, top - 0.004, z0 + 0.02, x1 - 0.02, top + 0.03, z1 - 0.02, 0.01)
+    roof = top + 0.03
+    # Front: service door on the mast half, control bay on the hitch half.
+    door = Mesh()
+    _door(door, 0.42, 1.02, 0.34, 1.08, z0)
+    m.merge(door)
+    m.bevel_box("black", 1.10, 0.72, z0 - 0.012, 1.68, 1.08, z0 + 0.002, 0.004)
+    _front_panel(m, "black", 1.14, 0.78, 1.64, 1.04, z0 - 0.014)
+    for k in range(4):
+        yy = 0.96 - k * 0.045
+        m.box("white", 1.18, yy, z0 - 0.018, 1.42, yy + 0.012, z0 - 0.014, faces="n")
+    m.box("green", 1.48, 0.90, z0 - 0.020, 1.54, 0.96, z0 - 0.012, faces="nsewd")
+    m.box("red", 1.56, 0.90, z0 - 0.020, 1.62, 0.96, z0 - 0.012, faces="nsewd")
+    m.bevel_box("grey", 1.12, 0.40, z0 - 0.008, 1.70, 0.70, z0 + 0.002, 0.004)
+    for (sx, mat, r) in ((1.22, "blue", 0.038), (1.36, "blue", 0.038), (1.50, "red", 0.05)):
+        _socket(m, sx, 0.55, z0 - 0.008, mat, r)
+    m.bevel_box("yellow", 1.60, 0.86, z0 - 0.006, 1.72, 0.98, z0 + 0.002, 0.003)
+    m.tube("red", [(1.66, 0.92, z0 - 0.006), (1.66, 0.92, z0 - 0.028)], 0.014, segs=8, caps=False)
+    m.tube("red", [(1.66, 0.92, z0 - 0.028), (1.66, 0.92, z0 - 0.042)], 0.026, segs=10)
+    # Back face, swung around the canopy's own centre so the louvres point outward.
+    back = Mesh()
+    _door(back, 0.42, 1.68, 0.34, 1.08, z0, louvre=True, handle=True)
+    m.merge(back.transformed(rot_y(180, (x0 + x1) * 0.5, (z0 + z1) * 0.5)))
+    for x in (0.40, 1.62):
+        _tower_stripes(m, x, z0, -1)
+        _tower_stripes(m, x, z1, 1)
+    # Hitch end: intake slats standing proud of the canopy.
+    for k in range(5):
+        y = 0.48 + k * 0.10
+        m.box("black", x1, y, 0.32, x1 + 0.014, y + 0.035, 0.68, faces="e")
+    # Fuel filler and a blank rating plate on the back, earth lead at a corner.
+    m.tube("black", [(1.48, 0.62, z1), (1.48, 0.62, z1 + 0.028)], 0.035, segs=10, caps=False)
+    cap = Mesh()
+    cap.cylinder("black", 0.032, 0.0, 0.01, cx=0, cz=0, segs=10)
+    cap.cylinder("chrome", 0.026, 0.01, 0.02, cx=0, cz=0, segs=10)
+    m.merge(cap.transformed(chain(rot_x(90, 0, 0), translate(1.48, 0.62, z1 + 0.028))))
+    m.bevel_box("chrome", 1.20, 0.48, z1, 1.40, 0.66, z1 + 0.006, 0.003)
+    m.quad("white", (1.21, 0.49, z1 + 0.008), (1.39, 0.49, z1 + 0.008), (1.39, 0.65, z1 + 0.008), (1.21, 0.65, z1 + 0.008), (0, 0, 1))
+    m.tube("chrome", [(1.70, 0.0, 0.10), (1.70, 0.14, 0.10)], 0.008, segs=6)
+    m.tube("yellow", [(1.70, 0.12, 0.10), (1.66, 0.16, 0.14), (1.62, 0.20, z0)], 0.006, segs=5)
+    # Roof: mast shoe, winch, coiled lead, exhaust, lifting eye.
+    m.box("galvanised", mx - 0.16, roof, mz - 0.16, mx + 0.16, roof + 0.05, mz + 0.16)
+    m.box("black", mx - 0.11, roof + 0.05, mz - 0.11, mx + 0.11, roof + 0.09, mz + 0.11)
+    m.cylinder("grey", 0.055, roof + 0.02, roof + 0.10, cx=mx + 0.24, cz=mz - 0.02, segs=10)
+    m.tube("black", [(mx + 0.24, roof + 0.06, mz - 0.02), (mx + 0.24, roof + 0.06, mz + 0.08),
+                     (mx + 0.16, roof + 0.08, mz + 0.08)], 0.008, segs=5)
+    coil = []
+    for i in range(28):
+        a = i / 27 * math.tau * 3.2
+        coil.append((mx - 0.24 + math.cos(a) * 0.055, roof + 0.03 + i * 0.0035, mz + math.sin(a) * 0.055))
+    m.tube("black", coil, 0.007, segs=5, caps=False)
+    ex, ez = LT_EXHAUST
+    m.cylinder("black", 0.045, roof, roof + 0.04, cx=ex, cz=ez, segs=10)
+    m.cylinder("metal", 0.032, roof + 0.03, roof + 0.14, cx=ex, cz=ez, segs=10, caps=False)
+    m.lathe("metal", [(0.032, roof + 0.14), (0.04, roof + 0.15), (0.028, roof + 0.17)], cx=ex, cz=ez, segs=10)
+    m.tube("chrome", [(1.15, roof, 0.50), (1.15, roof + 0.06, 0.50), (1.22, roof + 0.09, 0.50),
+                      (1.22, roof + 0.05, 0.50)], 0.012, segs=6)
+    return m
+
+
+def light_tower_section():
+    """One metre of telescopic mast, square tube with a foot flange and a cable rib. Centred on x=z=0.5."""
+    m = Mesh()
+    a, b, t = 0.40, 0.60, 0.02
+    m.box("galvanised", a, 0.0, a, b, 1.0, a + t)
+    m.box("galvanised", a, 0.0, b - t, b, 1.0, b)
+    m.box("galvanised", a, 0.0, a + t, a + t, 1.0, b - t)
+    m.box("galvanised", b - t, 0.0, a + t, b, 1.0, b - t)
+    m.box("galvanised", a - 0.025, 0.0, a - 0.025, b + 0.025, 0.025, b + 0.025)
+    m.box("black", b - 0.01, 0.02, b - 0.01, b + 0.018, 0.98, b + 0.018)
+    for x in (a, b):
+        for z in (a, b):
+            m.cylinder("grey", 0.012, 0.025, 0.04, cx=x, cz=z, segs=6)
+    return m
+
+
+def light_tower_yoke():
+    """Head of the mast: a neck and the cross the four floods hinge on. Pivot at (0.5, 0, 0.5)."""
+    m = Mesh()
+    m.box("galvanised", 0.43, -0.18, 0.43, 0.57, 0.02, 0.57)
+    m.box("galvanised", 0.20, -0.03, 0.45, 0.80, 0.04, 0.55)
+    m.box("galvanised", 0.45, -0.08, 0.45, 0.55, 0.10, 0.55)
+    m.box("black", 0.46, 0.04, 0.40, 0.54, 0.12, 0.48)
+    m.cylinder("grey", 0.03, -0.02, 0.02, cx=0.28, cz=0.50, segs=8)
+    m.cylinder("grey", 0.03, -0.02, 0.02, cx=0.72, cz=0.50, segs=8)
+    return m
+
+
+def light_tower_lamp():
+    """One LED flood. The hinge is (0.5, 0, 0.5) and the face looks toward -z, so a negative pitch aims it down."""
+    m = Mesh()
+    x0, x1, y0, y1 = 0.30, 0.70, -0.15, 0.13
+    z_face, z_back = 0.20, 0.46
+    m.bevel_box("black", x0, y0, z_face, x1, y1, z_back, 0.008)
+    m.box("black", x0 - 0.012, y1 - 0.012, z_face - 0.045, x1 + 0.012, y1 + 0.02, z_back)
+    for i in range(5):
+        x = x0 + 0.045 + i * 0.06
+        m.box("grey", x, y1, z_face + 0.04, x + 0.012, y1 + 0.028, z_back - 0.015)
+    m.box("white", x0 + 0.025, y0 + 0.02, z_face - 0.006, x1 - 0.025, y1 - 0.025, z_face, faces="n")
+    cols, rows = 6, 4
+    fw, fh = (x1 - x0 - 0.05), (y1 - y0 - 0.045)
+    for c in range(cols + 1):
+        x = x0 + 0.025 + fw * c / cols
+        m.box("grey", x - 0.003, y0 + 0.02, z_face - 0.012, x + 0.003, y1 - 0.025, z_face - 0.005, faces="n")
+    for r in range(rows + 1):
+        y = y0 + 0.02 + fh * r / rows
+        m.box("grey", x0 + 0.025, y - 0.003, z_face - 0.012, x1 - 0.025, y + 0.003, z_face - 0.005, faces="n")
+    m.tube("galvanised", [(x0 + 0.02, 0.0, 0.50), (x1 - 0.02, 0.0, 0.50)], 0.016, segs=8)
+    return m

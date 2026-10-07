@@ -115,6 +115,10 @@ def main():
                       ("flight_case_xl", 2, 1.62)):
         report[n] = model(props.flight_case(w, top), n, tinted=("paint",))
     report["generator"] = model(props.generator(), "generator", tinted=("paint",))
+    report["light_tower"] = model(props.light_tower(), "light_tower", tinted=("paint",), gui_scale=0.34, gui_offset=(-0.35, -0.2, 0))
+    report["light_tower_section"] = model(props.light_tower_section(), "light_tower_section")
+    report["light_tower_yoke"] = model(props.light_tower_yoke(), "light_tower_yoke")
+    report["light_tower_lamp"] = model(props.light_tower_lamp(), "light_tower_lamp")
     report["power_distro"] = model(props.power_distro(), "power_distro", gui_scale=0.42, gui_offset=(0, -0.15, 0))
     report["power_rack"] = model(props.power_rack(), "power_rack", tinted=("paint",), gui_scale=0.42, gui_offset=(0, -0.12, 0))
     report["site_toilet"] = model(props.site_toilet(False), "site_toilet", tinted=("paint",), gui_scale=0.4, gui_offset=(0, -0.4, 0))
@@ -189,6 +193,7 @@ def main():
     for n in ("flight_case", "flight_case_trunk", "flight_case_tall", "flight_case_xl"):
         blockstate(n, facing_parts(n))
     blockstate("generator", facing_parts("generator"))
+    blockstate("light_tower", facing_parts("light_tower"))
     blockstate("power_distro", facing_parts("power_distro"))
     blockstate("power_rack", facing_parts("power_rack"))
     blockstate("site_toilet", facing_parts("site_toilet", {"open": "false"}) + facing_parts("site_toilet_open", {"open": "true"}))
