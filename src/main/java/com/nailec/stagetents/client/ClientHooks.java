@@ -69,6 +69,10 @@ public final class ClientHooks {
         mc.setScreen(new DrapeScreen(pos, mc.level.getBlockState(pos)));
     }
 
+    public static void openCurtainScreen(BlockPos pos) {
+        Minecraft.getInstance().setScreen(new CurtainScreen(pos));
+    }
+
     public static void openBadgeScreen(InteractionHand hand) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;

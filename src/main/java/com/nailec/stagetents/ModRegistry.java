@@ -17,6 +17,7 @@ import com.nailec.stagetents.furniture.PendrillonBlock;
 import com.nailec.stagetents.furniture.PicnicTableBlock;
 import com.nailec.stagetents.furniture.FoldingTableBlock;
 import com.nailec.stagetents.furniture.PowerDistroBlock;
+import com.nailec.stagetents.furniture.CurtainBlock;
 import com.nailec.stagetents.furniture.FriseBlock;
 import com.nailec.stagetents.furniture.DrapeBlockEntity;
 import com.nailec.stagetents.furniture.SiteFenceBlock;
@@ -156,6 +157,7 @@ public final class ModRegistry {
     public static final RegistryObject<FoldingTableBlock> FOLDING_TABLE = BLOCKS.register("folding_table", () -> new FoldingTableBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<FriseBlock> FRISE = BLOCKS.register("frise", () -> new FriseBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<PendrillonBlock> PENDRILLON = BLOCKS.register("pendrillon", () -> new PendrillonBlock(furnitureProps(SoundType.WOOL)));
+    public static final RegistryObject<CurtainBlock> CURTAIN = BLOCKS.register("curtain", () -> new CurtainBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<FurnitureBlock> GUIDE_RAIL = BLOCKS.register("guide_rail", () -> new GuideRailBlock(
             furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.WHITE, new double[]{7, 0, 0, 9, 24, 16})));
     public static final RegistryObject<PropPartBlock> PROP_PART = BLOCKS.register("prop_part", () -> new PropPartBlock(
@@ -210,6 +212,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> ORIFLAMME_ITEM = blockItem("oriflamme", ORIFLAMME);
     public static final RegistryObject<Item> FRISE_ITEM = blockItem("frise", FRISE);
     public static final RegistryObject<Item> PENDRILLON_ITEM = blockItem("pendrillon", PENDRILLON);
+    public static final RegistryObject<Item> CURTAIN_ITEM = blockItem("curtain", CURTAIN);
     public static final RegistryObject<Item> SHOOTING_GALLERY_ITEM = ITEMS.register("shooting_gallery",
             () -> new BlockItem(SHOOTING_GALLERY.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WRENCH = ITEMS.register("tent_wrench", () -> new TentWrenchItem(new Item.Properties().stacksTo(1)));
@@ -224,7 +227,7 @@ public final class ModRegistry {
             () -> BlockEntityType.Builder.of(TurnstileBlockEntity::new, TURNSTILE.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<DrapeBlockEntity>> DRAPE_BE = BLOCK_ENTITIES.register("drape",
-            () -> BlockEntityType.Builder.of(DrapeBlockEntity::new, FRISE.get(), PENDRILLON.get()).build(null));
+            () -> BlockEntityType.Builder.of(DrapeBlockEntity::new, FRISE.get(), PENDRILLON.get(), CURTAIN.get()).build(null));
     public static final RegistryObject<BlockEntityType<WaterCannonBlockEntity>> WATER_CANNON_BE = BLOCK_ENTITIES.register("water_cannon",
             () -> BlockEntityType.Builder.of(WaterCannonBlockEntity::new, WATER_CANNON.get()).build(null));
 
@@ -265,6 +268,7 @@ public final class ModRegistry {
                 out.accept(CYCLORAMA_ITEM.get());
                 out.accept(FRISE_ITEM.get());
                 out.accept(PENDRILLON_ITEM.get());
+                out.accept(CURTAIN_ITEM.get());
                 out.accept(FLIGHT_CASE_ITEM.get());
                 out.accept(FLIGHT_CASE_TRUNK_ITEM.get());
                 out.accept(FLIGHT_CASE_TALL_ITEM.get());

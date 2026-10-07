@@ -50,5 +50,10 @@ public final class ModNetwork {
                 .decoder(ConfigureCableRampPacket::decode)
                 .consumerMainThread(ConfigureCableRampPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(ConfigureCurtainPacket.class, 7, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ConfigureCurtainPacket::encode)
+                .decoder(ConfigureCurtainPacket::decode)
+                .consumerMainThread(ConfigureCurtainPacket::handle)
+                .add();
     }
 }

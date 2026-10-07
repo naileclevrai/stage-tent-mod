@@ -84,6 +84,12 @@ public class TentWrenchItem extends Item {
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.CurtainBlock) {
+            if (level.isClientSide) {
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openCurtainScreen(ctx.getClickedPos()));
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         // On a bleacher: open the grandstand builder.
         if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.ConnectedFurnitureBlock c
                 && c.group.equals("grandstand")) {
@@ -153,5 +159,6 @@ public class TentWrenchItem extends Item {
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.7").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.8").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.9").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.10").withStyle(ChatFormatting.GRAY));
     }
 }

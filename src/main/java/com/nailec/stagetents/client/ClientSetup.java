@@ -58,7 +58,7 @@ public final class ClientSetup {
                 ModRegistry.CYCLORAMA_ITEM.get(), ModRegistry.FLIGHT_CASE_ITEM.get(), ModRegistry.FLIGHT_CASE_TRUNK_ITEM.get(),
                 ModRegistry.FLIGHT_CASE_TALL_ITEM.get(), ModRegistry.FLIGHT_CASE_XL_ITEM.get(), ModRegistry.GENERATOR_ITEM.get(),
                 ModRegistry.SITE_TOILET_ITEM.get(), ModRegistry.SITE_FENCE_ITEM.get(), ModRegistry.ORIFLAMME_ITEM.get(),
-                ModRegistry.FRISE_ITEM.get(), ModRegistry.PENDRILLON_ITEM.get(),
+                ModRegistry.FRISE_ITEM.get(), ModRegistry.PENDRILLON_ITEM.get(), ModRegistry.CURTAIN_ITEM.get(),
                 ModRegistry.ROUND_TABLE_ITEM.get(), ModRegistry.STANDING_TABLE_ITEM.get(), ModRegistry.BANQUET_CHAIR_ITEM.get(),
                 ModRegistry.FOLDING_CHAIR_ITEM.get(), ModRegistry.BAR_STOOL_ITEM.get(), ModRegistry.BAR_COUNTER_ITEM.get(),
                 ModRegistry.BLEACHER_ITEM.get(), ModRegistry.BLEACHER_AISLE_ITEM.get(), ModRegistry.STANCHION_ITEM.get(),
