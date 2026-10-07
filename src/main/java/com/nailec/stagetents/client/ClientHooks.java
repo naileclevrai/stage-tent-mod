@@ -77,6 +77,10 @@ public final class ClientHooks {
         Minecraft.getInstance().setScreen(new LightTowerScreen(pos));
     }
 
+    public static void openControlTowerScreen(BlockPos pos) {
+        Minecraft.getInstance().setScreen(new ControlTowerScreen(pos));
+    }
+
     public static void openBadgeScreen(InteractionHand hand) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;

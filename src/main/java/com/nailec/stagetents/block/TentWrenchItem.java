@@ -59,6 +59,12 @@ public class TentWrenchItem extends Item {
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.ControlTowerBlock) {
+            if (level.isClientSide) {
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openControlTowerScreen(ctx.getClickedPos()));
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.LightTowerBlock) {
             Player player = ctx.getPlayer();
             if (player != null && player.isShiftKeyDown()) {
@@ -171,5 +177,6 @@ public class TentWrenchItem extends Item {
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.9").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.10").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.11").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.12").withStyle(ChatFormatting.GRAY));
     }
 }

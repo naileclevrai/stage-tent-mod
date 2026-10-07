@@ -13,6 +13,9 @@ import com.nailec.stagetents.furniture.ConnectedFurnitureBlock;
 import com.nailec.stagetents.furniture.GeneratorBlock;
 import com.nailec.stagetents.furniture.LightTowerBlock;
 import com.nailec.stagetents.furniture.LightTowerBlockEntity;
+import com.nailec.stagetents.furniture.ControlTowerBlock;
+import com.nailec.stagetents.furniture.ControlTowerBlockEntity;
+import com.nailec.stagetents.furniture.ScaffoldCellBlock;
 import com.nailec.stagetents.furniture.GuideRailBlock;
 import com.nailec.stagetents.furniture.OriflammeBlock;
 import com.nailec.stagetents.furniture.PendrillonBlock;
@@ -147,6 +150,12 @@ public final class ModRegistry {
             new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}));
     public static final RegistryObject<GeneratorBlock> GENERATOR = BLOCKS.register("generator", () -> new GeneratorBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<LightTowerBlock> LIGHT_TOWER = BLOCKS.register("light_tower", () -> new LightTowerBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<ControlTowerBlock> CONTROL_TOWER = BLOCKS.register("control_tower", () -> new ControlTowerBlock(
+            furnitureProps(SoundType.METAL).pushReaction(PushReaction.BLOCK)));
+    public static final RegistryObject<ScaffoldCellBlock> SCAFFOLD_CELL = BLOCKS.register("scaffold_cell", () -> new ScaffoldCellBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
+                    .pushReaction(PushReaction.BLOCK).isValidSpawn((s, l, p, e) -> false)
+                    .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)));
     public static final RegistryObject<PowerDistroBlock> POWER_DISTRO = BLOCKS.register("power_distro", () -> new PowerDistroBlock(furnitureProps(SoundType.STONE)));
     public static final RegistryObject<FurnitureBlock> POWER_RACK = BLOCKS.register("power_rack", () -> new FurnitureBlock(
             furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.BLACK, new double[]{0.2, 0, 1.6, 15.8, 15.9, 13.8})));
@@ -207,6 +216,8 @@ public final class ModRegistry {
     public static final RegistryObject<Item> FLIGHT_CASE_XL_ITEM = blockItem("flight_case_xl", FLIGHT_CASE_XL);
     public static final RegistryObject<Item> GENERATOR_ITEM = blockItem("generator", GENERATOR);
     public static final RegistryObject<Item> LIGHT_TOWER_ITEM = blockItem("light_tower", LIGHT_TOWER);
+    public static final RegistryObject<Item> CONTROL_TOWER_ITEM = ITEMS.register("control_tower",
+            () -> new BlockItem(CONTROL_TOWER.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> POWER_DISTRO_ITEM = blockItem("power_distro", POWER_DISTRO);
     public static final RegistryObject<Item> POWER_RACK_ITEM = blockItem("power_rack", POWER_RACK);
     public static final RegistryObject<Item> CABLE_RAMP_ITEM = blockItem("cable_ramp", CABLE_RAMP);
@@ -234,6 +245,8 @@ public final class ModRegistry {
             () -> BlockEntityType.Builder.of(DrapeBlockEntity::new, FRISE.get(), PENDRILLON.get(), CURTAIN.get()).build(null));
     public static final RegistryObject<BlockEntityType<LightTowerBlockEntity>> LIGHT_TOWER_BE = BLOCK_ENTITIES.register("light_tower",
             () -> BlockEntityType.Builder.of(LightTowerBlockEntity::new, LIGHT_TOWER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<ControlTowerBlockEntity>> CONTROL_TOWER_BE = BLOCK_ENTITIES.register("control_tower",
+            () -> BlockEntityType.Builder.of(ControlTowerBlockEntity::new, CONTROL_TOWER.get()).build(null));
     public static final RegistryObject<BlockEntityType<WaterCannonBlockEntity>> WATER_CANNON_BE = BLOCK_ENTITIES.register("water_cannon",
             () -> BlockEntityType.Builder.of(WaterCannonBlockEntity::new, WATER_CANNON.get()).build(null));
 
@@ -271,6 +284,7 @@ public final class ModRegistry {
                 out.accept(STAGE_DECK_ITEM.get());
                 out.accept(STAGE_STAIRS_ITEM.get());
                 out.accept(STAGE_RAMP_ITEM.get());
+                out.accept(CONTROL_TOWER_ITEM.get());
                 out.accept(CYCLORAMA_ITEM.get());
                 out.accept(FRISE_ITEM.get());
                 out.accept(PENDRILLON_ITEM.get());

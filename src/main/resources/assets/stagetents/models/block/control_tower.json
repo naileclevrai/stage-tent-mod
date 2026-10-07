@@ -1,0 +1,17 @@
+{
+  "textures": { "particle": "minecraft:block/iron_block" },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [4, 2, 4],
+      "faces": {
+        "up": { "texture": "#particle" },
+        "down": { "texture": "#particle" },
+        "north": { "texture": "#particle" },
+        "south": { "texture": "#particle" },
+        "east": { "texture": "#particle" },
+        "west": { "texture": "#particle" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "stagetents:item/control_tower",
+    "layer1": "stagetents:item/control_tower_dye"
+  }
+}
