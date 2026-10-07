@@ -15,6 +15,7 @@ import com.nailec.stagetents.furniture.GuideRailBlock;
 import com.nailec.stagetents.furniture.OriflammeBlock;
 import com.nailec.stagetents.furniture.PendrillonBlock;
 import com.nailec.stagetents.furniture.PicnicTableBlock;
+import com.nailec.stagetents.furniture.FoldingTableBlock;
 import com.nailec.stagetents.furniture.PowerDistroBlock;
 import com.nailec.stagetents.furniture.FriseBlock;
 import com.nailec.stagetents.furniture.DrapeBlockEntity;
@@ -152,6 +153,7 @@ public final class ModRegistry {
     public static final RegistryObject<SiteFenceBlock> SITE_FENCE = BLOCKS.register("site_fence", () -> new SiteFenceBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<OriflammeBlock> ORIFLAMME = BLOCKS.register("oriflamme", () -> new OriflammeBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PicnicTableBlock> PICNIC_TABLE = BLOCKS.register("picnic_table", () -> new PicnicTableBlock(furnitureProps(SoundType.WOOD)));
+    public static final RegistryObject<FoldingTableBlock> FOLDING_TABLE = BLOCKS.register("folding_table", () -> new FoldingTableBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<FriseBlock> FRISE = BLOCKS.register("frise", () -> new FriseBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<PendrillonBlock> PENDRILLON = BLOCKS.register("pendrillon", () -> new PendrillonBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<FurnitureBlock> GUIDE_RAIL = BLOCKS.register("guide_rail", () -> new GuideRailBlock(
@@ -178,6 +180,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> ROUND_TABLE_ITEM = blockItem("round_table", ROUND_TABLE);
     public static final RegistryObject<Item> STANDING_TABLE_ITEM = blockItem("standing_table", STANDING_TABLE);
     public static final RegistryObject<Item> PICNIC_TABLE_ITEM = blockItem("picnic_table", PICNIC_TABLE);
+    public static final RegistryObject<Item> FOLDING_TABLE_ITEM = blockItem("folding_table", FOLDING_TABLE);
     public static final RegistryObject<Item> BANQUET_CHAIR_ITEM = blockItem("banquet_chair", BANQUET_CHAIR);
     public static final RegistryObject<Item> BAR_COUNTER_ITEM = blockItem("bar_counter", BAR_COUNTER);
     public static final RegistryObject<Item> BLEACHER_ITEM = blockItem("bleacher", BLEACHER);
@@ -244,6 +247,7 @@ public final class ModRegistry {
                 out.accept(BANQUET_CHAIR_ITEM.get());
                 out.accept(STANDING_TABLE_ITEM.get());
                 out.accept(PICNIC_TABLE_ITEM.get());
+                out.accept(FOLDING_TABLE_ITEM.get());
                 out.accept(BAR_COUNTER_ITEM.get());
                 out.accept(BAR_STOOL_ITEM.get());
                 out.accept(FOLDING_CHAIR_ITEM.get());
