@@ -38,6 +38,7 @@ import com.nailec.stagetents.furniture.StanchionBlock;
 import com.nailec.stagetents.furniture.StandingTableBlock;
 import com.nailec.stagetents.furniture.TurnstileBlock;
 import com.nailec.stagetents.furniture.TurnstileBlockEntity;
+import com.nailec.stagetents.furniture.WashStationBlock;
 import com.nailec.stagetents.furniture.WaterCannonBlock;
 import com.nailec.stagetents.furniture.WaterCannonBlockEntity;
 import net.minecraft.world.item.DyeColor;
@@ -164,6 +165,7 @@ public final class ModRegistry {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(1.0F).sound(SoundType.WOOL).noOcclusion()));
     public static final RegistryObject<WaterCannonBlock> WATER_CANNON = BLOCKS.register("water_cannon", () -> new WaterCannonBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<SiteToiletBlock> SITE_TOILET = BLOCKS.register("site_toilet", () -> new SiteToiletBlock(furnitureProps(SoundType.STONE)));
+    public static final RegistryObject<WashStationBlock> WASH_STATION = BLOCKS.register("wash_station", () -> new WashStationBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<SiteFenceBlock> SITE_FENCE = BLOCKS.register("site_fence", () -> new SiteFenceBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<OriflammeBlock> ORIFLAMME = BLOCKS.register("oriflamme", () -> new OriflammeBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PicnicTableBlock> PICNIC_TABLE = BLOCKS.register("picnic_table", () -> new PicnicTableBlock(furnitureProps(SoundType.WOOD)));
@@ -226,6 +228,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> CABLE_RAMP_ITEM = blockItem("cable_ramp", CABLE_RAMP);
     public static final RegistryObject<Item> WATER_CANNON_ITEM = blockItem("water_cannon", WATER_CANNON);
     public static final RegistryObject<Item> SITE_TOILET_ITEM = blockItem("site_toilet", SITE_TOILET);
+    public static final RegistryObject<Item> WASH_STATION_ITEM = blockItem("wash_station", WASH_STATION);
     public static final RegistryObject<Item> SITE_FENCE_ITEM = blockItem("site_fence", SITE_FENCE);
     public static final RegistryObject<Item> ORIFLAMME_ITEM = blockItem("oriflamme", ORIFLAMME);
     public static final RegistryObject<Item> FRISE_ITEM = blockItem("frise", FRISE);
@@ -304,6 +307,7 @@ public final class ModRegistry {
                 out.accept(CABLE_RAMP_ITEM.get());
                 out.accept(WATER_CANNON_ITEM.get());
                 out.accept(SITE_TOILET_ITEM.get());
+                out.accept(WASH_STATION_ITEM.get());
                 out.accept(SITE_FENCE_ITEM.get());
                 out.accept(ORIFLAMME_ITEM.get());
                 out.accept(SHOOTING_GALLERY_ITEM.get());

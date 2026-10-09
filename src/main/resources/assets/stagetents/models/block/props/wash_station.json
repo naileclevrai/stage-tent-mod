@@ -1,0 +1,17 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/wash_station.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/galvanised",
+    "galvanised": "stagetents:block/props/galvanised",
+    "black": "stagetents:block/props/black",
+    "grey": "stagetents:block/props/grey",
+    "white": "stagetents:block/props/white",
+    "chrome": "stagetents:block/props/chrome"
+  }
+}

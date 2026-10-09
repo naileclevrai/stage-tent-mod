@@ -1204,6 +1204,43 @@ def _wc_door(s, z, opened):
     s.merge(d)
 
 
+def wash_station():
+    """Backstage hand-wash stand: stainless cabinet, sunken basin, gooseneck tap, soap, side bin and a foot pedal."""
+    m = Mesh()
+    steel, tap = "galvanised", "chrome"
+    x0, x1, z0, z1 = 0.22, 0.78, 0.30, 0.74
+    # Plinth and an open toe-kick, with the pedal in the recess.
+    m.box(steel, x0, 0.0, z0, x1, 0.03, z1)
+    m.box(steel, x0, 0.03, z0, x0 + 0.06, 0.22, z1)
+    m.box(steel, x1 - 0.06, 0.03, z0, x1, 0.22, z1)
+    m.box(steel, x0, 0.03, z1 - 0.08, x1, 0.22, z1)
+    m.bevel_box("black", 0.40, 0.035, 0.20, 0.60, 0.075, 0.34, 0.006)
+    m.cylinder("black", 0.035, 0.02, 0.055, cx=0.62, cz=0.66, segs=10)
+    # Cabinet, top deck and the sunken basin.
+    m.bevel_box(steel, x0, 0.22, z0, x1, 1.12, z1, 0.008)
+    m.box(steel, x0 + 0.02, 1.12, z0 + 0.02, x1 - 0.02, 1.175, z1 - 0.02)
+    bx0, bx1, bz0, bz1 = 0.32, 0.68, 0.38, 0.64
+    m.box("grey", bx0, 1.04, bz0, bx1, 1.055, bz1, faces="ud")
+    m.box(steel, x0 + 0.02, 1.05, z0 + 0.02, bx0, 1.175, z1 - 0.08)
+    m.box(steel, bx1, 1.05, z0 + 0.02, x1 - 0.02, 1.175, z1 - 0.08)
+    m.box(steel, bx0, 1.05, z0 + 0.02, bx1, 1.175, bz0)
+    m.box(steel, bx0, 1.05, bz1, bx1, 1.175, z1 - 0.08)
+    # Backsplash, soap dispenser and the rail above it.
+    m.box(steel, x0, 1.12, 0.66, x1, 1.66, 0.76)
+    m.bevel_box("white", 0.56, 1.30, 0.58, 0.70, 1.54, 0.70, 0.006)
+    m.box("white", 0.60, 1.26, 0.56, 0.66, 1.32, 0.62)
+    m.tube(tap, [(0.28, 1.66, 0.71), (0.28, 1.74, 0.71), (0.72, 1.74, 0.71), (0.72, 1.66, 0.71)], 0.012, segs=8)
+    # Gooseneck over the basin, with a short spout.
+    m.tube(tap, [(0.50, 1.30, 0.66), (0.50, 1.50, 0.62), (0.50, 1.52, 0.48), (0.50, 1.40, 0.40), (0.50, 1.30, 0.40)],
+           0.016, segs=8)
+    m.cylinder(tap, 0.022, 1.26, 1.31, cx=0.50, cz=0.40, segs=8)
+    # Hanging bin on the left, clear of the cabinet so it reads as a separate bucket.
+    m.bevel_box("white", 0.02, 0.52, 0.36, 0.20, 0.96, 0.62, 0.01)
+    m.bevel_box("white", 0.015, 0.94, 0.34, 0.205, 1.00, 0.64, 0.006)
+    m.box("grey", 0.05, 0.78, 0.345, 0.17, 0.90, 0.36)
+    return m
+
+
 def site_toilet(opened):
     """Portable site toilet, two blocks tall: dyed ribbed shell on a dark base, corner posts, translucent domed
     roof, vent stack, louvred vents, door with a vacant/occupied indicator. Open, it shows the seat, the paper

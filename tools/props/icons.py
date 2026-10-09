@@ -187,6 +187,25 @@ ICONS = {
         ".KK..........KK.",
         "................",
     ],
+    # Point d'eau: rail, dosseret, robinet, savon, bassine, caisson, pédale, poubelle.
+    "wash_station": [
+        "................",
+        "......CCCC......",
+        ".....C....C.....",
+        "....SSSSSSSS....",
+        "....S.CC.WW.S...",
+        "....SSSSSSSS....",
+        "...ssssssssss...",
+        "...skkkkkkkks...",
+        "...skkkkkkkks...",
+        "...ssssssssss...",
+        "....ssssssss....",
+        "....ssssssss....",
+        "....s......s....",
+        "....s..KK..s....",
+        ".....sKKKKs.....",
+        "......ssss......",
+    ],
     # Sanitaire de chantier: dôme, porte nervurée, voyant, manche, évent.
     "site_toilet": [
         ".....WWWWW......",
