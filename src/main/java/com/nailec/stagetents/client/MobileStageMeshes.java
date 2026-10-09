@@ -30,30 +30,57 @@ final class MobileStageMeshes {
         return stream;
     }
 
+    /** Decoded once. Each quad is material, part, then 4×8 floats (the fourth corner repeats the third). */
+    private static int[] materials;
+    private static int[] parts;
+    private static float[] verts;
+
     static void build(MeshBuilder mesh, MobileStageShape shape) {
+        ensure();
+        float fold = StageFold.current;
+        double[][] quad = new double[4][8];
+        int count = materials.length;
+        for (int i = 0; i < count; i++) {
+            int material = materials[i];
+            int base = i * 32;
+            for (int v = 0; v < 4; v++) {
+                for (int k = 0; k < 8; k++) quad[v][k] = verts[base + v * 8 + k];
+            }
+            StageFold.apply(quad, parts[i], fold);
+            int tint = switch (material) {
+                case 5 -> shape.params.colorA;
+                case 6 -> shape.params.lining == -1 ? 0x24262A : shape.params.lining;
+                default -> 0xFFFFFF;
+            };
+            mesh.quad(quad, MeshBuilder.opaque(tint), MeshBuilder.MATERIAL + material, false);
+        }
+    }
+
+    private static void ensure() {
+        if (verts != null) return;
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(open()))) {
-            if (in.readInt() != 0x53544732) throw new IOException("Invalid stage mesh header");
+            int header = in.readInt();
+            boolean partsInFile = header == 0x53544733;
+            if (!partsInFile && header != 0x53544732) throw new IOException("Invalid stage mesh header");
             int count = in.readInt();
             if (count < 1 || count > 60_000) throw new IOException("Invalid stage triangle count: " + count);
-            double[][] quad = new double[4][8];
+            int[] mat = new int[count];
+            int[] part = new int[count];
+            float[] data = new float[count * 32];
             for (int i = 0; i < count; i++) {
-                int material = in.readUnsignedByte();
-                if (material >= MATERIALS.length) throw new IOException("Invalid stage material: " + material);
-                for (double[] vertex : quad) {
-                    for (int k = 0; k < vertex.length; k++) {
-                        float value = in.readFloat();
-                        if (!Float.isFinite(value)) throw new IOException("Non-finite stage vertex");
-                        vertex[k] = value;
-                    }
+                mat[i] = in.readUnsignedByte();
+                if (mat[i] >= MATERIALS.length) throw new IOException("Invalid stage material: " + mat[i]);
+                part[i] = partsInFile ? in.readUnsignedByte() : StageFold.BODY;
+                for (int k = 0; k < 32; k++) {
+                    float value = in.readFloat();
+                    if (!Float.isFinite(value)) throw new IOException("Non-finite stage vertex");
+                    data[i * 32 + k] = value;
                 }
-                int tint = switch (material) {
-                    case 5 -> shape.params.colorA;
-                    case 6 -> shape.params.lining == -1 ? 0x24262A : shape.params.lining;
-                    default -> 0xFFFFFF;
-                };
-                mesh.quad(quad, MeshBuilder.opaque(tint), MeshBuilder.MATERIAL + material, false);
             }
             if (in.read() != -1) throw new IOException("Unexpected data after stage mesh");
+            materials = mat;
+            parts = part;
+            verts = data;
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load the mobile stage geometry", e);
         }

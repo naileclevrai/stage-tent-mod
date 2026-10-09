@@ -65,6 +65,12 @@ final class MeshBuilder implements AutoCloseable {
     final TentShape g;
     final TentParams p;
     final long builtAt = System.nanoTime();
+    /** Fold pose currently stored in the vertex buffers. Updated every frame while the trailer moves. */
+    float foldShown = Float.NaN;
+    /** Rewriting positions into the existing layers, keeping colours and light. */
+    private boolean posing;
+    /** This mesh is reuploaded every frame, so its GPU buffers are dynamic. */
+    private boolean streaming;
     long lightStamp;
     boolean lit;
     private final Layer[] layers = new Layer[LAYERS];
@@ -73,6 +79,7 @@ final class MeshBuilder implements AutoCloseable {
     private boolean relightRunning;
     private Long2IntOpenHashMap relightCache;
     private final VertexBuffer[] gpu = new VertexBuffer[LAYERS];
+    private final boolean[] gpuDynamic = new boolean[LAYERS];
     private final boolean[] gpuStale = new boolean[LAYERS];
     /** Shared staging buffer for uploads (render thread only); its native memory is reused, never reallocated per tent. */
     private static BufferBuilder staging;
@@ -174,13 +181,15 @@ final class MeshBuilder implements AutoCloseable {
     }
 
     private void insideFace(double[][] q, int inner, int inLayer) {
+        double nx = 0, ny = 0, nz = 0;
+        for (double[] vv : q) { nx += vv[5]; ny += vv[6]; nz += vv[7]; }
+        double len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+        if (len > 1e-6) { nx /= len; ny /= len; nz /= len; }
+        // Keep the lining on the same vertices as the shell. Pushing each panel along its own normal
+        // opens a crack on every seam, which reads as a web of lines across a large membrane.
         double[][] r = new double[4][];
-        double fx = 0, fy = 0, fz = 0;
         for (int k = 0; k < 4; k++) {
             double[] vv = q[3 - k].clone();
-            fx -= vv[5];
-            fy -= vv[6];
-            fz -= vv[7];
             // Shade the inside as daylight coming through the canvas: flip the horizontal part of the normal but
             // keep it pointing up, otherwise the vanilla entity lighting makes every ceiling dull grey.
             vv[5] = -vv[5];
@@ -188,7 +197,9 @@ final class MeshBuilder implements AutoCloseable {
             vv[7] = -vv[7];
             r[k] = vv;
         }
-        quadFacing(r, inner, inLayer, false, fx, fy, fz);
+        // The lighting normal points up, but the face itself must point into the tent. Following the lighting
+        // normal wound the lining the same way as the outside cloth, so it vanished until the camera was inside.
+        quadFacing(r, inner, inLayer, false, -nx, -ny, -nz);
     }
 
     void twoSided(double[][] q, int outer) {
@@ -378,10 +389,28 @@ final class MeshBuilder implements AutoCloseable {
         } else if (l.flex != null) {
             l.flex[l.count * FLEX_STRIDE] = 0;
         }
-        l.color[l.count] = col;
-        l.emissive[l.count] = emissive;
-        l.light[l.count] = emissive ? LightTexture.FULL_BRIGHT : 0;
+        if (!posing) {
+            l.color[l.count] = col;
+            l.emissive[l.count] = emissive;
+            l.light[l.count] = emissive ? LightTexture.FULL_BRIGHT : 0;
+        }
         l.count++;
+    }
+
+    /**
+     * Clears the layers so the same mesh can be filled again. Colours and light stay, which keeps a folding
+     * trailer from being rebuilt and relit from scratch on every frame.
+     */
+    void pose() {
+        posing = true;
+        for (Layer l : layers) l.count = 0;
+    }
+
+    /** Marks the refilled layers for upload. */
+    void finishPose() {
+        posing = false;
+        streaming = true;
+        for (int i = 0; i < LAYERS; i++) if (layers[i].count > 0) gpuStale[i] = true;
     }
 
     // ------------------------------------------------------------------ light
@@ -492,7 +521,11 @@ final class MeshBuilder implements AutoCloseable {
                     data[o + 3], data[o + 4], packed, light[i], data[o + 5], data[o + 6], data[o + 7]);
         }
         VertexBuffer vb = gpu[layer];
-        if (vb == null) vb = gpu[layer] = new VertexBuffer(VertexBuffer.Usage.STATIC);
+        if (vb == null || (streaming && !gpuDynamic[layer])) {
+            if (vb != null) vb.close();
+            gpuDynamic[layer] = streaming;
+            vb = gpu[layer] = new VertexBuffer(streaming ? VertexBuffer.Usage.DYNAMIC : VertexBuffer.Usage.STATIC);
+        }
         vb.bind();
         vb.upload(bb.end());
         VertexBuffer.unbind();

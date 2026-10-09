@@ -63,8 +63,12 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         if (!state.getValue(HIDDEN)) return SHAPE;
         if (type == TentType.OPUS_4200) return Shapes.block(); // centre of the deck stays buildable
-        return ctx instanceof EntityCollisionContext ec && ec.getEntity() != null && ctx.isHoldingItem(ModRegistry.WRENCH.get())
-                ? SHAPE : Shapes.empty();
+        // Punch particles ask for the shape with no player. An empty shape crashes the client
+        // ("No bounds for empty shape") the moment someone hits a hidden plate.
+        if (!(ctx instanceof EntityCollisionContext ec) || ec.getEntity() == null || ctx.isHoldingItem(ModRegistry.WRENCH.get())) {
+            return SHAPE;
+        }
+        return Shapes.empty();
     }
 
     @Override

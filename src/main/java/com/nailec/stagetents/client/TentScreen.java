@@ -113,7 +113,10 @@ public class TentScreen extends Screen {
     // ------------------------------------------------------------------ tabs
 
     private void structure(int x1, int x2, int x3, int y) {
-        if (type == TentType.OPUS_4200) return;
+        if (type == TentType.OPUS_4200) {
+            poseButton(x1, y);
+            return;
+        }
         TentType.Ranges r = type.ranges;
         String t = type.id;
         int row = 0;
@@ -168,8 +171,9 @@ public class TentScreen extends Screen {
 
     private void style(int x1, int x2, int x3, int y) {
         if (type == TentType.OPUS_4200) {
-            colorRow(x1, y, "color_a", false, () -> edit.colorA, v -> edit.colorA = v);
-            colorRow(x1, y + ROW_H, "lining", true, () -> edit.lining, v -> edit.lining = v);
+            poseButton(x1, y);
+            colorRow(x1, y + ROW_H, "color_a", false, () -> edit.colorA, v -> edit.colorA = v);
+            colorRow(x1, y + ROW_H * 2, "lining", true, () -> edit.lining, v -> edit.lining = v);
             return;
         }
         if (type == TentType.DJ_ARCH) {
@@ -259,7 +263,10 @@ public class TentScreen extends Screen {
     }
 
     private void fittings(int x1, int x2, int x3, int y) {
-        if (type == TentType.OPUS_4200) return;
+        if (type == TentType.OPUS_4200) {
+            poseButton(x1, y);
+            return;
+        }
         int row = 0;
         addRenderableWidget(CycleButton.<FloorMode>builder(m -> tr("floor." + lower(m)))
                 .withValues(FloorMode.values()).withInitialValue(edit.floor)
@@ -423,6 +430,15 @@ public class TentScreen extends Screen {
 
     private static String lower(Enum<?> e) {
         return e.name().toLowerCase(Locale.ROOT);
+    }
+
+    private void poseButton(int x, int y) {
+        addRenderableWidget(CycleButton.booleanBuilder(tr("stage_folded"), tr("stage_open"))
+                .withInitialValue(edit.folded)
+                .create(x, y, COL_W, 20, tr("stage_pose"), (b, v) -> {
+                    edit.folded = v;
+                    preview();
+                }));
     }
 
     private void preview() {

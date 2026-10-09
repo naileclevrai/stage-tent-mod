@@ -57,6 +57,8 @@ public final class TentParams {
     public int signTextColor = 0xFFFFFF;
     /** Curtains tied back at every front pole. */
     public boolean poleCurtains = false;
+    /** Opus 4200 packed on its wheels. Other tents ignore it. */
+    public boolean folded = false;
 
     public static final int MAX_SIGN_TITLE = 24, MAX_SIGN_TEXT = 64;
     /** Stretch tents: extra masts as world offsets from the plate {dx, dz, height}. */
@@ -188,6 +190,7 @@ public final class TentParams {
         t.putInt("SignColor", signColor);
         t.putInt("SignTextColor", signTextColor);
         t.putBoolean("PoleCurtains", poleCurtains);
+        t.putBoolean("Folded", folded);
         int[] flat = new int[stretchPoles.size() * 3];
         for (int i = 0; i < stretchPoles.size(); i++) System.arraycopy(stretchPoles.get(i), 0, flat, i * 3, 3);
         t.putIntArray("StretchPoles", flat);
@@ -228,6 +231,7 @@ public final class TentParams {
         if (t.contains("SignColor")) p.signColor = t.getInt("SignColor");
         if (t.contains("SignTextColor")) p.signTextColor = t.getInt("SignTextColor");
         if (t.contains("PoleCurtains")) p.poleCurtains = t.getBoolean("PoleCurtains");
+        if (t.contains("Folded")) p.folded = t.getBoolean("Folded");
         int[] flat = t.getIntArray("StretchPoles");
         for (int i = 0; i + 2 < flat.length; i += 3) p.stretchPoles.add(new int[]{flat[i], flat[i + 1], flat[i + 2]});
         return p.clamp();

@@ -20,8 +20,9 @@ public final class MobileStageShape extends RectShape {
     }
 
     @Override protected double ridgeX(double px) { return px; }
-    @Override public double floorTop() { return scale; }
-    @Override public double top() { return 5.64 * scale; }
+    @Override public double floorTop() { return params.folded ? 6 : scale; }
+    /** Tall enough that the awnings, flipping up onto the roof, stay inside the render box. */
+    @Override public double top() { return 8 * scale; }
     @Override public double extent() { return 6.3 * scale; }
 
     @Override public double roofHeight(double lx, double lz) {
@@ -38,6 +39,10 @@ public final class MobileStageShape extends RectShape {
     @Override public boolean hasWallAt(double lx, double lz) { return !isEntrance(lx, lz); }
 
     @Override public void forEachCell(CellSink sink) {
+        if (params.folded) {
+            packedCells(sink);
+            return;
+        }
         // Full floor cells keep the deck buildable at its two-block height.
         int radius = (int) Math.ceil(5.5 * scale);
         for (int dx = -radius; dx <= radius; dx++) {
@@ -93,6 +98,24 @@ public final class MobileStageShape extends RectShape {
         for (double z : new double[]{-3.94, 3.94}) poleColumn(sink, 3.10 * scale, z * scale, (int) scale);
         for (double x : new double[]{-1.16, 1.16})
             for (double z : new double[]{-3.70, 3.70}) poleColumn(sink, x * scale, z * scale, (int) scale);
+    }
+
+    /** The road trailer: a box on the centre deck, plus the drawbar. The wings and the roof are gone. */
+    private void packedCells(CellSink sink) {
+        int radius = (int) Math.ceil(6.4 * scale);
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                double x = toLocalX(dx, dz), z = toLocalZ(dx, dz);
+                boolean body = Math.abs(x) <= 1.55 * scale && Math.abs(z) <= 4.25 * scale;
+                boolean hitch = Math.abs(x) <= 0.7 * scale && z < -4.15 * scale && z >= -6.35 * scale;
+                if (!body && !hitch) continue;
+                int yTop = hitch ? 2 : 6;
+                for (int y = 0; y < yTop; y++) {
+                    if (dx == 0 && dz == 0 && y == 0) continue;
+                    sink.cell(dx, y, dz, TentPart.FLOOR, 15, 0);
+                }
+            }
+        }
     }
 
     /** Cells of the first detailed stage, used only to migrate existing worlds. */

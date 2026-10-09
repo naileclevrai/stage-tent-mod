@@ -1,8 +1,21 @@
 package com.nailec.stagetents.block;
 
+import com.nailec.stagetents.client.ClientHooks;
+import com.nailec.stagetents.tent.TentParams;
 import com.nailec.stagetents.tent.TentPart;
+import com.nailec.stagetents.tent.TentType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -77,6 +90,37 @@ public class CanvasBlock extends Block {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
+    }
+
+    /**
+     * The Opus plate is one block in the middle of a huge trailer, so it is easy to miss.
+     * Sneak and use the wall itself: the stage folds or opens. The wrench without sneaking still opens the menu.
+     */
+    @Override
+    @SuppressWarnings("deprecation")
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack held = player.getItemInHand(hand);
+        if (held.getItem() instanceof BlockItem) return InteractionResult.PASS;
+        boolean wrench = held.getItem() instanceof TentWrenchItem;
+        if (!player.isShiftKeyDown() && !wrench) return InteractionResult.PASS;
+        TentBlockEntity be = TentBlockEntity.findAround(level, pos);
+        if (be == null) return InteractionResult.PASS;
+        if (player.isShiftKeyDown() && be.type() == TentType.OPUS_4200) {
+            if (!level.isClientSide) {
+                TentParams params = be.params().copy();
+                params.folded = !params.folded;
+                be.applyParams(params);
+                player.displayClientMessage(Component.translatable(params.folded
+                        ? "message.stagetents.stage_folded" : "message.stagetents.stage_open"), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (!wrench) return InteractionResult.PASS;
+        if (level.isClientSide) {
+            BlockPos plate = be.getBlockPos();
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openTentScreen(plate));
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     /**

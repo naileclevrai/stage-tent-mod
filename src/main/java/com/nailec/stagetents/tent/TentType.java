@@ -15,7 +15,7 @@ public enum TentType {
     STRETCH("stretch", new Ranges(2, 10, 0, 0, 1, 4, 16, 1, 5, 3, 8)),
     /** Tensile arena: membrane on two lines of lattice masts. Width = span, length = full length, wall = edge arch. */
     TENSILE("tensile", new Ranges(24, 90, 24, 160, 2, 12, 40, 3, 14, 8, 24)),
-    /** Ready to use mobile concert stage, shown only in its deployed position. */
+    /** Mobile concert stage. The wrench folds it back onto its wheels. */
     OPUS_4200("opus_4200", new Ranges(16, 16, 13, 13, 1, 12, 12, 10, 10, 3, 3));
 
     public record Ranges(int minWidth, int maxWidth, int minLength, int maxLength, int lengthStep,

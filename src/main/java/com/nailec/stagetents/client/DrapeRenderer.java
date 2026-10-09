@@ -13,7 +13,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -92,7 +91,7 @@ public class DrapeRenderer implements BlockEntityRenderer<DrapeBlockEntity> {
         float[] rgb = dye.getTextureDiffuseColors();
 
         var atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
+        VertexConsumer vc = buffers.getBuffer(TentRenderTypes.cutout(InventoryMenu.BLOCK_ATLAS));
         TextureAtlasSprite wool = atlas.getSprite(WOOL);
         TextureAtlasSprite iron = atlas.getSprite(IRON);
 
@@ -225,7 +224,7 @@ public class DrapeRenderer implements BlockEntityRenderer<DrapeBlockEntity> {
         put(vc, pose, sprite, x1, y1, z1, c1, nx, ny, nz, light);
         put(vc, pose, sprite, x2, y2, z2, c2, nx, ny, nz, light);
         put(vc, pose, sprite, x3, y3, z3, c3, nx, ny, nz, light);
-        float o = 0.004F;
+        float o = 0.02F;
         put(vc, pose, sprite, x0 - nx * o, y0 - ny * o, z0 - nz * o, c0, -nx, -ny, -nz, light);
         put(vc, pose, sprite, x3 - nx * o, y3 - ny * o, z3 - nz * o, c3, -nx, -ny, -nz, light);
         put(vc, pose, sprite, x2 - nx * o, y2 - ny * o, z2 - nz * o, c2, -nx, -ny, -nz, light);
@@ -358,7 +357,12 @@ public class DrapeRenderer implements BlockEntityRenderer<DrapeBlockEntity> {
                 float narrow = 1F - clamp(width / Math.max(0.2F, half), 0F, 1F);
                 amp += 0.018F * narrow;
                 float cinch = (float) Math.exp(-((t - 0.46F) / 0.055F) * ((t - 0.46F) / 0.055F));
+                // The two panels overlap at the meeting edge. Flatten that strip and park one just behind the other,
+                // otherwise the pleats cross and the cloth flickers.
+                float meet = clamp((u - 0.72F) / 0.28F, 0F, 1F);
+                wave *= 1F - 0.9F * meet;
                 float z = Z + zBias + wave * amp * (0.3F + 0.7F * t);
+                z += (left ? 0.045F : -0.045F) * meet;
                 z -= cinch * 0.055F * tie;
                 z -= u * u * 0.055F * (0.45F + 0.55F * (1F - tie));
                 if (u < 0.06F) z += (0.06F - u) / 0.06F * 0.05F;

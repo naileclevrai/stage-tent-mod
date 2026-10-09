@@ -45,11 +45,27 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         MeshBuilder old = be.clientMesh instanceof MeshBuilder m ? m : null;
         MeshBuilder mesh = old;
         boolean stale = old == null || old.version != be.clientVersion() || old.facing != be.facing();
+        boolean mobile = be.shape() instanceof com.nailec.stagetents.tent.MobileStageShape;
+        float fold = 0F;
+        if (mobile) {
+            fold = StageFold.amount(be.getBlockPos().asLong(), be.params().folded);
+            StageFold.current = fold;
+        }
         // While a slider is dragged the settings change every frame; keep the previous mesh for a few frames.
         if (stale && (old == null || System.nanoTime() - old.builtAt > REBUILD_NANOS)) {
             mesh = TentMeshes.build(be.shape(), be.clientVersion());
+            mesh.foldShown = fold;
             be.clientMesh = mesh;
             if (old != null) old.close();
+        } else if (mobile && mesh != null && mesh.foldShown != fold) {
+            // The fold used to jump between a handful of poses. Rewrite the same mesh every frame instead.
+            mesh.pose();
+            try {
+                MobileStageMeshes.build(mesh, (com.nailec.stagetents.tent.MobileStageShape) be.shape());
+            } finally {
+                mesh.finishPose();
+            }
+            mesh.foldShown = fold;
         }
         if (mesh == null) return;
         BlockPos origin = be.getBlockPos();
@@ -71,7 +87,7 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         float t = time + partialTick;
         float wind = beyond < WIND_RANGE ? windAmplitude(level, partialTick) : 0;
         PoseStack.Pose pose = poseStack.last();
-        RenderType canvas = RenderType.entityCutout(CANVAS_TEXTURE);
+        RenderType canvas = TentRenderTypes.cutout(CANVAS_TEXTURE);
         ShaderInstance shader = TentShaders.tent();
         Layers draw;
         MeshBuilder m = mesh;
@@ -92,11 +108,9 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
         }
         draw.layer(MeshBuilder.SOLID, canvas);
         if (!inside) draw.layer(MeshBuilder.OUTER, canvas);
-        // From far away the inside only shows through rolled-up walls.
-        // The entity render type does not cull the reverse side of the arena canvas. Drawing its lining from
-        // outside overlays the white roof in navy, so show that layer only once the camera is under the membrane.
-        boolean arenaExterior = shape instanceof com.nailec.stagetents.tent.TensileShape && !inside;
-        if (inside || (!arenaExterior && (beyond < INNER_RANGE || be.params().walls == com.nailec.stagetents.tent.WallMode.OPEN))) {
+        // The lining faces into the tent, so it stays visible under the membrane from outside.
+        // Far away it only shows through rolled-up walls.
+        if (inside || beyond < INNER_RANGE || be.params().walls == com.nailec.stagetents.tent.WallMode.OPEN) {
             draw.layer(MeshBuilder.INNER, canvas);
         }
         if (beyond < DETAIL_RANGE) draw.layer(MeshBuilder.DETAIL, canvas);
@@ -112,14 +126,14 @@ public class TentRenderer implements BlockEntityRenderer<TentBlockEntity> {
                 case WHITE -> TILES_TEXTURE;
                 default -> CARPET_TEXTURE;
             };
-            draw.layer(MeshBuilder.FLOOR, RenderType.entityCutout(tex));
+            draw.layer(MeshBuilder.FLOOR, TentRenderTypes.cutout(tex));
         }
         if (mesh.hasLayer(MeshBuilder.DECK)) {
-            draw.layer(MeshBuilder.DECK, RenderType.entityCutout(CARPET_TEXTURE));
+            draw.layer(MeshBuilder.DECK, TentRenderTypes.cutout(CARPET_TEXTURE));
         }
         for (int i = 0; i < MobileStageMeshes.TEXTURES.length; i++) {
             int layer = MeshBuilder.MATERIAL + i;
-            if (mesh.hasLayer(layer)) draw.layer(layer, RenderType.entityCutout(MobileStageMeshes.TEXTURES[i]));
+            if (mesh.hasLayer(layer)) draw.layer(layer, TentRenderTypes.cutout(MobileStageMeshes.TEXTURES[i]));
         }
         // Glass stays on the batched path: translucent panes must be drawn after everything behind them.
         if (mesh.hasLayer(MeshBuilder.GLASS)) {

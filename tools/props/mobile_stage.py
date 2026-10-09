@@ -19,6 +19,18 @@ MATERIALS = ['galvanised', 'metal', 'chrome', 'black', 'rubber', 'stage_canvas',
              'stage_drape', 'stage_deck', 'tread', 'red', 'orange', 'stage_label']
 AX, AZ, DECK = 3.30, 4.10, 1.0
 SCALE = 2.0  # The in-game festival version is twice the brochure's dimensions.
+# Fold groups. The order is the part byte written into the mesh and read by StageFold.
+BODY, WING_POS, WING_NEG, ROOF, AWNING_POS, AWNING_NEG = range(6)
+FACADE, CURTAIN, STAIRS, JACK, JACK_POS, JACK_NEG, POST, STRUT = range(6, 14)
+
+
+def roof_part(x):
+    """Centre cassette, or the hinged awning on either side of x = ±1.22."""
+    if x < -1.30:
+        return AWNING_NEG
+    if x > 1.30:
+        return AWNING_POS
+    return ROOF
 
 
 def bar(m, mat, a, b, r=0.024, segs=8):
@@ -35,7 +47,10 @@ def face(m, mat, corners, n=None, double=False, uv=None):
     uv = uv or ((0, 1), (1, 1), (1, 0), (0, 0))
     m.quad(mat, *corners, n=n, uv=uv)
     if double:
-        m.quad(mat, *corners[::-1], n=tuple(-v for v in n), uv=uv[::-1])
+        # The lining sits just inside the shell. The same plane z-fights, especially on the roof.
+        gap = 0.015
+        back = tuple(tuple(p[k] - n[k] * gap for k in range(3)) for p in corners)
+        m.quad(mat, *back[::-1], n=tuple(-v for v in n), uv=uv[::-1])
 
 
 def roof_y(x, z=0):
@@ -109,6 +124,7 @@ def fender(m, cx, cz):
 
 def chassis(m):
     # Two central longitudinal chassis members, crossmembers and torsion axles.
+    m.part = BODY
     for x in (-1.06, 1.06):
         m.box('galvanised', x - .055, .43, -4.04, x + .055, .65, 4.04)
         m.box('metal', x - .071, .63, -4.04, x + .071, .67, 4.04)
@@ -122,6 +138,7 @@ def chassis(m):
             m.box('black', x - .08, .49, z - .17, x + .08, .60, z + .17)
     # Hinged extension decks: separate diagonal stays and pinned underframe on each wing.
     for side in (-1, 1):
+        m.part = WING_POS if side > 0 else WING_NEG
         for z in (-3.92, -2.36, -.80, .80, 2.36, 3.92):
             x0, x1 = side * 1.23, side * 3.18
             bar(m, 'galvanised', (x0, .80, z), (x1, .80, z), .045, 4)
@@ -131,6 +148,7 @@ def chassis(m):
         for z in (-3.4, -1.8, 1.8, 3.4):
             m.box('orange', side * 1.135 - .005, .50, z - .045, side * 1.135 + .005, .56, z + .045)
     # Tail lamp carrier, number plate and reflectors, all unlit.
+    m.part = BODY
     m.box('galvanised', -1.17, .43, 4.04, 1.17, .61, 4.12)
     for x in (-.93, .93):
         m.bevel_box('black', x - .18, .44, 4.11, x + .18, .62, 4.16, .025)
@@ -142,6 +160,7 @@ def chassis(m):
 
 
 def drawbar(m):
+    m.part = BODY
     for x in (-1.04, 1.04):
         bar(m, 'galvanised', (x, .54, -3.88), (0, .54, -5.63), .067, 4)
     m.box('galvanised', -.075, .455, -5.96, .075, .63, -5.44)
@@ -181,22 +200,29 @@ def jack(m, x, z):
 def hydraulics(m):
     # Deck stabilisation and diagonal telescopic stays.
     for x in (-3.16, 3.16):
+        m.part = JACK_POS if x > 0 else JACK_NEG
         for z in (-3.93, 3.93):
             jack(m, x, z)
+            m.part = WING_POS if x > 0 else WING_NEG
             bar(m, 'galvanised', (x, .84, z), (math.copysign(1.1, x), .56, z), .035, 4)
+            m.part = JACK_POS if x > 0 else JACK_NEG
+    m.part = JACK
     for x in (-1.15, 1.15):
         for z in (-3.44, 3.44):
             jack(m, x, z)
     # Hydraulic pump housing with vent slats, reservoir, pump lever and flexible hose runs.
+    m.part = BODY
     m.bevel_box('black', -1.75, .49, 2.6, -1.30, .79, 3.13, .025)
     for i in range(7):
         m.box('metal', -1.762, .54 + i * .027, 2.67, -1.748, .549 + i * .027, 3.05)
     bar(m, 'metal', (-1.70, .78, 2.75), (-1.75, .95, 2.87), .014, 6)
     bar(m, 'black', (-1.75, .95, 2.87), (-1.75, .95, 3.03), .023, 8)
+    m.part = POST
     for z in (-3.7, 3.7):
         for side in (-1, 1):
             x = side * 1.16
             # Fixed outer sleeve and chrome telescopic inner section of each lifting post.
+            m.part = POST
             m.box('galvanised', x - .065, .82, z - .065, x + .065, 3.50, z + .065)
             m.box('chrome', x - .043, 3.38, z - .043, x + .043, 5.43, z + .043)
             m.box('black', x - .080, 3.40, z - .080, x + .080, 3.49, z + .080)
@@ -204,6 +230,7 @@ def hydraulics(m):
                 bolt(m, (x + side * .069, y, z), (side, 0, 0), .019)
             m.tube('rubber', [(x + .10, .8, z), (x + .12, 1.15, z), (x + .12, 3.35, z), (x + .05, 3.5, z)], .012, segs=6)
             # Gas strut holding the opened roof wing, with a separate exposed piston rod.
+            m.part = STRUT
             a, b = (x, 4.88, z), (side * 2.72, roof_y(side * 2.72) - .19, z)
             mid = tuple(a[i] * .5 + b[i] * .5 for i in range(3))
             bar(m, 'black', a, mid, .036, 8)
@@ -212,7 +239,8 @@ def hydraulics(m):
 
 def deck(m):
     # Individually edged plywood panels. The gaps expose metal, not a continuous black cuboid.
-    for xa, xb in ((-AX, -1.25), (-1.25, 1.25), (1.25, AX)):
+    for xa, xb, part in ((-AX, -1.25, WING_NEG), (-1.25, 1.25, BODY), (1.25, AX, WING_POS)):
+        m.part = part
         for j in range(8):
             za, zb = -AZ + j * 1.025, -AZ + (j + 1) * 1.025
             m.box('metal', xa + .009, .868, za + .009, xb - .009, .966, zb - .009)
@@ -220,11 +248,15 @@ def deck(m):
             for x in (xa + .07, xb - .07):
                 for z in (za + .07, zb - .07):
                     m.cylinder('black', .013, 1.001, 1.006, cx=x, cz=z, segs=6)
-    for x in (-AX, AX):
+    for x, part in ((-AX, WING_NEG), (AX, WING_POS)):
+        m.part = part
         m.box('metal', x - .016, .874, -AZ, x + .016, 1.006, AZ)
     for z in (-AZ, AZ):
-        m.box('metal', -AX, .874, z - .016, AX, 1.006, z + .016)
+        for xa, xb, part in ((-AX, -1.25, WING_NEG), (-1.25, 1.25, BODY), (1.25, AX, WING_POS)):
+            m.part = part
+            m.box('metal', xa, .874, z - .016, xb, 1.006, z + .016)
     # Hinge barrels between central deck and each unfolded wing, with end pins.
+    m.part = BODY
     for x in (-1.25, 1.25):
         for j in range(12):
             z = -3.85 + j * .70
@@ -260,6 +292,7 @@ def truss(m, a, b, width=.28):
 
 def frame(m):
     # Two facade towers and a proper three-dimensional four-chord header.
+    m.part = FACADE
     for z in (-3.94, 3.94):
         truss(m, (3.10, 1.02, z), (3.10, 5.34, z), .24)
         m.box('metal', 2.87, 1.01, z - .20, 3.32, 1.045, z + .20)
@@ -269,21 +302,26 @@ def frame(m):
     truss(m, (3.10, 5.34, -3.94), (3.10, 5.34, 3.94), .28)
     # Central roof cassette and exposed cross ribs of both awnings.
     for x in (-3.10, -1.22, 1.22, 3.10):
+        m.part = roof_part(x)
         bar(m, 'metal', (x, roof_y(x) - .12, -4.04), (x, roof_y(x) - .12, 4.04), .038, 4)
     for i in range(11):
         z = -4.05 + i * .81
         for xa, xb in ((-3.13, -1.22), (-1.22, 1.22), (1.22, 3.13)):
+            m.part = roof_part((xa + xb) / 2)
             bar(m, 'metal', (xa, roof_y(xa) - .10, z), (xb, roof_y(xb) - .10, z), .034, 4)
+        m.part = ROOF
         for x in (-1.22, 1.22):
             bar(m, 'chrome', (x, 5.45, z - .11), (x, 5.45, z + .11), .034, 10)
     # Four bare projector bars, with saddle clamps; deliberately no fixtures.
     for x in (-2.2, -.70, .70, 2.2):
+        m.part = roof_part(x)
         y = roof_y(x) - .25
         bar(m, 'galvanised', (x, y, -3.85), (x, y, 3.85), .024, 8)
         for z in (-3.6, -.8, .8, 3.6):
             m.box('black', x - .034, y - .036, z - .025, x + .034, y + .055, z + .025)
             bolt(m, (x + .04, y + .025, z), radius=.011)
-    # Rear safety rails, separated at the access gate.
+    # Rear safety rails, separated at the access gate. They ride up with the back wing.
+    m.part = WING_NEG
     for za, zb in ((-3.90, 2.32), (3.58, 3.90)):
         for y in (1.50, 2.03):
             bar(m, 'galvanised', (-3.05, y, za), (-3.05, y, zb), .019, 8)
@@ -293,16 +331,19 @@ def frame(m):
 
 def roof(m):
     # A taut PVC envelope with visible pitched wings; no single flat slab.
+    m.part = ROOF
     xs = [-3.48 + i * 6.98 / 18 for i in range(19)]
     zs = [-4.23 + i * 8.46 / 20 for i in range(21)]
     for xa, xb in zip(xs, xs[1:]):
         for za, zb in zip(zs, zs[1:]):
             pts = [(xa, roof_y(xa, za), za), (xb, roof_y(xb, za), za),
                    (xb, roof_y(xb, zb), zb), (xa, roof_y(xa, zb), zb)]
+            m.part = roof_part((xa + xb) / 2)
             face(m, 'stage_canvas', pts, double=True,
                  uv=((xa / 2, za / 2), (xb / 2, za / 2), (xb / 2, zb / 2), (xa / 2, zb / 2)))
     # Front and rear scalloped valances, plus the side returns.
     for x in (-3.48, 3.50):
+        m.part = roof_part(x)
         for i in range(64):
             za, zb = -4.23 + 8.46 * i / 64, -4.23 + 8.46 * (i + 1) / 64
             ya, yb = roof_y(x, za), roof_y(x, zb)
@@ -313,6 +354,7 @@ def roof(m):
     for z in (-4.23, 4.23):
         for i in range(48):
             xa, xb = -3.48 + 6.98 * i / 48, -3.48 + 6.98 * (i + 1) / 48
+            m.part = roof_part((xa + xb) / 2)
             ya, yb = roof_y(xa, z), roof_y(xb, z)
             da, db = .16 + .04 * math.sin(i * math.pi / 2) ** 2, .16 + .04 * math.sin((i + 1) * math.pi / 2) ** 2
             face(m, 'stage_canvas', [(xa, ya, z), (xb, yb, z), (xb, yb - db, z), (xa, ya - da, z)],
@@ -347,9 +389,11 @@ def drape(m, start, end, top, outward, apron=False):
             gn = _cross(_sub(corners[1], corners[0]), _sub(corners[2], corners[0]))
             if sum(gn[k] * outward[k] for k in range(3)) < 0:
                 corners.reverse(); normals.reverse(); uv.reverse()
-            # White PVC on the exterior, black lining on the performance side.
+            # White PVC on the exterior, black lining just inside so the two cloths do not z-fight.
             m.quad('stage_canvas', *corners, normals=normals, uv=uv)
-            m.quad('stage_canvas' if apron else 'stage_drape', *corners[::-1],
+            gap = 0.012
+            lining = [tuple(c[k] - outward[k] * gap for k in range(3)) for c in corners]
+            m.quad('stage_canvas' if apron else 'stage_drape', *lining[::-1],
                    normals=[tuple(-v for v in n) for n in normals[::-1]], uv=uv[::-1])
     # Sewn hem, regular eyelets and ties along the top rail.
     for i in range(0, cols + 1, max(1, round(cols / (length / .55)))):
@@ -364,6 +408,7 @@ def drape(m, start, end, top, outward, apron=False):
 
 
 def curtains(m):
+    m.part = CURTAIN
     for z in (-4.025, 4.025):
         drape(m, (-3.17, z), (2.98, z), lambda u: roof_y(-3.17 + u * 6.15, z) - .20,
               (0, 0, math.copysign(1, z)))
@@ -381,6 +426,7 @@ def curtains(m):
 
 
 def stairs(m):
+    m.part = STAIRS
     z = 3.0
     # Four rises of .4 block after export scale: walkable without jumping.
     for xa, xb, y in ((-5.65, -5.15, .20), (-5.15, -4.65, .40),
@@ -433,7 +479,9 @@ def export(m):
     bounds = [[math.inf] * 3, [-math.inf] * 3]
     for mat, tris in m.groups.items():
         assert mat in MATERIALS, mat
-        for tri in tris:
+        ids = m.part_ids.get(mat, [])
+        assert len(ids) == len(tris), (mat, len(ids), len(tris))
+        for part, tri in zip(ids, tris):
             # Fix winding to match vertex normals, as in the furniture exporter.
             gn = _cross(_sub(tri[1][0], tri[0][0]), _sub(tri[2][0], tri[0][0]))
             assert sum(n * n for n in gn) > 1e-15, (mat, tri)
@@ -444,20 +492,24 @@ def export(m):
                 assert all(math.isfinite(v) for v in (*p, *n, *uv))
                 for k in range(3):
                     bounds[0][k] = min(bounds[0][k], p[k]); bounds[1][k] = max(bounds[1][k], p[k])
-            triangles.append((MATERIALS.index(mat), tri))
+            triangles.append((MATERIALS.index(mat), part, tri))
     assert len(triangles) < 60000, len(triangles)
     with open(os.path.join(out, 'opus_4200.mesh'), 'wb') as f:
-        f.write(struct.pack('>II', 0x53544732, len(triangles)))
-        for mat, tri in triangles:
-            f.write(struct.pack('>B', mat))
+        f.write(struct.pack('>II', 0x53544733, len(triangles)))
+        for mat, part, tri in triangles:
+            f.write(struct.pack('>BB', mat, part))
             # Degenerate fourth corner lets the existing quad pipeline render a triangle without allocation per frame.
             for p, n, uv in (*tri, tri[-1]):
                 f.write(struct.pack('>8f', *p, *uv, *n))
     preview = os.path.join(ROOT, 'build', 'mobile-stage')
     os.makedirs(preview, exist_ok=True)
     _write_obj(m, os.path.join(preview, 'opus_4200.obj'), 'opus_4200')
+    counts = {}
+    for _mat, part, _tri in triangles:
+        counts[part] = counts.get(part, 0) + 1
     report = {'triangles': len(triangles), 'bounds': bounds,
-              'materials': {mat: len(tris) for mat, tris in m.groups.items()}, 'fixtures': 0}
+              'materials': {mat: len(tris) for mat, tris in m.groups.items()},
+              'parts': counts, 'fixtures': 0}
     with open(os.path.join(preview, 'report.json'), 'w') as f:
         json.dump(report, f, indent=2)
     print(json.dumps(report))

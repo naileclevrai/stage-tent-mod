@@ -26,6 +26,8 @@ class Mesh:
 
     def __init__(self):
         self.groups = {}  # material -> list of triangles [(p, n, uv) * 3]
+        self.part = 0  # stamped onto every triangle added afterwards (mobile stage fold groups)
+        self.part_ids = {}  # material -> part id parallel to groups
 
     # ------------------------------------------------------------------ raw faces
 
@@ -34,6 +36,7 @@ class Mesh:
             n = _norm(_cross(_sub(b, a), _sub(c, a)))
             na = nb = nc = n
         self.groups.setdefault(mat, []).append(((a, na, uva), (b, nb, uvb), (c, nc, uvc)))
+        self.part_ids.setdefault(mat, []).append(self.part)
 
     def quad(self, mat, a, b, c, d, n=None, uv=((0, 0), (1, 0), (1, 1), (0, 1)), normals=None):
         """Counter-clockwise quad (seen from the front)."""
@@ -229,10 +232,14 @@ class Mesh:
 
     def merge(self, other, transform=None):
         for mat, tris in other.groups.items():
-            for t in tris:
+            ids = other.part_ids.get(mat)
+            dest = self.groups.setdefault(mat, [])
+            dest_ids = self.part_ids.setdefault(mat, [])
+            for i, t in enumerate(tris):
                 if transform:
                     t = tuple((transform(p), _rot_only(transform, n), uv) for (p, n, uv) in t)
-                self.groups.setdefault(mat, []).append(t)
+                dest.append(t)
+                dest_ids.append(ids[i] if ids is not None and i < len(ids) else other.part)
 
     def transformed(self, fn):
         out = Mesh()

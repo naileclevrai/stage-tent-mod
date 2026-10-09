@@ -36,7 +36,8 @@ public final class MobileStageCheck {
         int triangles;
         try (DataInputStream in = new DataInputStream(MobileStageCheck.class.getResourceAsStream(
                 "/assets/stagetents/models/structure/opus_4200.mesh"))) {
-            require(in.readInt() == 0x53544732, "Stage mesh header");
+            int header = in.readInt();
+            require(header == 0x53544733 || header == 0x53544732, "Stage mesh header");
             triangles = in.readInt();
         }
         TentParams p = TentType.OPUS_4200.defaults();

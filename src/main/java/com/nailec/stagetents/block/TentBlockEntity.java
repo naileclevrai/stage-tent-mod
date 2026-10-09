@@ -311,6 +311,35 @@ public class TentBlockEntity extends BlockEntity {
         releaseClientMesh();
     }
 
+    /**
+     * The tent that owns a canvas cell. The plate can sit many blocks away from the wall you are actually looking at.
+     */
+    public static TentBlockEntity findAround(net.minecraft.world.level.Level level, BlockPos pos) {
+        BlockPos.MutableBlockPos mp = new BlockPos.MutableBlockPos();
+        TentBlockEntity best = null;
+        double bestD = Double.MAX_VALUE;
+        for (int dy = 0; dy >= -14; dy--) {
+            for (int dx = -16; dx <= 16; dx++) {
+                for (int dz = -16; dz <= 16; dz++) {
+                    mp.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    if (!(level.getBlockState(mp).getBlock() instanceof TentBlock)) continue;
+                    if (!(level.getBlockEntity(mp) instanceof TentBlockEntity be)) continue;
+                    int ox = pos.getX() - mp.getX(), oy = pos.getY() - mp.getY(), oz = pos.getZ() - mp.getZ();
+                    TentShape shape = be.shape();
+                    double lx = shape.toLocalX(ox, oz), lz = shape.toLocalZ(ox, oz);
+                    if (Math.abs(lx) > shape.extent() + 1 || Math.abs(lz) > shape.extent() + 1) continue;
+                    if (oy < 0 || oy > shape.top() + 2) continue;
+                    double d = ox * (double) ox + oy * (double) oy + oz * (double) oz;
+                    if (d < bestD) {
+                        bestD = d;
+                        best = be;
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
     @Override
     public AABB getRenderBoundingBox() {
         TentShape s = shape();
