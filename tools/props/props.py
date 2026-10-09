@@ -1403,16 +1403,100 @@ def _yz_board(m, mat, x, z0, y0, z1, y1, thick, wide):
     m.merge(board, xf)
 
 
+def _span_overlap(a, b):
+    out = []
+    for a0, a1 in a:
+        for b0, b1 in b:
+            lo, hi = max(a0, b0), min(a1, b1)
+            if hi - lo > 0.012:
+                out.append((lo, hi))
+    return out
+
+
+def _ring(m, mat, cx, cz, r0, r1, y0, y1, segs=32):
+    """Flat annulus with an inner and outer wall. The hole looks through r0."""
+    for i in range(segs):
+        a0 = math.tau * i / segs
+        a1 = math.tau * (i + 1) / segs
+        c0, s0, c1, s1 = math.cos(a0), math.sin(a0), math.cos(a1), math.sin(a1)
+
+        def p(r, y, c, s):
+            return (cx + r * c, y, cz + r * s)
+
+        m.quad(mat, p(r0, y1, c0, s0), p(r0, y1, c1, s1), p(r1, y1, c1, s1), p(r1, y1, c0, s0), (0, 1, 0))
+        m.quad(mat, p(r1, y0, c0, s0), p(r1, y0, c1, s1), p(r0, y0, c1, s1), p(r0, y0, c0, s0), (0, -1, 0))
+        m.quad(mat, p(r1, y0, c0, s0), p(r1, y1, c0, s0), p(r1, y1, c1, s1), p(r1, y0, c1, s1),
+               _norm((c0 + c1, 0, s0 + s1)))
+        m.quad(mat, p(r0, y0, c1, s1), p(r0, y1, c1, s1), p(r0, y1, c0, s0), p(r0, y0, c0, s0),
+               _norm((-c0 - c1, 0, -s0 - s1)))
+
+
+def _cut_plank(m, mat, x0, y0, z0, x1, y1, z1, hx, hz, r, bevel):
+    """A plank with a round bite taken out, so a pole can pass through the top."""
+    if r <= 0 or x1 < hx - r or x0 > hx + r or z1 < hz - r or z0 > hz + r:
+        m.bevel_box(mat, x0, y0, z0, x1, y1, z1, bevel)
+        return
+
+    def outside(x):
+        dx = x - hx
+        if abs(dx) >= r:
+            return [(z0, z1)]
+        h = math.sqrt(max(0.0, r * r - dx * dx))
+        lo, hi = hz - h, hz + h
+        spans = []
+        if z0 < lo:
+            spans.append((z0, min(z1, lo)))
+        if z1 > hi:
+            spans.append((max(z0, hi), z1))
+        return [(a, b) for a, b in spans if b - a > 0.012]
+
+    xs = [x0, x1]
+    for t in (hx - r, hx + r):
+        if x0 + 1e-3 < t < x1 - 1e-3:
+            xs.append(t)
+    for i in range(1, 24):
+        xs.append(x0 + (x1 - x0) * i / 24)
+    xs = sorted(set(round(x, 5) for x in xs))
+    for xa, xb in zip(xs, xs[1:]):
+        if xb - xa < 1e-4:
+            continue
+        spans = outside(xa)
+        spans = _span_overlap(spans, outside(xb))
+        spans = _span_overlap(spans, outside((xa + xb) * 0.5))
+        for za, zb in spans:
+            m.box(mat, xa, y0, za, xb, y1, zb)
+
+
 def picnic_table():
     """Two-metre pine picnic table: plank top, two plank benches, A-frames and the tie beams of the photos."""
+    return _picnic_scale(_picnic(False))
+
+
+def picnic_table_parasol():
+    """The same table with a round hole mid-top and a parasol stood through it."""
+    m = _picnic(True)
+    m.merge(_parasol_raw(1.0, 0.5, foot=0.22))
+    return _picnic_scale(m)
+
+
+def _picnic(hole):
+    """Two-metre pine picnic table, before the 1.5 scale. The hole is the parasol socket."""
     m = Mesh()
     top, frame = "wood", "wood_dark"
+    hx, hz = 1.0, 0.5
     # Tabletop: five boards, a little longer than the frames, with a small gap so the planks read separately.
     z0, z1, gap, n = 0.22, 0.78, 0.008, 5
     w = (z1 - z0 - gap * (n - 1)) / n
     for i in range(n):
         a = z0 + i * (w + gap)
-        m.bevel_box(top, 0.05, 0.714, a, 1.95, 0.752, a + w, 0.007)
+        if hole:
+            _cut_plank(m, top, 0.05, 0.714, a, 1.95, 0.752, a + w, hx, hz, 0.145, 0.007)
+        else:
+            m.bevel_box(top, 0.05, 0.714, a, 1.95, 0.752, a + w, 0.007)
+    if hole:
+        # Wooden escutcheon and a dark liner, so the socket reads as a finished hole rather than a cut.
+        _ring(m, top, hx, hz, 0.055, 0.155, 0.708, 0.758, 36)
+        _ring(m, "black", hx, hz, 0.038, 0.055, 0.702, 0.764, 28)
     # Benches are shorter than the top and sit outside it, one on each long side.
     benches = ((-0.10, 0.14), (0.86, 1.10))
     for a, b in benches:
@@ -1429,11 +1513,90 @@ def picnic_table():
         for z in (0.02, 0.98):
             m.box("black", x - 0.012, 0.40, z - 0.012, x + 0.012, 0.424, z + 0.012)
     # Beams running the length: under the top, and under each bench.
-    m.bevel_box(frame, 0.28, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
+    # The centre beam stops either side of the socket so the pole can come up through the hole.
+    if hole:
+        m.bevel_box(frame, 0.28, 0.64, 0.46, hx - 0.07, 0.71, 0.54, 0.006)
+        m.bevel_box(frame, hx + 0.07, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
+    else:
+        m.bevel_box(frame, 0.28, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
     m.bevel_box(frame, 0.28, 0.385, -0.02, 1.72, 0.418, 0.06, 0.004)
     m.bevel_box(frame, 0.28, 0.385, 0.94, 1.72, 0.418, 1.02, 0.004)
-    # Half again as long, wide and tall: about three metres, benches included.
-    return m.transformed(lambda p: (p[0] * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+    return m
+
+
+def _picnic_scale(mesh):
+    """Half again as long, wide and tall: about three metres, benches included."""
+    return mesh.transformed(lambda p: (p[0] * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+
+
+def parasol():
+    """Terrace umbrella, half again the first size. One continuous cloth, no open seams."""
+    raw = _parasol_raw(0.5, 0.5, foot=0.36)
+    return raw.transformed(lambda p: (0.5 + (p[0] - 0.5) * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+
+
+def _parasol_raw(cx, cz, foot):
+    """Umbrella at the original size, pole on (cx, cz). Callers scale it by 1.5."""
+    m = Mesh()
+    m.bevel_box("black", cx - foot, 0.0, cz - 0.10, cx + foot, 0.06, cz + 0.10, 0.008)
+    m.bevel_box("black", cx - 0.10, 0.0, cz - foot, cx + 0.10, 0.06, cz + foot, 0.008)
+    m.cylinder("black", 0.13, 0.06, 0.13, cx, cz, segs=16)
+    m.cylinder("galvanised", 0.028, 0.12, 2.30, cx, cz, segs=12)
+    m.cylinder("grey", 0.042, 0.98, 1.05, cx, cz, segs=8)
+    m.tube("black", [(cx, 1.015, cz - 0.03), (cx, 1.015, cz - 0.12), (cx + 0.05, 1.08, cz - 0.14)], 0.011, segs=6)
+    # Cap the cloth meets, so the centre is a hub and not a hole.
+    m.cylinder("galvanised", 0.07, 2.28, 2.50, cx, cz, segs=16)
+    m.sphere("black", 0.04, cx, 2.58, cz, segs=10, rings=6)
+
+    segs, rings = 40, 12
+    inner, radius = 0.05, 1.22
+    grid = []
+    for i in range(segs):
+        col = []
+        a = math.tau * i / segs
+        for k in range(rings + 1):
+            v = k / rings
+            r = inner + (radius - inner) * v
+            y = 2.50 + (2.02 - 2.50) * (v ** 1.15)
+            # Eight soft dips in the hem. They are part of the same surface, so they don't open holes.
+            scallop = 0.055 * (max(0.0, (v - 0.78) / 0.22) ** 2) * (0.5 - 0.5 * math.cos(a * 8))
+            col.append((cx + r * math.cos(a), y - scallop, cz + r * math.sin(a)))
+        # Short lip on the same vertices, so the rim has a thickness and stays closed.
+        rim = col[-1]
+        col.append((rim[0], rim[1] - 0.018, rim[2]))
+        grid.append(col)
+    rows = rings + 1
+
+    def at(i, k):
+        return grid[i % segs][max(0, min(rows, k))]
+
+    def normal(i, k):
+        t = _sub(at(i + 1, k), at(i - 1, k))
+        b = _sub(at(i, min(rows, k + 1)), at(i, max(0, k - 1)))
+        n = _norm(_cross(t, b))
+        if n[1] < 0 and k < rings:
+            n = (-n[0], -n[1], -n[2])
+        return n
+
+    for i in range(segs):
+        for k in range(rows):
+            a, b, c, d = at(i, k), at(i + 1, k), at(i + 1, k + 1), at(i, k + 1)
+            na, nb, nc, nd = normal(i, k), normal(i + 1, k), normal(i + 1, k + 1), normal(i, k + 1)
+            uv = ((i / segs, k / rows), ((i + 1) / segs, k / rows),
+                  ((i + 1) / segs, (k + 1) / rows), (i / segs, (k + 1) / rows))
+            m.quad("cloth", a, b, c, d, normals=(na, nb, nc, nd), uv=uv)
+            m.quad("cloth", a, d, c, b,
+                   normals=((-na[0], -na[1], -na[2]), (-nd[0], -nd[1], -nd[2]),
+                            (-nc[0], -nc[1], -nc[2]), (-nb[0], -nb[1], -nb[2])),
+                   uv=(uv[0], uv[3], uv[2], uv[1]))
+        # One rib tucked under the cloth, following it so it never pokes a gap.
+        if i % 5 == 0:
+            rib = []
+            for k in range(0, rings + 1, 2):
+                p = at(i, k)
+                rib.append((p[0], p[1] - 0.028, p[2]))
+            m.tube("galvanised", rib, 0.007, segs=5, caps=False)
+    return m
 
 
 def _fold_frame(m, hinge_x, foot_x):

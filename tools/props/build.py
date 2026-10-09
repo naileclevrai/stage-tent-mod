@@ -126,6 +126,7 @@ def main():
     report["site_fence"] = model(props.site_fence(), "site_fence", tinted=("scrim", "hem"))
     report["oriflamme"] = model(props.oriflamme(), "oriflamme", tinted=("cloth", "hem"))
     report["picnic_table"] = model(props.picnic_table(), "picnic_table", gui_scale=0.22, gui_offset=(-0.4, 0, 0))
+    report["picnic_table_parasol"] = model(props.picnic_table_parasol(), "picnic_table_parasol", tinted=("cloth",), gui_scale=0.18, gui_offset=(-0.4, 0, 0))
     report["folding_table"] = model(props.folding_table(), "folding_table", gui_scale=0.26, gui_offset=(-0.7, -0.15, 0))
     report["water_cannon"] = model(props.water_cannon(), "water_cannon", tinted=("paint",), gui_scale=0.28, gui_offset=(-0.35, -0.15, 0))
     report["water_cannon_base"] = model(props.water_cannon_base(), "water_cannon_base", tinted=("paint",))
@@ -200,7 +201,10 @@ def main():
     blockstate("site_toilet", facing_parts("site_toilet", {"open": "false"}) + facing_parts("site_toilet_open", {"open": "true"}))
     blockstate("site_fence", facing_parts("site_fence"))
     blockstate("oriflamme", facing_parts("oriflamme"))
-    blockstate("picnic_table", facing_parts("picnic_table"))
+    picnic = []
+    for flag, name in (("false", "picnic_table"), ("true", "picnic_table_parasol")):
+        picnic += facing_parts(name, {"parasol": flag})
+    blockstate("picnic_table", picnic)
     blockstate("water_cannon", water_cannon_states())
     # The inventory icon is the full-height deck; the height variants are not items.
     deck_item = os.path.join(ASSETS, "models", "item", "stage_deck_4.json")

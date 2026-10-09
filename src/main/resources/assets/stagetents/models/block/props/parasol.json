@@ -1,0 +1,16 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/parasol.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "galvanised": "stagetents:block/props/galvanised",
+    "grey": "stagetents:block/props/grey",
+    "cloth": "stagetents:block/props/cloth"
+  }
+}

@@ -64,7 +64,12 @@ public class FurnitureBlock extends Block {
             for (double[] b : spec.shape()) s = Shapes.or(s, rotated(b, d));
             shapes.put(d, s.optimize());
         }
-        registerDefaultState(stateDefinition.any().setValue(COLOR, spec.color()).setValue(FACING, Direction.NORTH));
+        registerDefaultState(fillDefault(stateDefinition.any().setValue(COLOR, spec.color()).setValue(FACING, Direction.NORTH)));
+    }
+
+    /** Extra blockstate properties a subclass registered. The default must mention every one of them. */
+    protected BlockState fillDefault(BlockState state) {
+        return state;
     }
 
     /** Rotates a north-facing box (pixels) to face {@code d}. */

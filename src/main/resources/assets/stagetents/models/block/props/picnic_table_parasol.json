@@ -1,0 +1,18 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/picnic_table_parasol.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/wood",
+    "wood": "stagetents:block/props/wood",
+    "black": "stagetents:block/props/black",
+    "wood_dark": "stagetents:block/props/wood_dark",
+    "galvanised": "stagetents:block/props/galvanised",
+    "grey": "stagetents:block/props/grey",
+    "cloth": "stagetents:block/props/cloth"
+  }
+}

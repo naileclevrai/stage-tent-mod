@@ -2,7 +2,8 @@
   "multipart": [
     {
       "when": {
-        "facing": "north"
+        "facing": "north",
+        "parasol": "false"
       },
       "apply": {
         "model": "stagetents:block/props/picnic_table"
@@ -10,7 +11,8 @@
     },
     {
       "when": {
-        "facing": "east"
+        "facing": "east",
+        "parasol": "false"
       },
       "apply": {
         "model": "stagetents:block/props/picnic_table",
@@ -19,7 +21,8 @@
     },
     {
       "when": {
-        "facing": "south"
+        "facing": "south",
+        "parasol": "false"
       },
       "apply": {
         "model": "stagetents:block/props/picnic_table",
@@ -28,10 +31,50 @@
     },
     {
       "when": {
-        "facing": "west"
+        "facing": "west",
+        "parasol": "false"
       },
       "apply": {
         "model": "stagetents:block/props/picnic_table",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "parasol": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/picnic_table_parasol"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "parasol": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/picnic_table_parasol",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "parasol": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/picnic_table_parasol",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "parasol": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/picnic_table_parasol",
         "y": 270
       }
     }
