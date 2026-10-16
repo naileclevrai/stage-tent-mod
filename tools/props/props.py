@@ -1204,6 +1204,75 @@ def _wc_door(s, z, opened):
     s.merge(d)
 
 
+def _heater_cap(m, lit):
+    """Shallow mushroom reflector, rim turned down. The underside carries the glow when it is lit."""
+    cx = cz = 0.5
+    profile = (
+        (0.05, 2.28),
+        (0.18, 2.32),
+        (0.34, 2.34),
+        (0.48, 2.31),
+        (0.56, 2.22),
+        (0.60, 2.12),
+    )
+    segs = 28
+    rings = []
+    for r, y in profile:
+        rings.append([(cx + r * math.cos(math.tau * k / segs), y, cz + r * math.sin(math.tau * k / segs))
+                      for k in range(segs + 1)])
+    for i in range(len(rings) - 1):
+        under = "bulb" if lit and i < 2 else "paint"
+        for k in range(segs):
+            a, b = rings[i][k], rings[i][k + 1]
+            c, d = rings[i + 1][k + 1], rings[i + 1][k]
+            m.quad("paint", a, d, c, b)
+            m.quad(under, (a[0], a[1] - 0.012, a[2]), (b[0], b[1] - 0.012, b[2]),
+                   (c[0], c[1] - 0.012, c[2]), (d[0], d[1] - 0.012, d[2]))
+    m.cylinder("galvanised", 0.07, 2.28, 2.38, cx=cx, cz=cz, segs=12)
+    m.disc("galvanised", 0.07, 2.38, cx=cx, cz=cz, segs=12)
+
+
+def patio_heater(lit=False):
+    """Terrace mushroom heater: gas bottle, slim pole, chrome burner and a wide reflector."""
+    m = Mesh()
+    cx, cz = 0.5, 0.5
+    body = "paint"
+    glow = "bulb" if lit else "red"
+    m.lathe(body, [(0.30, 0.0), (0.30, 0.028), (0.24, 0.055), (0.22, 0.08)], cx, cz, segs=24)
+    m.cylinder(body, 0.22, 0.07, 0.74, cx=cx, cz=cz, segs=24)
+    m.lathe(body, [(0.22, 0.72), (0.14, 0.78), (0.045, 0.84)], cx, cz, segs=20)
+    for i in range(5):
+        y = 0.20 + i * 0.09
+        m.cylinder("black", 0.228, y, y + 0.016, cx=cx, cz=cz, segs=24, caps=False)
+    # Round inspection port and the valve, on the front of the bottle.
+    port = Mesh()
+    port.disc("black", 0.055, 0.0, cx=0, cz=0, segs=14)
+    port.cylinder("galvanised", 0.064, -0.01, 0.008, cx=0, cz=0, segs=14, caps=False)
+    m.merge(port.transformed(chain(rot_x(-90, 0, 0), translate(cx, 0.42, cz - 0.22))))
+    knob = Mesh()
+    knob.cylinder("black", 0.026, 0.0, 0.016, cx=0, cz=0, segs=10)
+    knob.cylinder("chrome", 0.012, 0.016, 0.04, cx=0, cz=0, segs=8)
+    m.merge(knob.transformed(chain(rot_x(-90, 0, 0), translate(cx, 0.58, cz - 0.22))))
+    for sx in (-0.16, 0.16):
+        wheel = Mesh()
+        wheel.cylinder("black", 0.045, -0.014, 0.014, cx=0, cz=0, segs=10)
+        wheel.cylinder("galvanised", 0.016, -0.02, 0.02, cx=0, cz=0, segs=8)
+        m.merge(wheel.transformed(chain(rot_z(90, 0, 0), translate(cx + sx, 0.045, cz + 0.30))))
+    m.cylinder(body, 0.026, 0.80, 1.98, cx=cx, cz=cz, segs=10)
+    m.cylinder("galvanised", 0.042, 1.90, 1.98, cx=cx, cz=cz, segs=10, caps=False)
+    m.cylinder("chrome", 0.11, 1.98, 2.20, cx=cx, cz=cz, segs=16, caps=False)
+    m.cylinder(glow, 0.082, 2.02, 2.16, cx=cx, cz=cz, segs=12, caps=False)
+    m.cylinder("chrome", 0.128, 2.168, 2.192, cx=cx, cz=cz, segs=16, caps=False)
+    for i in range(8):
+        a = math.tau * i / 8
+        x, z = cx + 0.118 * math.cos(a), cz + 0.118 * math.sin(a)
+        m.tube("galvanised", [(x, 1.98, z), (x, 2.20, z)], 0.006, segs=4, caps=False)
+    m.box("black", cx - 0.04, 1.76, cz - 0.075, cx + 0.04, 1.88, cz - 0.03)
+    m.box("orange" if lit else "red", cx - 0.012, 1.79, cz - 0.08, cx + 0.012, 1.82, cz - 0.072)
+    _heater_cap(m, lit)
+    return m
+
+
 def wash_station():
     """Backstage hand-wash stand: stainless cabinet, sunken basin, gooseneck tap, soap, side bin and a foot pedal."""
     m = Mesh()

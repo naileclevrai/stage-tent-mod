@@ -122,6 +122,8 @@ def main():
     report["power_distro"] = model(props.power_distro(), "power_distro", gui_scale=0.42, gui_offset=(0, -0.15, 0))
     report["power_rack"] = model(props.power_rack(), "power_rack", tinted=("paint",), gui_scale=0.42, gui_offset=(0, -0.12, 0))
     report["wash_station"] = model(props.wash_station(), "wash_station", gui_scale=0.45, gui_offset=(0, -0.5, 0))
+    report["patio_heater"] = model(props.patio_heater(False), "patio_heater", tinted=("paint",), gui_scale=0.28, gui_offset=(0, -1.1, 0))
+    report["patio_heater_lit"] = model(props.patio_heater(True), "patio_heater_lit", tinted=("paint",), gui_scale=0.28, gui_offset=(0, -1.1, 0))
     report["site_toilet"] = model(props.site_toilet(False), "site_toilet", tinted=("paint",), gui_scale=0.4, gui_offset=(0, -0.4, 0))
     report["site_toilet_open"] = model(props.site_toilet(True), "site_toilet_open", tinted=("paint",))
     report["site_fence"] = model(props.site_fence(), "site_fence", tinted=("scrim", "hem"))
@@ -143,7 +145,7 @@ def main():
 
     # The connecting parts are not items.
     extra_items = ["guide_rail_corner", "site_toilet_open", "site_fence_end_left", "site_fence_end_right", "site_fence_joint", "site_fence_end",
-                   "water_cannon_base", "light_tower_section", "light_tower_yoke", "light_tower_lamp",
+                   "water_cannon_base", "light_tower_section", "light_tower_yoke", "light_tower_lamp", "patio_heater_lit",
                    "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
                    "stage_ramp_end_left", "stage_ramp_end_right"] + ["water_cannon_barrel_%d" % i for i in range(11)]
     for level in range(1, 5):
@@ -200,6 +202,10 @@ def main():
     blockstate("power_distro", facing_parts("power_distro"))
     blockstate("power_rack", facing_parts("power_rack"))
     blockstate("wash_station", facing_parts("wash_station"))
+    heater = []
+    for flag, name in (("false", "patio_heater"), ("true", "patio_heater_lit")):
+        heater += facing_parts(name, {"lit": flag})
+    blockstate("patio_heater", heater)
     blockstate("site_toilet", facing_parts("site_toilet", {"open": "false"}) + facing_parts("site_toilet_open", {"open": "true"}))
     blockstate("site_fence", facing_parts("site_fence"))
     blockstate("oriflamme", facing_parts("oriflamme"))

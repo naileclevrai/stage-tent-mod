@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "stagetents:item/patio_heater",
+    "layer1": "stagetents:item/patio_heater_dye"
+  }
+}

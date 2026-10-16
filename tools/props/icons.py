@@ -662,6 +662,25 @@ ICONS = {
         ".....KKKKKK.....",
         "......kkkk......",
     ],
+    # Chauffage champignon: chapeau, brûleur, mât, bouteille. La carrosserie se teinte.
+    "patio_heater": [
+        "....ssssssss....",
+        "...s11111111s...",
+        "..s11YYYYYY11s..",
+        "...s11RRRR11s...",
+        ".....s2222s.....",
+        "......s11s......",
+        ".......11.......",
+        ".......11.......",
+        ".......11.......",
+        ".....111111.....",
+        "....11222211....",
+        "....11s11s11....",
+        "....11222211....",
+        "....11s11s11....",
+        "....11111111....",
+        ".....ssssss.....",
+    ],
     # Table pliante: plateau blanc, pieds noirs en X. Pas de teinte.
     "folding_table": [
         "................",

@@ -1,0 +1,18 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/patio_heater_lit.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/paint",
+    "paint": "stagetents:block/props/paint",
+    "black": "stagetents:block/props/black",
+    "galvanised": "stagetents:block/props/galvanised",
+    "chrome": "stagetents:block/props/chrome",
+    "bulb": "stagetents:block/props/bulb",
+    "orange": "stagetents:block/props/orange"
+  }
+}

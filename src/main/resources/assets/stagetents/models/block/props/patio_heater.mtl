@@ -1,0 +1,25 @@
+newmtl paint
+Kd 1 1 1
+map_Kd #paint
+forge_TintIndex 0
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl galvanised
+Kd 1 1 1
+map_Kd #galvanised
+forge_TintIndex -1
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+forge_TintIndex -1
+
+newmtl red
+Kd 1 1 1
+map_Kd #red
+forge_TintIndex -1
+
