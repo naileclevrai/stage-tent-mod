@@ -9,8 +9,8 @@
   "textures": {
     "particle": "stagetents:block/props/wood",
     "wood": "stagetents:block/props/wood",
-    "black": "stagetents:block/props/black",
     "wood_dark": "stagetents:block/props/wood_dark",
+    "black": "stagetents:block/props/black",
     "galvanised": "stagetents:block/props/galvanised",
     "grey": "stagetents:block/props/grey",
     "cloth": "stagetents:block/props/cloth"

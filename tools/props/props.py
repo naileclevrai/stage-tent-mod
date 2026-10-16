@@ -1440,68 +1440,65 @@ def _yz_board(m, mat, x, z0, y0, z1, y1, thick, wide):
     m.merge(board, xf)
 
 
-def _span_overlap(a, b):
-    out = []
-    for a0, a1 in a:
-        for b0, b1 in b:
-            lo, hi = max(a0, b0), min(a1, b1)
-            if hi - lo > 0.012:
-                out.append((lo, hi))
-    return out
-
-
-def _ring(m, mat, cx, cz, r0, r1, y0, y1, segs=32):
-    """Flat annulus with an inner and outer wall. The hole looks through r0."""
-    for i in range(segs):
-        a0 = math.tau * i / segs
-        a1 = math.tau * (i + 1) / segs
-        c0, s0, c1, s1 = math.cos(a0), math.sin(a0), math.cos(a1), math.sin(a1)
-
-        def p(r, y, c, s):
-            return (cx + r * c, y, cz + r * s)
-
-        m.quad(mat, p(r0, y1, c0, s0), p(r0, y1, c1, s1), p(r1, y1, c1, s1), p(r1, y1, c0, s0), (0, 1, 0))
-        m.quad(mat, p(r1, y0, c0, s0), p(r1, y0, c1, s1), p(r0, y0, c1, s1), p(r0, y0, c0, s0), (0, -1, 0))
-        m.quad(mat, p(r1, y0, c0, s0), p(r1, y1, c0, s0), p(r1, y1, c1, s1), p(r1, y0, c1, s1),
-               _norm((c0 + c1, 0, s0 + s1)))
-        m.quad(mat, p(r0, y0, c1, s1), p(r0, y1, c1, s1), p(r0, y1, c0, s0), p(r0, y0, c0, s0),
-               _norm((-c0 - c1, 0, -s0 - s1)))
+def _wood(pts):
+    """Grain follows the plank, in the same world scale as the other boards."""
+    return tuple((p[0], p[2]) for p in pts)
 
 
 def _cut_plank(m, mat, x0, y0, z0, x1, y1, z1, hx, hz, r, bevel):
-    """A plank with a round bite taken out, so a pole can pass through the top."""
+    """A plank with a round hole drilled through it. The grain keeps running along the board."""
     if r <= 0 or x1 < hx - r or x0 > hx + r or z1 < hz - r or z0 > hz + r:
         m.bevel_box(mat, x0, y0, z0, x1, y1, z1, bevel)
         return
+    # Whole boards on either side of the hole. The arc itself is meshed between them.
+    if x0 < hx - r - 1e-4:
+        m.bevel_box(mat, x0, y0, z0, hx - r, y1, z1, bevel)
+    if x1 > hx + r + 1e-4:
+        m.bevel_box(mat, hx + r, y0, z0, x1, y1, z1, bevel)
 
-    def outside(x):
+    def bands(x):
         dx = x - hx
-        if abs(dx) >= r:
-            return [(z0, z1)]
+        if abs(dx) >= r - 1e-6:
+            # The circle starts as a point. Splitting there keeps the first arc sewn to the solid board.
+            if z0 < hz < z1 and abs(dx) <= r + 1e-5:
+                return [(z0, hz, "hi"), (hz, z1, "lo")]
+            return [(z0, z1, None)]
         h = math.sqrt(max(0.0, r * r - dx * dx))
-        lo, hi = hz - h, hz + h
-        spans = []
-        if z0 < lo:
-            spans.append((z0, min(z1, lo)))
-        if z1 > hi:
-            spans.append((max(z0, hi), z1))
-        return [(a, b) for a, b in spans if b - a > 0.012]
+        clo, chi = hz - h, hz + h
+        out = []
+        if z0 < clo - 1e-5:
+            out.append((z0, min(z1, clo), "hi" if clo < z1 - 1e-5 else None))
+        if z1 > chi + 1e-5:
+            out.append((max(z0, chi), z1, "lo" if chi > z0 + 1e-5 else None))
+        return out
 
-    xs = [x0, x1]
-    for t in (hx - r, hx + r):
-        if x0 + 1e-3 < t < x1 - 1e-3:
-            xs.append(t)
-    for i in range(1, 24):
-        xs.append(x0 + (x1 - x0) * i / 24)
-    xs = sorted(set(round(x, 5) for x in xs))
+    xa0, xb1 = max(x0, hx - r), min(x1, hx + r)
+    steps = 14
+    xs = [xa0 + (xb1 - xa0) * i / steps for i in range(steps + 1)]
     for xa, xb in zip(xs, xs[1:]):
-        if xb - xa < 1e-4:
+        if xb - xa < 1e-5:
             continue
-        spans = outside(xa)
-        spans = _span_overlap(spans, outside(xb))
-        spans = _span_overlap(spans, outside((xa + xb) * 0.5))
-        for za, zb in spans:
-            m.box(mat, xa, y0, za, xb, y1, zb)
+        ba, bb = bands(xa), bands(xb)
+        if len(ba) != len(bb):
+            continue
+        for (za0, za1, ta), (zb0, zb1, tb) in zip(ba, bb):
+            top = ((xa, y1, za0), (xb, y1, zb0), (xb, y1, zb1), (xa, y1, za1))
+            bot = ((xa, y0, za1), (xb, y0, zb1), (xb, y0, zb0), (xa, y0, za0))
+            m.quad(mat, *top, (0, 1, 0), _wood(top))
+            m.quad(mat, *bot, (0, -1, 0), _wood(bot))
+            if abs(za0 - z0) < 1e-4 and abs(zb0 - z0) < 1e-4:
+                side = ((xa, y0, z0), (xb, y0, z0), (xb, y1, z0), (xa, y1, z0))
+                m.quad(mat, *side, (0, 0, -1), _wood(side))
+            if abs(za1 - z1) < 1e-4 and abs(zb1 - z1) < 1e-4:
+                side = ((xb, y0, z1), (xa, y0, z1), (xa, y1, z1), (xb, y1, z1))
+                m.quad(mat, *side, (0, 0, 1), _wood(side))
+            tag = ta or tb
+            if tag == "hi":
+                wall = ((xb, y0, zb1), (xa, y0, za1), (xa, y1, za1), (xb, y1, zb1))
+                m.quad(mat, *wall, _norm((hx - (xa + xb) / 2, 0, hz - za1)), _wood(wall))
+            elif tag == "lo":
+                wall = ((xa, y0, za0), (xb, y0, zb0), (xb, y1, zb0), (xa, y1, za0))
+                m.quad(mat, *wall, _norm((hx - (xa + xb) / 2, 0, hz - za0)), _wood(wall))
 
 
 def picnic_table():
@@ -1527,13 +1524,9 @@ def _picnic(hole):
     for i in range(n):
         a = z0 + i * (w + gap)
         if hole:
-            _cut_plank(m, top, 0.05, 0.714, a, 1.95, 0.752, a + w, hx, hz, 0.145, 0.007)
+            _cut_plank(m, top, 0.05, 0.714, a, 1.95, 0.752, a + w, hx, hz, 0.040, 0.007)
         else:
             m.bevel_box(top, 0.05, 0.714, a, 1.95, 0.752, a + w, 0.007)
-    if hole:
-        # Wooden escutcheon and a dark liner, so the socket reads as a finished hole rather than a cut.
-        _ring(m, top, hx, hz, 0.055, 0.155, 0.708, 0.758, 36)
-        _ring(m, "black", hx, hz, 0.038, 0.055, 0.702, 0.764, 28)
     # Benches are shorter than the top and sit outside it, one on each long side.
     benches = ((-0.10, 0.14), (0.86, 1.10))
     for a, b in benches:
@@ -1552,8 +1545,8 @@ def _picnic(hole):
     # Beams running the length: under the top, and under each bench.
     # The centre beam stops either side of the socket so the pole can come up through the hole.
     if hole:
-        m.bevel_box(frame, 0.28, 0.64, 0.46, hx - 0.07, 0.71, 0.54, 0.006)
-        m.bevel_box(frame, hx + 0.07, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
+        m.bevel_box(frame, 0.28, 0.64, 0.46, hx - 0.05, 0.71, 0.54, 0.006)
+        m.bevel_box(frame, hx + 0.05, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
     else:
         m.bevel_box(frame, 0.28, 0.64, 0.46, 1.72, 0.71, 0.54, 0.006)
     m.bevel_box(frame, 0.28, 0.385, -0.02, 1.72, 0.418, 0.06, 0.004)
