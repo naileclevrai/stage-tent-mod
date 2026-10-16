@@ -40,6 +40,18 @@ public class TentWrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
+        // On a festoon: sneak changes the height, a plain click strings the cable.
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.FestoonBlock) {
+            Player player = ctx.getPlayer();
+            if (!level.isClientSide && player != null) {
+                if (player.isShiftKeyDown()) {
+                    com.nailec.stagetents.furniture.FestoonBlock.cycleHeight(level, ctx.getClickedPos(), level.getBlockState(ctx.getClickedPos()), player);
+                } else {
+                    com.nailec.stagetents.furniture.FestoonBlock.link(level, ctx.getClickedPos(), player, ctx.getItemInHand());
+                }
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         // On a turnstile: sneak opens the settings, a plain click cycles the mode.
         if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof com.nailec.stagetents.furniture.TurnstileBlock) {
             Player player = ctx.getPlayer();
@@ -158,13 +170,17 @@ public class TentWrenchItem extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return stack.getTagElement(KEY) != null;
+        return stack.getTagElement(KEY) != null
+                || stack.getTag() != null && stack.getTag().contains(com.nailec.stagetents.furniture.FestoonBlock.LINK_KEY);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         if (stack.getTagElement(KEY) != null) {
             tooltip.add(Component.translatable("tooltip.stagetents.wrench.copied").withStyle(ChatFormatting.GOLD));
+        }
+        if (stack.getTag() != null && stack.getTag().contains(com.nailec.stagetents.furniture.FestoonBlock.LINK_KEY)) {
+            tooltip.add(Component.translatable("tooltip.stagetents.wrench.festoon").withStyle(ChatFormatting.GOLD));
         }
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.1").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.2").withStyle(ChatFormatting.GRAY));
@@ -179,5 +195,6 @@ public class TentWrenchItem extends Item {
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.11").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.12").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.stagetents.wrench.13").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.stagetents.wrench.14").withStyle(ChatFormatting.GRAY));
     }
 }

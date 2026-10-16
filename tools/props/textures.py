@@ -268,4 +268,101 @@ def make_all(folder):
     w = d.textlength("WC", font=font)
     d.text(((N - w) / 2, 7), "WC", font=font, fill=(30, 30, 34, 255))
     wc.save(os.path.join(folder, "wc_sign.png"))
-    return sorted(list(tex) + ["booth_sign", "wc_sign"])
+    make_co2(folder)
+    make_pint(folder)
+    make_plancha(folder)
+    return sorted(list(tex) + ["booth_sign", "wc_sign"] + [f"co2_{i}" for i in range(12)] + ["co2_blue", "pint_glass", "beer_liquid", "beer_foam", "plancha_hot", "plancha_meat", "plancha_sausage"])
+
+
+def make_co2(folder):
+    """Painted cylinder body: light grey at the shoulder, grimy grey-brown at the foot, plus a blue collar."""
+    os.makedirs(folder, exist_ok=True)
+    bands = 12
+    for i in range(bands):
+        t = i / (bands - 1)
+        r = 186 + (58 - 186) * t
+        g = 188 + (52 - 188) * t
+        b = 184 + (46 - 184) * t
+        if t > 0.5:
+            k = (t - 0.5) / 0.5
+            r += 18 * k
+            g -= 6 * k
+            b -= 14 * k
+        rnd = random.Random(80 + i)
+        im = Image.new("RGBA", (N, N))
+        px = im.load()
+        for y in range(N):
+            for x in range(N):
+                n = rnd.uniform(-7, 7)
+                rust = 22 if rnd.random() < 0.015 + t * 0.04 else 0
+                px[x, y] = (_clamp(r + n + rust), _clamp(g + n + rust * 0.35), _clamp(b + n), 255)
+        im.save(os.path.join(folder, f"co2_{i}.png"))
+    blue = Image.new("RGBA", (N, N))
+    px = blue.load()
+    rnd = random.Random(91)
+    for y in range(N):
+        lift = 28 * (1 - y / (N - 1))
+        for x in range(N):
+            n = rnd.uniform(-6, 6)
+            px[x, y] = (_clamp(16 + n), _clamp(96 + lift + n), _clamp(186 + n), 255)
+    blue.save(os.path.join(folder, "co2_blue.png"))
+
+
+def make_pint(folder):
+    """Clear pint glass, amber beer and a cream foam head."""
+    os.makedirs(folder, exist_ok=True)
+    glass = Image.new("RGBA", (N, N))
+    px = glass.load()
+    for y in range(N):
+        for x in range(N):
+            shine = 70 if 11 <= x <= 15 else 0
+            px[x, y] = (_clamp(198 + shine * 0.4), _clamp(214 + shine * 0.3), _clamp(226 + shine * 0.2), 160)
+    glass.save(os.path.join(folder, "pint_glass.png"))
+    beer = Image.new("RGBA", (N, N))
+    px = beer.load()
+    rnd = random.Random(12)
+    for y in range(N):
+        for x in range(N):
+            n = rnd.uniform(-8, 8)
+            px[x, y] = (_clamp(198 + n), _clamp(118 + n * 0.4), _clamp(36 + n * 0.2), 235)
+    beer.save(os.path.join(folder, "beer_liquid.png"))
+    foam = Image.new("RGBA", (N, N))
+    px = foam.load()
+    rnd = random.Random(13)
+    for y in range(N):
+        for x in range(N):
+            n = rnd.uniform(-6, 10)
+            px[x, y] = (_clamp(246 + n), _clamp(238 + n), _clamp(214 + n * 0.4), 248)
+    foam.save(os.path.join(folder, "beer_foam.png"))
+
+
+def make_plancha(folder):
+    """Seasoned hot plate, a seared steak and a sausage."""
+    os.makedirs(folder, exist_ok=True)
+    hot = Image.new("RGBA", (N, N))
+    px = hot.load()
+    rnd = random.Random(21)
+    for y in range(N):
+        for x in range(N):
+            n = rnd.uniform(-10, 8)
+            heat = 50 * math.exp(-((x - 16) ** 2 + (y - 18) ** 2) / 180)
+            px[x, y] = (_clamp(92 + n + heat), _clamp(48 + n * 0.4 + heat * 0.45), _clamp(28 + n * 0.2), 255)
+    hot.save(os.path.join(folder, "plancha_hot.png"))
+    meat = Image.new("RGBA", (N, N))
+    px = meat.load()
+    rnd = random.Random(22)
+    for y in range(N):
+        stripe = 28 if 6 <= y % 14 <= 8 else 0
+        for x in range(N):
+            n = rnd.uniform(-12, 10)
+            px[x, y] = (_clamp(132 + n - stripe), _clamp(62 + n * 0.4 - stripe * 0.6), _clamp(36 + n * 0.2), 255)
+    meat.save(os.path.join(folder, "plancha_meat.png"))
+    sausage = Image.new("RGBA", (N, N))
+    px = sausage.load()
+    rnd = random.Random(23)
+    for y in range(N):
+        for x in range(N):
+            n = rnd.uniform(-8, 8)
+            spec = 40 if rnd.random() < 0.08 else 0
+            px[x, y] = (_clamp(168 + n + spec), _clamp(72 + n * 0.3 + spec * 0.4), _clamp(42 + n * 0.2), 255)
+    sausage.save(os.path.join(folder, "plancha_sausage.png"))

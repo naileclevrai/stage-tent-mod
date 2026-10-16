@@ -1,0 +1,23 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/plancha_lit.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "galvanised": "stagetents:block/props/galvanised",
+    "chrome": "stagetents:block/props/chrome",
+    "red": "stagetents:block/props/red",
+    "paint": "stagetents:block/props/paint",
+    "metal": "stagetents:block/props/metal",
+    "plancha_hot": "stagetents:block/props/plancha_hot",
+    "orange": "stagetents:block/props/orange",
+    "rubber": "stagetents:block/props/rubber",
+    "plancha_meat": "stagetents:block/props/plancha_meat",
+    "plancha_sausage": "stagetents:block/props/plancha_sausage"
+  }
+}

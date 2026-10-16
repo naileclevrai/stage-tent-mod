@@ -1,0 +1,85 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl co2_11
+Kd 1 1 1
+map_Kd #co2_11
+forge_TintIndex -1
+
+newmtl co2_10
+Kd 1 1 1
+map_Kd #co2_10
+forge_TintIndex -1
+
+newmtl co2_9
+Kd 1 1 1
+map_Kd #co2_9
+forge_TintIndex -1
+
+newmtl co2_8
+Kd 1 1 1
+map_Kd #co2_8
+forge_TintIndex -1
+
+newmtl co2_7
+Kd 1 1 1
+map_Kd #co2_7
+forge_TintIndex -1
+
+newmtl co2_6
+Kd 1 1 1
+map_Kd #co2_6
+forge_TintIndex -1
+
+newmtl co2_5
+Kd 1 1 1
+map_Kd #co2_5
+forge_TintIndex -1
+
+newmtl co2_4
+Kd 1 1 1
+map_Kd #co2_4
+forge_TintIndex -1
+
+newmtl co2_3
+Kd 1 1 1
+map_Kd #co2_3
+forge_TintIndex -1
+
+newmtl co2_2
+Kd 1 1 1
+map_Kd #co2_2
+forge_TintIndex -1
+
+newmtl co2_1
+Kd 1 1 1
+map_Kd #co2_1
+forge_TintIndex -1
+
+newmtl co2_0
+Kd 1 1 1
+map_Kd #co2_0
+forge_TintIndex -1
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+forge_TintIndex -1
+
+newmtl co2_blue
+Kd 1 1 1
+map_Kd #co2_blue
+forge_TintIndex -1
+
+newmtl grey
+Kd 1 1 1
+map_Kd #grey
+forge_TintIndex -1
+
+newmtl white
+Kd 1 1 1
+map_Kd #white
+forge_TintIndex -1
+

@@ -1204,72 +1204,141 @@ def _wc_door(s, z, opened):
     s.merge(d)
 
 
-def _heater_cap(m, lit):
-    """Shallow mushroom reflector, rim turned down. The underside carries the glow when it is lit."""
-    cx = cz = 0.5
-    profile = (
-        (0.05, 2.28),
-        (0.18, 2.32),
-        (0.34, 2.34),
-        (0.48, 2.31),
-        (0.56, 2.22),
-        (0.60, 2.12),
-    )
-    segs = 28
+def _revolve(m, mat, profile, cx, cz, segs, cavity=False):
+    """Closed ring of a profile. cavity faces the hollow side, so a reflector reads from underneath."""
     rings = []
     for r, y in profile:
         rings.append([(cx + r * math.cos(math.tau * k / segs), y, cz + r * math.sin(math.tau * k / segs))
                       for k in range(segs + 1)])
     for i in range(len(rings) - 1):
-        under = "bulb" if lit and i < 2 else "paint"
         for k in range(segs):
             a, b = rings[i][k], rings[i][k + 1]
             c, d = rings[i + 1][k + 1], rings[i + 1][k]
-            m.quad("paint", a, d, c, b)
-            m.quad(under, (a[0], a[1] - 0.012, a[2]), (b[0], b[1] - 0.012, b[2]),
-                   (c[0], c[1] - 0.012, c[2]), (d[0], d[1] - 0.012, d[2]))
-    m.cylinder("galvanised", 0.07, 2.28, 2.38, cx=cx, cz=cz, segs=12)
-    m.disc("galvanised", 0.07, 2.38, cx=cx, cz=cz, segs=12)
+            geo = _norm(_cross(_sub(b, a), _sub(d, a)))
+            mid = ((a[0] + c[0]) * 0.5, (a[1] + c[1]) * 0.5, (a[2] + c[2]) * 0.5)
+            want = (mid[0] - cx, 0.25, mid[2] - cz)
+            if cavity:
+                want = (-want[0], -want[1], -want[2])
+            if geo[0] * want[0] + geo[1] * want[1] + geo[2] * want[2] < 0:
+                geo = (-geo[0], -geo[1], -geo[2])
+            m.quad(mat, a, b, c, d, geo)
+
+
+def _inset_profile(profile, dist):
+    """Parallel curve toward the hollow, so the two skins meet at a real rim instead of a cracked copy."""
+    out = []
+    n = len(profile)
+    for i, (r, y) in enumerate(profile):
+        if i == 0:
+            dr, dy = profile[1][0] - r, profile[1][1] - y
+        elif i == n - 1:
+            dr, dy = r - profile[i - 1][0], y - profile[i - 1][1]
+        else:
+            dr = profile[i + 1][0] - profile[i - 1][0]
+            dy = profile[i + 1][1] - profile[i - 1][1]
+        length = math.hypot(dr, dy) or 1.0
+        nr, ny = -dy / length, dr / length
+        out.append((max(0.004, r - nr * dist), y - ny * dist))
+    return out
+
+
+def _heater_cap(m, lit):
+    """One reflector: outer skin, inner skin, and a lip that joins them."""
+    cx = cz = 0.5
+    segs = 32
+    outer = (
+        (0.04, 2.300),
+        (0.18, 2.335),
+        (0.34, 2.350),
+        (0.46, 2.325),
+        (0.54, 2.250),
+        (0.60, 2.145),
+    )
+    inner = _inset_profile(outer, 0.018)
+    _revolve(m, "paint", outer, cx, cz, segs, cavity=False)
+    glow = "bulb" if lit else "black"
+    _revolve(m, glow, inner[:3], cx, cz, segs, cavity=True)
+    _revolve(m, "paint", inner[2:], cx, cz, segs, cavity=True)
+    for k in range(segs):
+        a0 = math.tau * k / segs
+        a1 = math.tau * (k + 1) / segs
+
+        def at(r, y, a):
+            return (cx + r * math.cos(a), y, cz + r * math.sin(a))
+
+        q0, q1 = at(*outer[-1], a0), at(*outer[-1], a1)
+        q2, q3 = at(*inner[-1], a1), at(*inner[-1], a0)
+        mid = (a0 + a1) * 0.5
+        m.quad("paint", q0, q1, q2, q3, (math.cos(mid), 0, math.sin(mid)))
+    m.cylinder("galvanised", 0.055, 2.30, 2.40, cx=cx, cz=cz, segs=14)
+    m.disc("galvanised", 0.055, 2.40, cx=cx, cz=cz, segs=14)
 
 
 def patio_heater(lit=False):
-    """Terrace mushroom heater: gas bottle, slim pole, chrome burner and a wide reflector."""
+    """Terrace mushroom heater, built small and then grown by half so it stands over a table."""
     m = Mesh()
     cx, cz = 0.5, 0.5
     body = "paint"
     glow = "bulb" if lit else "red"
-    m.lathe(body, [(0.30, 0.0), (0.30, 0.028), (0.24, 0.055), (0.22, 0.08)], cx, cz, segs=24)
-    m.cylinder(body, 0.22, 0.07, 0.74, cx=cx, cz=cz, segs=24)
-    m.lathe(body, [(0.22, 0.72), (0.14, 0.78), (0.045, 0.84)], cx, cz, segs=20)
+    # One skin from the foot to the neck, so the bottle has no seam to flicker.
+    m.lathe(body, [
+        (0.30, 0.004), (0.30, 0.032), (0.24, 0.058), (0.22, 0.09),
+        (0.22, 0.72), (0.15, 0.78), (0.045, 0.86),
+    ], cx, cz, segs=28)
     for i in range(5):
-        y = 0.20 + i * 0.09
-        m.cylinder("black", 0.228, y, y + 0.016, cx=cx, cz=cz, segs=24, caps=False)
-    # Round inspection port and the valve, on the front of the bottle.
+        y = 0.22 + i * 0.08
+        m.cylinder("black", 0.232, y, y + 0.012, cx=cx, cz=cz, segs=28, caps=False)
     port = Mesh()
-    port.disc("black", 0.055, 0.0, cx=0, cz=0, segs=14)
-    port.cylinder("galvanised", 0.064, -0.01, 0.008, cx=0, cz=0, segs=14, caps=False)
-    m.merge(port.transformed(chain(rot_x(-90, 0, 0), translate(cx, 0.42, cz - 0.22))))
+    port.disc("black", 0.05, 0.0, cx=0, cz=0, segs=14)
+    port.cylinder("galvanised", 0.058, -0.006, 0.01, cx=0, cz=0, segs=14, caps=False)
+    m.merge(port.transformed(chain(rot_x(-90, 0, 0), translate(cx, 0.40, 0.27))))
     knob = Mesh()
-    knob.cylinder("black", 0.026, 0.0, 0.016, cx=0, cz=0, segs=10)
-    knob.cylinder("chrome", 0.012, 0.016, 0.04, cx=0, cz=0, segs=8)
-    m.merge(knob.transformed(chain(rot_x(-90, 0, 0), translate(cx, 0.58, cz - 0.22))))
-    for sx in (-0.16, 0.16):
+    knob.cylinder("black", 0.022, 0.0, 0.012, cx=0, cz=0, segs=10)
+    knob.cylinder("chrome", 0.01, 0.012, 0.038, cx=0, cz=0, segs=8)
+    m.merge(knob.transformed(chain(rot_x(-90, 0, 0), translate(cx, 0.56, 0.27))))
+    # Rear trolley, in the unscaled mesh. The 1.5 grow keeps the tyre biting the foot rim,
+    # the axle through both hubs, and the fork buried in the base.
+    wy, wz, track = 0.046, 0.784, 0.12
+    for sx in (-track, track):
         wheel = Mesh()
-        wheel.cylinder("black", 0.045, -0.014, 0.014, cx=0, cz=0, segs=10)
-        wheel.cylinder("galvanised", 0.016, -0.02, 0.02, cx=0, cz=0, segs=8)
-        m.merge(wheel.transformed(chain(rot_z(90, 0, 0), translate(cx + sx, 0.045, cz + 0.30))))
-    m.cylinder(body, 0.026, 0.80, 1.98, cx=cx, cz=cz, segs=10)
-    m.cylinder("galvanised", 0.042, 1.90, 1.98, cx=cx, cz=cz, segs=10, caps=False)
-    m.cylinder("chrome", 0.11, 1.98, 2.20, cx=cx, cz=cz, segs=16, caps=False)
-    m.cylinder(glow, 0.082, 2.02, 2.16, cx=cx, cz=cz, segs=12, caps=False)
-    m.cylinder("chrome", 0.128, 2.168, 2.192, cx=cx, cz=cz, segs=16, caps=False)
+        wheel.cylinder("black", 0.042, -0.012, 0.012, cx=0, cz=0, segs=12)
+        wheel.cylinder("galvanised", 0.015, -0.018, 0.018, cx=0, cz=0, segs=8)
+        m.merge(wheel.transformed(chain(rot_z(90, 0, 0), translate(cx + sx, wy, wz))))
+        nut = Mesh()
+        nut.cylinder("chrome", 0.020, -0.005, 0.005, cx=0, cz=0, segs=8)
+        m.merge(nut.transformed(chain(rot_z(90, 0, 0), translate(cx + sx + (0.032 if sx > 0 else -0.032), wy, wz))))
+    m.tube("chrome", [(cx - track - 0.036, wy, wz), (cx + track + 0.036, wy, wz)], 0.010, segs=8)
+    for sx in (-track, track):
+        if sx < 0:
+            x0, x1 = cx + sx + 0.028, cx + sx + 0.070
+        else:
+            x0, x1 = cx + sx - 0.070, cx + sx - 0.028
+        m.box("galvanised", x0, 0.012, 0.70, x1, 0.210, wz + 0.016)
+    m.box("galvanised", cx - 0.10, 0.120, 0.68, cx + 0.10, 0.208, 0.78)
+    m.box("galvanised", cx - track + 0.032, 0.010, 0.70, cx + track - 0.032, 0.042, wz + 0.006)
+    m.cylinder(body, 0.024, 0.82, 1.96, cx=cx, cz=cz, segs=10)
+    m.cylinder("galvanised", 0.038, 1.90, 1.98, cx=cx, cz=cz, segs=12, caps=False)
+    m.sphere(glow, 0.072, cx, 2.08, cz, segs=14, rings=8)
+    m.cylinder("chrome", 0.112, 1.98, 2.20, cx=cx, cz=cz, segs=18, caps=False)
+    m.cylinder("chrome", 0.124, 2.175, 2.198, cx=cx, cz=cz, segs=18, caps=False)
     for i in range(8):
         a = math.tau * i / 8
-        x, z = cx + 0.118 * math.cos(a), cz + 0.118 * math.sin(a)
-        m.tube("galvanised", [(x, 1.98, z), (x, 2.20, z)], 0.006, segs=4, caps=False)
-    m.box("black", cx - 0.04, 1.76, cz - 0.075, cx + 0.04, 1.88, cz - 0.03)
-    m.box("orange" if lit else "red", cx - 0.012, 1.79, cz - 0.08, cx + 0.012, 1.82, cz - 0.072)
+        x, z = cx + 0.112 * math.cos(a), cz + 0.112 * math.sin(a)
+        m.tube("chrome", [(x, 1.985, z), (x, 2.195, z)], 0.007, segs=5, caps=False)
+    m.box("black", cx - 0.032, 1.78, 0.42, cx + 0.032, 1.90, 0.482)
+    m.box("orange" if lit else "red", cx - 0.01, 1.805, 0.408, cx + 0.01, 1.835, 0.424)
     _heater_cap(m, lit)
+    return m.transformed(lambda p: (0.5 + (p[0] - 0.5) * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+
+
+def festoon():
+    """Stepped foot of a festoon post. The mast, hoop and cable are drawn to the wrench height."""
+    m = Mesh()
+    cx, cz = 0.5, 0.5
+    m.cylinder("black", 0.26, 0.0, 0.025, cx=cx, cz=cz, segs=20)
+    m.cylinder("black", 0.18, 0.025, 0.07, cx=cx, cz=cz, segs=16)
+    m.cylinder("galvanised", 0.11, 0.07, 0.12, cx=cx, cz=cz, segs=14)
+    m.cylinder("black", 0.065, 0.12, 0.22, cx=cx, cz=cz, segs=12)
     return m
 
 
@@ -2537,3 +2606,209 @@ def light_tower_lamp():
         m.box("grey", x0 + 0.025, y - 0.003, z_face - 0.012, x1 - 0.025, y + 0.003, z_face - 0.005, faces="n")
     m.tube("galvanised", [(x0 + 0.02, 0.0, 0.50), (x1 - 0.02, 0.0, 0.50)], 0.016, segs=8)
     return m
+
+
+BAR_TOP = 0.12
+TAP_X = (0.30, 0.50, 0.70)
+
+
+def beer_tap(on_bar=False):
+    """T-bar draft tower: polished column on a flange, three faucets with black levers, slotted drip tray.
+    Faucets face -Z. Everything stays within z 0.34..0.66 so it sits on the bar top whichever way the bar faces."""
+    m = Mesh()
+    col_z = 0.565
+    bar_y = 0.60
+    # Drip tray: stainless pan, raised rim, black well and a slotted grille.
+    x0, x1, z0, z1 = 0.17, 0.83, 0.345, 0.505
+    m.bevel_box("steel", x0, 0.0, z0, x1, 0.010, z1, 0.004)
+    rim = 0.012
+    m.box("steel", x0, 0.010, z0, x1, 0.032, z0 + rim)
+    m.box("steel", x0, 0.010, z1 - rim, x1, 0.032, z1)
+    m.box("steel", x0, 0.010, z0 + rim, x0 + rim, 0.032, z1 - rim)
+    m.box("steel", x1 - rim, 0.010, z0 + rim, x1, 0.032, z1 - rim)
+    m.box("black", x0 + rim, 0.010, z0 + rim, x1 - rim, 0.014, z1 - rim, faces="u")
+    n = 21
+    span = (x1 - x0 - 2 * rim - 0.012)
+    for i in range(n):
+        x = x0 + rim + 0.006 + span * i / (n - 1)
+        m.box("chrome", x - 0.004, 0.014, z0 + rim + 0.006, x + 0.004, 0.026, z1 - rim - 0.006)
+    m.box("chrome", x0 + rim + 0.002, 0.014, 0.42, x1 - rim - 0.002, 0.024, 0.428)
+    # Column: wide flange, fillet, polished shaft, a collar where it meets the bar.
+    m.lathe("chrome", [(0.078, 0.0), (0.078, 0.008), (0.070, 0.014), (0.052, 0.024), (0.044, 0.040),
+                       (0.040, 0.060), (0.040, 0.540), (0.046, 0.556), (0.046, bar_y)], cx=0.5, cz=col_z, segs=24)
+    m.cylinder("steel", 0.0475, 0.300, 0.312, cx=0.5, cz=col_z, segs=24, caps=False)
+    for a in (0.0, math.pi / 2, math.pi, 3 * math.pi / 2):
+        m.cylinder("black", 0.006, 0.006, 0.012, cx=0.5 + 0.062 * math.cos(a), cz=col_z + 0.062 * math.sin(a), segs=6)
+    # Horizontal T-bar with domed end caps.
+    m.tube("chrome", [(0.205, bar_y, col_z), (0.795, bar_y, col_z)], 0.044, segs=20, caps=False)
+    for x, s in ((0.205, -1), (0.795, 1)):
+        cap = Mesh()
+        cap.lathe("chrome", [(0.044, 0.0), (0.040, 0.010), (0.028, 0.022), (0.010, 0.028), (0.001, 0.029)],
+                  cx=0, cz=0, segs=20)
+        m.merge(cap.transformed(chain(rot_z(-90 * s, 0, 0), translate(x, bar_y, col_z))))
+    # Faucets: shank nut, body, spout, lever collar and a tapered black handle with a coloured badge.
+    badges = ("yellow", "red", "white")
+    for x, badge in zip(TAP_X, badges):
+        m.tube("chrome", [(x, bar_y, col_z - 0.040), (x, bar_y, 0.505)], 0.017, segs=12)
+        m.tube("steel", [(x, bar_y, 0.508), (x, bar_y, 0.492)], 0.022, segs=12)
+        m.tube("chrome", [(x, bar_y, 0.494), (x, bar_y, 0.432)], 0.024, segs=14)
+        m.sphere("chrome", 0.024, x, bar_y, 0.432, segs=12, rings=6)
+        m.tube("chrome", [(x, bar_y - 0.010, 0.426), (x, bar_y - 0.040, 0.420), (x, bar_y - 0.078, 0.418)],
+               0.010, segs=10)
+        m.cylinder("chrome", 0.013, bar_y - 0.086, bar_y - 0.076, cx=x, cz=0.418, segs=10)
+        m.cylinder("chrome", 0.014, bar_y + 0.020, bar_y + 0.040, cx=x, cz=0.462, segs=10)
+        m.lathe("black", [(0.012, bar_y + 0.040), (0.016, bar_y + 0.070), (0.021, bar_y + 0.140),
+                          (0.024, bar_y + 0.195), (0.020, bar_y + 0.212), (0.001, bar_y + 0.218)],
+                cx=x, cz=0.462, segs=14)
+        m.box(badge, x - 0.016, bar_y + 0.120, 0.4395, x + 0.016, bar_y + 0.170, 0.441, faces="n")
+    # Beer line inlet at the back, dropping through the bar top.
+    drop = -BAR_TOP + 0.01 if on_bar else 0.012
+    m.tube("black", [(0.5, 0.050, col_z + 0.036), (0.5, 0.050, 0.640), (0.5, drop, 0.640)], 0.012, segs=8)
+    m.cylinder("chrome", 0.016, 0.040, 0.062, cx=0.5, cz=col_z + 0.040, segs=10)
+    if on_bar:
+        return m.transformed(translate(0, BAR_TOP, 0))
+    return m
+
+
+def beer_keg():
+    """Squat stainless keg: chimes, a coloured band, top handles and a spear cap. No brand lettering."""
+    m = Mesh()
+    cx = cz = 0.5
+    m.cylinder("steel", 0.36, 0.02, 0.08, cx=cx, cz=cz, segs=24)
+    m.cylinder("chrome", 0.33, 0.08, 0.58, cx=cx, cz=cz, segs=24, caps=False)
+    m.cylinder("green", 0.335, 0.28, 0.40, cx=cx, cz=cz, segs=24, caps=False)
+    m.cylinder("steel", 0.36, 0.56, 0.64, cx=cx, cz=cz, segs=24)
+    m.lathe("chrome", [(0.33, 0.58), (0.28, 0.70), (0.12, 0.82), (0.05, 0.86)], cx=cx, cz=cz, segs=24)
+    m.cylinder("yellow", 0.055, 0.84, 0.94, cx=cx, cz=cz, segs=12)
+    m.cylinder("chrome", 0.025, 0.80, 0.86, cx=cx, cz=cz, segs=8)
+    m.box("black", 0.62, 0.74, 0.47, 0.80, 0.82, 0.53)
+    for x, z0, z1 in ((0.24, 0.36, 0.64), (0.76, 0.36, 0.64)):
+        m.tube("black", [(x, 0.66, z0), (x, 0.78, z0), (x, 0.78, z1), (x, 0.66, z1)], 0.018, segs=6)
+    return m
+
+
+def co2_cylinder():
+    """Tall gas cylinder. The body is painted in bands from a light shoulder to a grimy base, with a blue collar."""
+    m = Mesh()
+    cx = cz = 0.5
+    m.cylinder("black", 0.20, 0.0, 0.04, cx=cx, cz=cz, segs=20)
+    y0, y1, bands = 0.05, 1.42, 12
+    for i in range(bands):
+        a = y0 + (y1 - y0) * i / bands
+        b = y0 + (y1 - y0) * (i + 1) / bands
+        m.cylinder(f"co2_{bands - 1 - i}", 0.155, a, b, cx=cx, cz=cz, segs=20, caps=False)
+    m.lathe("co2_0", [(0.155, 1.42), (0.12, 1.52), (0.06, 1.60), (0.04, 1.66)], cx=cx, cz=cz, segs=20)
+    m.cylinder("chrome", 0.038, 1.62, 1.70, cx=cx, cz=cz, segs=10)
+    m.lathe("co2_blue", [(0.06, 1.60), (0.10, 1.68), (0.135, 1.78)], cx=cx, cz=cz, segs=16)
+    m.box("chrome", 0.46, 1.64, 0.46, 0.54, 1.72, 0.54)
+    m.box("grey", 0.48, 1.66, 0.34, 0.52, 1.72, 0.46)
+    m.box("white", 0.655, 0.90, 0.38, 0.675, 1.20, 0.62, faces="e")
+    return m
+
+
+def _taper(m, mat, r0, r1, y0, y1, cx, cz, segs, outward):
+    """Vertical tapered wall. r0 is the radius at y0, r1 at y1."""
+    for k in range(segs):
+        a0, a1 = TAU * k / segs, TAU * (k + 1) / segs
+        c0, s0 = math.cos(a0), math.sin(a0)
+        c1, s1 = math.cos(a1), math.sin(a1)
+        p0 = (cx + c0 * r0, y0, cz + s0 * r0)
+        p1 = (cx + c1 * r0, y0, cz + s1 * r0)
+        p2 = (cx + c1 * r1, y1, cz + s1 * r1)
+        p3 = (cx + c0 * r1, y1, cz + s0 * r1)
+        n0 = (c0, (r0 - r1) * 0.15, s0)
+        n1 = (c1, (r0 - r1) * 0.15, s1)
+        if not outward:
+            n0, n1 = (-n0[0], -n0[1], -n0[2]), (-n1[0], -n1[1], -n1[2])
+            m.quad(mat, p0, p3, p2, p1, normals=(n0, n0, n1, n1),
+                   uv=((k / segs, 0), (k / segs, 1), ((k + 1) / segs, 1), ((k + 1) / segs, 0)))
+        else:
+            m.quad(mat, p0, p1, p2, p3, normals=(n0, n1, n1, n0),
+                   uv=((k / segs, 0), ((k + 1) / segs, 0), ((k + 1) / segs, 1), (k / segs, 1)))
+
+
+def _annulus(m, mat, r_in, r_out, y, cx, cz, segs, up):
+    for k in range(segs):
+        a0, a1 = TAU * k / segs, TAU * (k + 1) / segs
+        c0, s0, c1, s1 = math.cos(a0), math.sin(a0), math.cos(a1), math.sin(a1)
+        i0 = (cx + c0 * r_in, y, cz + s0 * r_in)
+        i1 = (cx + c1 * r_in, y, cz + s1 * r_in)
+        o0 = (cx + c0 * r_out, y, cz + s0 * r_out)
+        o1 = (cx + c1 * r_out, y, cz + s1 * r_out)
+        n = (0, 1 if up else -1, 0)
+        if up:
+            m.quad(mat, i0, i1, o1, o0, n)
+        else:
+            m.quad(mat, i0, o0, o1, i1, n)
+
+
+def beer_glass(filled=False):
+    """Conical pint: thick foot, thin clear wall, and, when filled, beer under a foam head."""
+    m = Mesh()
+    cx = cz = 0.5
+    y0, y1 = 0.0, 0.40
+    rb, rt, wall = 0.058, 0.080, 0.007
+    segs = 24
+    m.cylinder("pint_glass", rb + 0.004, 0.0, 0.026, cx=cx, cz=cz, segs=segs)
+    _taper(m, "pint_glass", rb, rt, 0.022, y1, cx, cz, segs, True)
+    _taper(m, "pint_glass", rb - wall, rt - wall, 0.030, y1 - 0.004, cx, cz, segs, False)
+    _annulus(m, "pint_glass", rt - wall, rt, y1, cx, cz, segs, True)
+    _annulus(m, "pint_glass", 0.001, rb - wall, 0.030, cx, cz, segs, True)
+    if filled:
+        top = 0.030 + (y1 - 0.055) * 0.86
+        r_top = (rb - wall) + (rt - wall - (rb - wall)) * (top - 0.030) / (y1 - 0.034)
+        _taper(m, "beer_liquid", rb - wall - 0.003, r_top - 0.002, 0.032, top, cx, cz, segs, True)
+        _annulus(m, "beer_liquid", 0.001, r_top - 0.002, top, cx, cz, segs, True)
+        foam_r = r_top + 0.002
+        _taper(m, "beer_foam", foam_r * 0.92, foam_r, top - 0.012, top + 0.012, cx, cz, segs, True)
+        _annulus(m, "beer_foam", 0.001, foam_r, top + 0.012, cx, cz, segs, True)
+    return m
+
+
+def plancha(lit=False):
+    """Festival plancha on a cart, grown 1.5 times around its footprint. The plate heats up once it is lit."""
+    m = Mesh()
+    for x in (0.14, 0.82):
+        for z in (0.26, 0.72):
+            m.box("black", x, 0.09, z, x + 0.04, 0.70, z + 0.04)
+    m.box("black", 0.16, 0.14, 0.27, 0.84, 0.175, 0.31)
+    m.box("black", 0.16, 0.14, 0.71, 0.84, 0.175, 0.75)
+    m.box("black", 0.15, 0.14, 0.28, 0.19, 0.175, 0.74)
+    m.box("black", 0.81, 0.14, 0.28, 0.85, 0.175, 0.74)
+    m.box("galvanised", 0.18, 0.30, 0.30, 0.82, 0.322, 0.72)
+    m.cylinder("galvanised", 0.065, 0.322, 0.52, cx=0.34, cz=0.50, segs=12)
+    m.cylinder("black", 0.042, 0.52, 0.555, cx=0.34, cz=0.50, segs=10)
+    m.cylinder("chrome", 0.012, 0.555, 0.61, cx=0.34, cz=0.50, segs=8)
+    m.box("red", 0.328, 0.50, 0.42, 0.352, 0.545, 0.50)
+    m.box("black", 0.12, 0.68, 0.22, 0.88, 0.845, 0.78)
+    m.box("paint", 0.16, 0.705, 0.198, 0.84, 0.825, 0.222)
+    m.bevel_box("metal", 0.06, 0.835, 0.16, 0.94, 0.895, 0.78, b=0.008)
+    surface = "plancha_hot" if lit else "metal"
+    m.box(surface, 0.10, 0.893, 0.22, 0.90, 0.912, 0.70)
+    m.box("chrome", 0.06, 0.90, 0.72, 0.94, 0.965, 0.785)
+    m.box("chrome", 0.06, 0.90, 0.16, 0.105, 0.955, 0.72)
+    m.box("chrome", 0.895, 0.90, 0.16, 0.94, 0.955, 0.72)
+    m.box("chrome", 0.36, 0.855, 0.09, 0.64, 0.905, 0.18)
+    m.box("black", 0.40, 0.78, 0.07, 0.60, 0.855, 0.145)
+    m.box("chrome", 0.08, 0.90, 0.745, 0.92, 1.14, 0.805)
+    m.box("paint", 0.18, 0.98, 0.728, 0.82, 1.08, 0.748)
+    for x, cap in ((0.32, "red"), (0.68, "orange" if lit else "black")):
+        knob = Mesh()
+        knob.cylinder("chrome", 0.015, 0.0, 0.045, cx=0, cz=0, segs=8)
+        knob.cylinder(cap, 0.022, 0.04, 0.058, cx=0, cz=0, segs=8)
+        m.merge(knob.transformed(chain(rot_x(-90, 0, 0), translate(x, 0.755, 0.198))))
+    m.tube("chrome", [(0.86, 0.76, 0.36), (0.98, 0.76, 0.36), (0.98, 0.76, 0.64), (0.86, 0.76, 0.64)], 0.012, segs=6)
+    for x, z in ((0.16, 0.28), (0.86, 0.28), (0.16, 0.74), (0.86, 0.74)):
+        wheel = Mesh()
+        wheel.cylinder("rubber", 0.042, -0.015, 0.015, cx=0, cz=0, segs=12)
+        wheel.cylinder("galvanised", 0.016, -0.022, 0.022, cx=0, cz=0, segs=8)
+        m.merge(wheel.transformed(chain(rot_z(90, 0, 0), translate(x, 0.046, z))))
+        m.box("galvanised", x - 0.018, 0.018, z - 0.02, x + 0.058, 0.105, z + 0.02)
+    if lit:
+        m.box("plancha_meat", 0.26, 0.912, 0.38, 0.48, 0.948, 0.56)
+        m.box("black", 0.28, 0.946, 0.40, 0.46, 0.952, 0.43)
+        m.box("black", 0.28, 0.946, 0.51, 0.46, 0.952, 0.54)
+        sausage = Mesh()
+        sausage.cylinder("plancha_sausage", 0.026, -0.11, 0.11, cx=0, cz=0, segs=10)
+        m.merge(sausage.transformed(chain(rot_z(90, 0, 0), translate(0.66, 0.938, 0.46))))
+    return m.transformed(lambda p: (0.5 + (p[0] - 0.5) * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))

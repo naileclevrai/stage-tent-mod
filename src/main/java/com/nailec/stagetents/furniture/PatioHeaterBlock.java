@@ -25,9 +25,9 @@ public class PatioHeaterBlock extends MultiPropBlock {
 
     public PatioHeaterBlock(Properties props) {
         super(props.lightLevel(state -> state.getValue(LIT) ? 13 : 0), Spec.of(true, DyeColor.BLACK,
-                new double[]{3.2, 0, 3.2, 12.8, 12.0, 12.8},
-                new double[]{6.5, 12.0, 6.5, 9.5, 16, 9.5}),
-                new int[][]{{0, 0}, {0, 1}, {0, 2}});
+                new double[]{0.8, 0, 0.8, 15.2, 16, 15.2},
+                new double[]{6.4, 0, 6.4, 9.6, 16, 9.6}),
+                new int[][]{{0, 0}, {0, 1}, {0, 2}, {0, 3}});
     }
 
     @Override
@@ -62,12 +62,12 @@ public class PatioHeaterBlock extends MultiPropBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!state.getValue(LIT)) return;
         double ang = random.nextDouble() * Math.PI * 2;
-        double rad = 0.04 + random.nextDouble() * 0.07;
+        double rad = 0.06 + random.nextDouble() * 0.10;
         level.addParticle(ParticleTypes.FLAME,
-                pos.getX() + 0.5 + Math.cos(ang) * rad, pos.getY() + 2.08, pos.getZ() + 0.5 + Math.sin(ang) * rad,
+                pos.getX() + 0.5 + Math.cos(ang) * rad, pos.getY() + 3.12, pos.getZ() + 0.5 + Math.sin(ang) * rad,
                 0, 0.01, 0);
         if (random.nextInt(4) == 0) {
-            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.5, pos.getY() + 2.42, pos.getZ() + 0.5, 0, 0.02, 0);
+            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.5, pos.getY() + 3.64, pos.getZ() + 0.5, 0, 0.02, 0);
         }
     }
 }

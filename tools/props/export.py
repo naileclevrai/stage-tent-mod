@@ -102,3 +102,22 @@ def _json(path, obj):
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(obj, f, indent=2)
         f.write("\n")
+
+
+PINT_DISPLAY = {
+    "gui": {"rotation": [30, 45, 0], "translation": [0, 2, 0], "scale": [2.15, 2.15, 2.15]},
+    "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.8, 0.8, 0.8]},
+    "fixed": {"rotation": [0, 90, 0], "translation": [0, 0, 0], "scale": [1.3, 1.3, 1.3]},
+    "thirdperson_righthand": {"rotation": [70, 45, 0], "translation": [0, 3.5, 0.4], "scale": [0.62, 0.62, 0.62]},
+    "thirdperson_lefthand": {"rotation": [70, 45, 0], "translation": [0, 3.5, 0.4], "scale": [0.62, 0.62, 0.62]},
+    "firstperson_righthand": {"rotation": [0, 50, 0], "translation": [1.2, 2.4, 0], "scale": [0.85, 0.85, 0.85]},
+    "firstperson_lefthand": {"rotation": [0, 230, 0], "translation": [1.2, 2.4, 0], "scale": [0.85, 0.85, 0.85]},
+}
+
+
+def set_item_display(assets, name, display):
+    path = os.path.join(assets, "models", "item", name + ".json")
+    with open(path, encoding="utf-8") as f:
+        item = json.load(f)
+    item["display"] = display
+    _json(path, item)

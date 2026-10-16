@@ -1,0 +1,18 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/beer_tap_bar.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/steel",
+    "steel": "stagetents:block/props/steel",
+    "black": "stagetents:block/props/black",
+    "chrome": "stagetents:block/props/chrome",
+    "yellow": "stagetents:block/props/yellow",
+    "red": "stagetents:block/props/red",
+    "white": "stagetents:block/props/white"
+  }
+}

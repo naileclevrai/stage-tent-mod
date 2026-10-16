@@ -1,0 +1,29 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/co2_cylinder.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/black",
+    "black": "stagetents:block/props/black",
+    "co2_11": "stagetents:block/props/co2_11",
+    "co2_10": "stagetents:block/props/co2_10",
+    "co2_9": "stagetents:block/props/co2_9",
+    "co2_8": "stagetents:block/props/co2_8",
+    "co2_7": "stagetents:block/props/co2_7",
+    "co2_6": "stagetents:block/props/co2_6",
+    "co2_5": "stagetents:block/props/co2_5",
+    "co2_4": "stagetents:block/props/co2_4",
+    "co2_3": "stagetents:block/props/co2_3",
+    "co2_2": "stagetents:block/props/co2_2",
+    "co2_1": "stagetents:block/props/co2_1",
+    "co2_0": "stagetents:block/props/co2_0",
+    "chrome": "stagetents:block/props/chrome",
+    "co2_blue": "stagetents:block/props/co2_blue",
+    "grey": "stagetents:block/props/grey",
+    "white": "stagetents:block/props/white"
+  }
+}

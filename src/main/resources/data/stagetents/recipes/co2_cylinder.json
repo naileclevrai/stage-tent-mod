@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DC",
+    "BB",
+    "BB"
+  ],
+  "key": {
+    "D": { "item": "minecraft:blue_dye" },
+    "C": { "item": "minecraft:copper_ingot" },
+    "B": { "item": "minecraft:iron_block" }
+  },
+  "result": { "item": "stagetents:co2_cylinder", "count": 1 }
+}

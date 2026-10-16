@@ -1,0 +1,15 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/beer.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "stagetents:block/props/pint_glass",
+    "pint_glass": "stagetents:block/props/pint_glass",
+    "beer_liquid": "stagetents:block/props/beer_liquid",
+    "beer_foam": "stagetents:block/props/beer_foam"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "bar": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "bar": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "bar": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "bar": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "bar": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap_bar"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "bar": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap_bar",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "bar": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap_bar",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "bar": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/beer_tap_bar",
+        "y": 270
+      }
+    }
+  ]
+}

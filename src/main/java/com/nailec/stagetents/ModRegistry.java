@@ -21,8 +21,18 @@ import com.nailec.stagetents.furniture.OriflammeBlock;
 import com.nailec.stagetents.furniture.PendrillonBlock;
 import com.nailec.stagetents.furniture.ParasolBlock;
 import com.nailec.stagetents.furniture.PatioHeaterBlock;
+import com.nailec.stagetents.furniture.PlanchaBlock;
 import com.nailec.stagetents.furniture.PicnicTableBlock;
 import com.nailec.stagetents.furniture.FoldingTableBlock;
+import com.nailec.stagetents.furniture.FestoonBlock;
+import com.nailec.stagetents.furniture.FestoonBlockEntity;
+import com.nailec.stagetents.furniture.BeerTapBlock;
+import com.nailec.stagetents.furniture.BeerKegBlock;
+import com.nailec.stagetents.furniture.Co2CylinderBlock;
+import com.nailec.stagetents.furniture.DraftBlockEntity;
+import com.nailec.stagetents.furniture.DraftBlockItem;
+import com.nailec.stagetents.furniture.BeerHoseItem;
+import com.nailec.stagetents.furniture.BeerMugItem;
 import com.nailec.stagetents.furniture.PowerDistroBlock;
 import com.nailec.stagetents.furniture.CurtainBlock;
 import com.nailec.stagetents.furniture.FriseBlock;
@@ -172,6 +182,11 @@ public final class ModRegistry {
     public static final RegistryObject<PicnicTableBlock> PICNIC_TABLE = BLOCKS.register("picnic_table", () -> new PicnicTableBlock(furnitureProps(SoundType.WOOD)));
     public static final RegistryObject<ParasolBlock> PARASOL = BLOCKS.register("parasol", () -> new ParasolBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PatioHeaterBlock> PATIO_HEATER = BLOCKS.register("patio_heater", () -> new PatioHeaterBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<PlanchaBlock> PLANCHA = BLOCKS.register("plancha", () -> new PlanchaBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<FestoonBlock> FESTOON = BLOCKS.register("festoon", () -> new FestoonBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<BeerTapBlock> BEER_TAP = BLOCKS.register("beer_tap", () -> new BeerTapBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<BeerKegBlock> BEER_KEG = BLOCKS.register("beer_keg", () -> new BeerKegBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<Co2CylinderBlock> CO2_CYLINDER = BLOCKS.register("co2_cylinder", () -> new Co2CylinderBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<FoldingTableBlock> FOLDING_TABLE = BLOCKS.register("folding_table", () -> new FoldingTableBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<FriseBlock> FRISE = BLOCKS.register("frise", () -> new FriseBlock(furnitureProps(SoundType.WOOL)));
     public static final RegistryObject<PendrillonBlock> PENDRILLON = BLOCKS.register("pendrillon", () -> new PendrillonBlock(furnitureProps(SoundType.WOOL)));
@@ -202,6 +217,16 @@ public final class ModRegistry {
     public static final RegistryObject<Item> PICNIC_TABLE_ITEM = blockItem("picnic_table", PICNIC_TABLE);
     public static final RegistryObject<Item> PARASOL_ITEM = blockItem("parasol", PARASOL);
     public static final RegistryObject<Item> PATIO_HEATER_ITEM = blockItem("patio_heater", PATIO_HEATER);
+    public static final RegistryObject<Item> PLANCHA_ITEM = blockItem("plancha", PLANCHA);
+    public static final RegistryObject<Item> FESTOON_ITEM = blockItem("festoon", FESTOON);
+    public static final RegistryObject<Item> BEER_TAP_ITEM = blockItem("beer_tap", BEER_TAP);
+    public static final RegistryObject<Item> BEER_KEG_ITEM = ITEMS.register("beer_keg",
+            () -> new DraftBlockItem(BEER_KEG.get(), new Item.Properties().stacksTo(1), false));
+    public static final RegistryObject<Item> CO2_CYLINDER_ITEM = ITEMS.register("co2_cylinder",
+            () -> new DraftBlockItem(CO2_CYLINDER.get(), new Item.Properties().stacksTo(1), true));
+    public static final RegistryObject<Item> BEER_HOSE = ITEMS.register("beer_hose", () -> new BeerHoseItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BEER_MUG = ITEMS.register("beer_mug", () -> new BeerMugItem(new Item.Properties().stacksTo(16), false));
+    public static final RegistryObject<Item> BEER = ITEMS.register("beer", () -> new BeerMugItem(new Item.Properties().stacksTo(16), true));
     public static final RegistryObject<Item> FOLDING_TABLE_ITEM = blockItem("folding_table", FOLDING_TABLE);
     public static final RegistryObject<Item> BANQUET_CHAIR_ITEM = blockItem("banquet_chair", BANQUET_CHAIR);
     public static final RegistryObject<Item> BAR_COUNTER_ITEM = blockItem("bar_counter", BAR_COUNTER);
@@ -258,6 +283,10 @@ public final class ModRegistry {
             () -> BlockEntityType.Builder.of(ControlTowerBlockEntity::new, CONTROL_TOWER.get()).build(null));
     public static final RegistryObject<BlockEntityType<WaterCannonBlockEntity>> WATER_CANNON_BE = BLOCK_ENTITIES.register("water_cannon",
             () -> BlockEntityType.Builder.of(WaterCannonBlockEntity::new, WATER_CANNON.get()).build(null));
+    public static final RegistryObject<BlockEntityType<FestoonBlockEntity>> FESTOON_BE = BLOCK_ENTITIES.register("festoon",
+            () -> BlockEntityType.Builder.of(FestoonBlockEntity::new, FESTOON.get()).build(null));
+    public static final RegistryObject<BlockEntityType<DraftBlockEntity>> DRAFT_BE = BLOCK_ENTITIES.register("draft",
+            () -> BlockEntityType.Builder.of(DraftBlockEntity::new, BEER_TAP.get(), BEER_KEG.get(), CO2_CYLINDER.get()).build(null));
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stagetents"))
@@ -280,8 +309,16 @@ public final class ModRegistry {
                 out.accept(PICNIC_TABLE_ITEM.get());
                 out.accept(PARASOL_ITEM.get());
                 out.accept(PATIO_HEATER_ITEM.get());
+                out.accept(PLANCHA_ITEM.get());
+                out.accept(FESTOON_ITEM.get());
                 out.accept(FOLDING_TABLE_ITEM.get());
                 out.accept(BAR_COUNTER_ITEM.get());
+                out.accept(BEER_TAP_ITEM.get());
+                out.accept(BEER_KEG_ITEM.get());
+                out.accept(CO2_CYLINDER_ITEM.get());
+                out.accept(BEER_HOSE.get());
+                out.accept(BEER_MUG.get());
+                out.accept(BEER.get());
                 out.accept(BAR_STOOL_ITEM.get());
                 out.accept(FOLDING_CHAIR_ITEM.get());
                 out.accept(BLEACHER_ITEM.get());

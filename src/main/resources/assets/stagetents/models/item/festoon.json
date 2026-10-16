@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "stagetents:item/festoon",
+    "layer1": "stagetents:item/festoon_dye"
+  }
+}

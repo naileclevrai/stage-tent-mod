@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import icons  # noqa: E402
 import props  # noqa: E402
 import textures  # noqa: E402
-from export import write_model  # noqa: E402
+from export import write_model, PINT_DISPLAY, set_item_display  # noqa: E402
 from mesh import chain  # noqa: E402
 
 # Real-world sizes read small next to a 1.8 block player: seats are scaled up around the block centre, more in
@@ -122,8 +122,19 @@ def main():
     report["power_distro"] = model(props.power_distro(), "power_distro", gui_scale=0.42, gui_offset=(0, -0.15, 0))
     report["power_rack"] = model(props.power_rack(), "power_rack", tinted=("paint",), gui_scale=0.42, gui_offset=(0, -0.12, 0))
     report["wash_station"] = model(props.wash_station(), "wash_station", gui_scale=0.45, gui_offset=(0, -0.5, 0))
-    report["patio_heater"] = model(props.patio_heater(False), "patio_heater", tinted=("paint",), gui_scale=0.28, gui_offset=(0, -1.1, 0))
-    report["patio_heater_lit"] = model(props.patio_heater(True), "patio_heater_lit", tinted=("paint",), gui_scale=0.28, gui_offset=(0, -1.1, 0))
+    report["patio_heater"] = model(props.patio_heater(False), "patio_heater", tinted=("paint",), gui_scale=0.20, gui_offset=(0, -1.6, 0))
+    report["patio_heater_lit"] = model(props.patio_heater(True), "patio_heater_lit", tinted=("paint",), gui_scale=0.20, gui_offset=(0, -1.6, 0))
+    report["plancha"] = model(props.plancha(False), "plancha", tinted=("paint",), gui_scale=0.55, gui_offset=(0, -0.15, 0))
+    report["plancha_lit"] = model(props.plancha(True), "plancha_lit", tinted=("paint",), gui_scale=0.55, gui_offset=(0, -0.15, 0))
+    report["festoon"] = model(props.festoon(), "festoon", gui_scale=0.32, gui_offset=(0, -1.2, 0))
+    report["beer_tap"] = model(props.beer_tap(), "beer_tap", gui_scale=0.7)
+    report["beer_tap_bar"] = model(props.beer_tap(True), "beer_tap_bar", gui_scale=0.7)
+    report["beer_keg"] = model(props.beer_keg(), "beer_keg", gui_scale=0.7)
+    report["co2_cylinder"] = model(props.co2_cylinder(), "co2_cylinder", gui_scale=0.38, gui_offset=(0, -0.7, 0))
+    report["beer_mug"] = model(props.beer_glass(False), "beer_mug", render_type="minecraft:translucent", gui_scale=0.9)
+    report["beer"] = model(props.beer_glass(True), "beer", render_type="minecraft:translucent", gui_scale=0.9)
+    set_item_display(ASSETS, "beer_mug", PINT_DISPLAY)
+    set_item_display(ASSETS, "beer", PINT_DISPLAY)
     report["site_toilet"] = model(props.site_toilet(False), "site_toilet", tinted=("paint",), gui_scale=0.4, gui_offset=(0, -0.4, 0))
     report["site_toilet_open"] = model(props.site_toilet(True), "site_toilet_open", tinted=("paint",))
     report["site_fence"] = model(props.site_fence(), "site_fence", tinted=("scrim", "hem"))
@@ -145,7 +156,7 @@ def main():
 
     # The connecting parts are not items.
     extra_items = ["guide_rail_corner", "site_toilet_open", "site_fence_end_left", "site_fence_end_right", "site_fence_joint", "site_fence_end",
-                   "water_cannon_base", "light_tower_section", "light_tower_yoke", "light_tower_lamp", "patio_heater_lit",
+                   "water_cannon_base", "beer_tap_bar", "light_tower_section", "light_tower_yoke", "light_tower_lamp", "patio_heater_lit", "plancha_lit",
                    "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
                    "stage_ramp_end_left", "stage_ramp_end_right"] + ["water_cannon_barrel_%d" % i for i in range(11)]
     for level in range(1, 5):
@@ -206,6 +217,14 @@ def main():
     for flag, name in (("false", "patio_heater"), ("true", "patio_heater_lit")):
         heater += facing_parts(name, {"lit": flag})
     blockstate("patio_heater", heater)
+    plancha = []
+    for flag, name in (("false", "plancha"), ("true", "plancha_lit")):
+        plancha += facing_parts(name, {"lit": flag})
+    blockstate("plancha", plancha)
+    blockstate("festoon", one("festoon"))
+    blockstate("beer_tap", facing_parts("beer_tap", {"bar": "false"}) + facing_parts("beer_tap_bar", {"bar": "true"}))
+    blockstate("beer_keg", one("beer_keg"))
+    blockstate("co2_cylinder", one("co2_cylinder"))
     blockstate("site_toilet", facing_parts("site_toilet", {"open": "false"}) + facing_parts("site_toilet_open", {"open": "true"}))
     blockstate("site_fence", facing_parts("site_fence"))
     blockstate("oriflamme", facing_parts("oriflamme"))

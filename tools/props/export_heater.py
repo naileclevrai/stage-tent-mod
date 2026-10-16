@@ -9,8 +9,8 @@ import props  # noqa: E402
 from build import ASSETS, blockstate, facing_parts, model  # noqa: E402
 from PIL import Image
 
-off = model(props.patio_heater(False), "patio_heater", tinted=("paint",), gui_scale=0.28, gui_offset=(0, -1.1, 0))
-on = model(props.patio_heater(True), "patio_heater_lit", tinted=("paint",), gui_scale=0.28, gui_offset=(0, -1.1, 0))
+off = model(props.patio_heater(False), "patio_heater", tinted=("paint",), gui_scale=0.20, gui_offset=(0, -1.6, 0))
+on = model(props.patio_heater(True), "patio_heater_lit", tinted=("paint",), gui_scale=0.20, gui_offset=(0, -1.6, 0))
 parts = []
 for flag, name in (("false", "patio_heater"), ("true", "patio_heater_lit")):
     parts += facing_parts(name, {"lit": flag})
