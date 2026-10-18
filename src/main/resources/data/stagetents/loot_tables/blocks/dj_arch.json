@@ -1,16 +1,19 @@
 {
   "type": "minecraft:block",
-  "pools": [{
-    "rolls": 1,
-    "entries": [{
-      "type": "minecraft:item",
-      "name": "stagetents:dj_arch",
-      "functions": [{
-        "function": "minecraft:copy_nbt",
-        "source": "block_entity",
-        "ops": [{"source": "Tent", "target": "BlockEntityTag.Tent", "op": "replace"}]
-      }]
-    }],
-    "conditions": [{"condition": "minecraft:survives_explosion"}]
-  }]
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "stagetents:dj_foot"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
 }

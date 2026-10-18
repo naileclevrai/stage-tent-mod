@@ -10,7 +10,7 @@ public enum TentType {
     /** Inflatable arch: width = span, height = top, wall height = tube thickness. */
     ARCH("arch", new Ranges(4, 24, 0, 0, 1, 3, 14, 1, 3, 3, 6)),
     /** Clear PVC sheet on two poles and one curved tube. Width = span, length = depth. */
-    DJ_ARCH("dj_arch", new Ranges(4, 12, 2, 6, 1, 4, 8, 1, 1, 2, 5)),
+    DJ_ARCH("dj_arch", new Ranges(6, 24, 2, 8, 1, 5, 12, 2, 6, 1, 4)),
     /** Stretch tent: free canvas over masts. Width = overhang past the masts, wall height = edge pole height. */
     STRETCH("stretch", new Ranges(2, 10, 0, 0, 1, 4, 16, 1, 5, 3, 8)),
     /** Tensile arena: membrane on two lines of lattice masts. Width = span, length = full length, wall = edge arch. */
@@ -69,7 +69,7 @@ public enum TentType {
                 p.colorA = Palette.RED; p.colorB = Palette.WHITE;
             }
             case DJ_ARCH -> {
-                p.width = 8; p.length = 6; p.height = 6; p.wallHeight = 1; p.poleSpacing = 2;
+                p.width = 10; p.length = 5; p.height = 8; p.wallHeight = 3; p.poleSpacing = 2;
                 p.walls = WallMode.OPEN; p.entrance = Entrance.NONE; p.valance = false;
                 p.stripes = false; p.guyRopes = false; p.flags = false;
                 p.colorA = 0x252B31; p.colorB = 0xC5D8E4;

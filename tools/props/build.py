@@ -131,6 +131,7 @@ def main():
     report["work_light_lit"] = model(props.work_light(True), "work_light_lit", gui_scale=0.8)
     report["traffic_cone"] = model(props.traffic_cone(), "traffic_cone", gui_scale=0.9)
     report["extinguisher"] = model(props.extinguisher(), "extinguisher", gui_scale=1.05)
+    report["dj_foot"] = model(props.dj_foot(), "dj_foot", gui_scale=1.0)
     report["sorting_bins"] = model(props.sorting_bins(), "sorting_bins", gui_scale=0.7)
     report["festoon"] = model(props.festoon(), "festoon", gui_scale=0.32, gui_offset=(0, -1.2, 0))
     report["beer_tap"] = model(props.beer_tap(), "beer_tap", gui_scale=0.7)

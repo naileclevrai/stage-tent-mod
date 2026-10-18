@@ -3427,3 +3427,25 @@ def extinguisher():
     return m
 
 
+
+
+def dj_foot():
+    """DJ cover foot before it is linked: square plinth, bolted flange with gussets and the start of the leg. The
+    cover draws the same base itself once raised, and the leg then runs up to where the arches split."""
+    m = Mesh()
+    p = 0.45
+    m.box("steel", 0.05, 0.0, 0.05, 0.95, p - 0.03, 0.95)
+    m.box("galvanised", 0.03, p - 0.03, 0.03, 0.97, p, 0.97)
+    m.box("galvanised", 0.20, p, 0.20, 0.80, p + 0.04, 0.80)
+    for bx in (0.28, 0.72):
+        for bz in (0.28, 0.72):
+            m.cylinder("steel", 0.03, p + 0.04, p + 0.06, cx=bx, cz=bz, segs=6)
+            m.cylinder("chrome", 0.012, p + 0.06, p + 0.085, cx=bx, cz=bz, segs=8)
+    r = 0.11
+    m.box("steel", 0.5 + r - 0.01, p + 0.04, 0.488, 0.79, p + 0.16, 0.512)
+    m.box("steel", 0.21, p + 0.04, 0.488, 0.5 - r + 0.01, p + 0.16, 0.512)
+    m.box("steel", 0.488, p + 0.04, 0.5 + r - 0.01, 0.512, p + 0.16, 0.79)
+    m.box("steel", 0.488, p + 0.04, 0.21, 0.512, p + 0.16, 0.5 - r + 0.01)
+    m.cylinder("black", r, p + 0.04, 1.0, cx=0.5, cz=0.5, segs=16)
+    m.cylinder("steel", r + 0.04, p + 0.04, p + 0.20, cx=0.5, cz=0.5, segs=16)
+    return m

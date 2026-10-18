@@ -95,8 +95,22 @@ public class TentBlockEntity extends BlockEntity {
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
-    private void setParams(TentParams p) {
+    /** DJ cover raised from two feet: the span is the distance between them and never changes afterwards. */
+    public void linkFeet(TentParams p) {
+        if (level == null || level.isClientSide) return;
         params = p.copy();
+        params.type = type();
+        params.clamp();
+        shape = null;
+        placeCells();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    }
+
+    private void setParams(TentParams p) {
+        // The feet of a DJ cover are blocks in the world: settings may change everything but the span.
+        int span = params.width;
+        params = p.copy();
+        if (type() == TentType.DJ_ARCH) params.width = span;
         params.type = type();
         params.clamp();
         shape = null;

@@ -33,7 +33,7 @@ public final class DjArchDump {
         layersF.setAccessible(true);
         Object[] layers = (Object[]) layersF.get(mesh);
         try (PrintWriter w = new PrintWriter(Files.newBufferedWriter(file))) {
-            w.printf(Locale.ROOT, "# ax %.3f span %.3f H %.3f leg %.3f%n", shape.ax, shape.span, shape.H, shape.legHeight);
+            w.printf(Locale.ROOT, "# ax %.3f span %.3f H %.3f lean %.3f%n", shape.ax, shape.span, shape.H, shape.lean);
             for (int li = 0; li < layers.length; li++) {
                 Object l = layers[li];
                 Class<?> c = l.getClass();

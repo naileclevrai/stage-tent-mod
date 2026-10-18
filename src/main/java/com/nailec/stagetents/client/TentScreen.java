@@ -120,17 +120,18 @@ public class TentScreen extends Screen {
         TentType.Ranges r = type.ranges;
         String t = type.id;
         int row = 0;
-        addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "width." + t, r.minWidth(), r.maxWidth(), 1,
-                () -> edit.width, v -> edit.width = v, null));
+        // A DJ cover spans between its two feet: the span is set by where they stand, not here.
+        if (type != TentType.DJ_ARCH)
+            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "width." + t, r.minWidth(), r.maxWidth(), 1,
+                    () -> edit.width, v -> edit.width = v, null));
         if (r.maxLength() > 0) {
             addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, type == TentType.DJ_ARCH ? "depth.dj_arch" : (type == TentType.FRAME || type == TentType.GAZEBO || type == TentType.TENSILE) ? "length" : "length_extra",
                     r.minLength(), r.maxLength(), r.lengthStep(), () -> edit.length, v -> edit.length = v, null));
         }
         addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "height." + t, r.minHeight(), r.maxHeight(), 1,
                 () -> edit.height, v -> edit.height = v, null));
-        if (type != TentType.DJ_ARCH)
-            addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "wall_height." + t, r.minWall(), r.maxWall(), 1,
-                    () -> edit.wallHeight, v -> edit.wallHeight = v, null));
+        addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "wall_height." + t, r.minWall(), r.maxWall(), 1,
+                () -> edit.wallHeight, v -> edit.wallHeight = v, null));
         if (type != TentType.ARCH) {
             addRenderableWidget(new IntSlider(x1, y + ROW_H * row++, "spacing." + t, r.minSpacing(), r.maxSpacing(), 1,
                     () -> edit.poleSpacing, v -> edit.poleSpacing = v, null));

@@ -126,6 +126,11 @@ public class TentWrenchItem extends Item {
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
+        // On a DJ cover foot: raise the cover toward the nearest free foot in line.
+        if (level.getBlockState(ctx.getClickedPos()).getBlock() instanceof DjFootBlock) {
+            if (!level.isClientSide && ctx.getPlayer() != null) DjFootBlock.raise(level, ctx.getClickedPos(), ctx.getPlayer());
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!(level.getBlockEntity(ctx.getClickedPos()) instanceof TentBlockEntity be)) return InteractionResult.PASS;
         Player player = ctx.getPlayer();
         ItemStack stack = ctx.getItemInHand();

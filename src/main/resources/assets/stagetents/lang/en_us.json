@@ -409,5 +409,9 @@
   "message.stagetents.power_busy": "That socket already has a cable",
   "message.stagetents.power_mismatch": "Those sockets don't connect",
   "message.stagetents.power_gone": "The other socket is gone",
-  "message.stagetents.power_self": "A block can't feed itself"
+  "message.stagetents.power_self": "A block can't feed itself",
+  "block.stagetents.dj_foot": "DJ Cover Foot",
+  "message.stagetents.dj_foot.none": "No free DJ cover foot in line, %s to %s blocks away",
+  "message.stagetents.dj_foot.raised": "DJ cover raised over %s blocks",
+  "screen.stagetents.wall_height.dj_arch": "Leg height: %s"
 }

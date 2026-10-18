@@ -10,7 +10,7 @@ import net.minecraft.core.Direction;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Standalone sanity checks for the compact DJ roof and its two post collisions. */
+/** Standalone sanity checks for the two-foot DJ cover: leaf of two arches, saddle membrane, arch collisions. */
 public final class DjArchCheck {
     private record Cell(int y, TentPart part) {}
 
@@ -31,43 +31,38 @@ public final class DjArchCheck {
 
     public static void main(String[] args) {
         int cases = 0;
-        for (int width : new int[]{4, 5, 8, 12}) for (int depth : new int[]{2, 3, 6})
-            for (int height : new int[]{4, 5, 8}) for (Direction facing :
+        for (int span : new int[]{6, 9, 14, 24}) for (int depth : new int[]{2, 5, 8})
+            for (int height : new int[]{4, 7, 10}) for (Direction facing :
                     new Direction[]{Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH}) {
                 TentParams p = TentType.DJ_ARCH.defaults();
-                p.width = width; p.length = depth; p.height = height; p.clamp();
+                p.width = span; p.length = depth; p.height = height; p.clamp();
                 DjArchShape shape = new DjArchShape(p, facing);
-                check(shape.roofHeight(0, 0) > 2.5, "Roof must clear the booth");
-                check(shape.y(0) > 1.4 && shape.y(Math.PI / 2) > shape.y(0) + 1.2
-                                && shape.roofHeight(0, 0) > shape.y(0),
-                        "Straight poles, then a curved sheet above them");
-                check(Double.isNaN(shape.roofHeight(0, shape.span + 0.2)), "PVC extends beyond its frame");
+                double crown = shape.roofHeight(0, shape.zc);
+                check(crown > 2.5, "Membrane must clear the booth at the crown");
+                double[] front = shape.arch(0, 1), back = shape.arch(0, -1);
+                check(Math.abs(front[0] + back[0]) < 1e-9 && Math.abs(front[1] - back[1]) < 1e-9,
+                        "The two arches must mirror each other");
+                check(crown < front[1] - 0.2, "The membrane must sag between the arches");
+                double[] footA = shape.arch(-1, 1), footB = shape.arch(1, -1);
+                check(Math.abs(footA[2]) < 1e-9 && Math.abs(footB[2] - span) < 1e-9 && Math.abs(footA[0]) < 1e-9,
+                        "Both arches spring from the plate foot and land on the far foot");
+                check(Double.isNaN(shape.roofHeight(0, -0.5)) && Double.isNaN(shape.roofHeight(0, span + 0.5)),
+                        "PVC extends beyond the feet");
+                check(Double.isNaN(shape.roofHeight(shape.lean + 0.2, shape.zc)), "PVC extends beyond the arches");
                 Map<String, Cell> dry = cells(shape);
-                long posts = dry.values().stream().filter(c -> c.part == TentPart.POLE).count();
-                check(posts == 2L * (int) Math.ceil(shape.legHeight), "Expected two narrow upright collisions");
+                check(dry.values().stream().anyMatch(c -> c.part == TentPart.POLE), "Missing arch collision");
                 check(dry.values().stream().noneMatch(c -> c.part == TentPart.WALL || c.part == TentPart.FLOOR),
-                        "Open DJ roof acquired a wall or floor");
+                        "Open DJ cover acquired a wall or floor");
                 check(dry.values().stream().anyMatch(c -> c.part == TentPart.ROOF), "Missing PVC roof collision");
-                p.guyRopes = true;
-                p.clamp();
-                check(!p.guyRopes, "DJ roof should never spawn side cables");
-                check(cells(new DjArchShape(p, facing)).keySet().equals(dry.keySet()),
-                        "Guy ropes should never change collision cells");
+                check(!dry.containsKey("0:0:0"), "A cell landed on the plate foot");
                 cases++;
             }
         TentParams p = TentType.DJ_ARCH.defaults();
         DjArchShape shape = new DjArchShape(p, Direction.EAST);
         MeshBuilder mesh = TentMeshes.build(shape, 0);
         check(mesh.hasLayer(MeshBuilder.GLASS), "Transparent PVC layer missing");
-        check(Math.abs(shape.sailY(shape.ax, Math.PI / 2) - shape.sailY(-shape.ax, Math.PI / 2)) < 0.05
-                        && shape.sailY(0, Math.PI / 2) > shape.sailY(shape.ax, Math.PI / 2) + 0.4
-                        && shape.sailCovers(Math.PI / 2)
-                        && !shape.sailCovers(0.2)
-                        && Double.isNaN(shape.roofHeight(0, shape.span * 0.95))
-                        && shape.roofHeight(0, 0) > shape.legHeight + 1,
-                "The sheet runs off both sides of the tube and stays open under the poles");
         int quads = mesh.quadCount();
-        check(quads > 250 && quads < 8000, "Detail or mesh budget unexpectedly changed: " + quads + " quads");
-        System.out.println("DJ arch checked: " + cases + " orientations and sizes, " + quads + " quads");
+        check(quads > 500 && quads < 20000, "Detail or mesh budget unexpectedly changed: " + quads + " quads");
+        System.out.println("DJ cover checked: " + cases + " orientations and sizes, " + quads + " quads");
     }
 }

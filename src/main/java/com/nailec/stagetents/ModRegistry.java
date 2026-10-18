@@ -99,6 +99,8 @@ public final class ModRegistry {
     public static final RegistryObject<TentBlock> TENSILE = tent(TentType.TENSILE);
     public static final RegistryObject<TentBlock> OPUS_4200 = tent(TentType.OPUS_4200);
 
+    public static final RegistryObject<com.nailec.stagetents.block.DjFootBlock> DJ_FOOT = BLOCKS.register("dj_foot", () -> new com.nailec.stagetents.block.DjFootBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5F).sound(SoundType.METAL).noOcclusion()));
     public static final RegistryObject<StretchPoleBlock> STRETCH_POLE = BLOCKS.register("stretch_pole", () -> new StretchPoleBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0F).sound(SoundType.WOOD).noOcclusion()));
     public static final RegistryObject<RiggingBarBlock> RIGGING_BAR = BLOCKS.register("rigging_bar", () -> new RiggingBarBlock(
@@ -222,6 +224,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> STRETCH_ITEM = tentItem("stretch", STRETCH);
     public static final RegistryObject<Item> TENSILE_ITEM = tentItem("tensile", TENSILE);
     public static final RegistryObject<Item> OPUS_4200_ITEM = tentItem("opus_4200", OPUS_4200);
+    public static final RegistryObject<Item> DJ_FOOT_ITEM = ITEMS.register("dj_foot", () -> new BlockItem(DJ_FOOT.get(), new Item.Properties()));
     public static final RegistryObject<Item> STRETCH_POLE_ITEM = ITEMS.register("stretch_pole", () -> new BlockItem(STRETCH_POLE.get(), new Item.Properties()));
     public static final RegistryObject<Item> RIGGING_BAR_ITEM = ITEMS.register("rigging_bar", () -> new BlockItem(RIGGING_BAR.get(), new Item.Properties()));
     public static final RegistryObject<Item> ROUND_TABLE_ITEM = blockItem("round_table", ROUND_TABLE);
@@ -321,7 +324,7 @@ public final class ModRegistry {
                 out.accept(TENSILE_ITEM.get());
                 out.accept(OPUS_4200_ITEM.get());
                 out.accept(ARCH_ITEM.get());
-                out.accept(DJ_ARCH_ITEM.get());
+                out.accept(DJ_FOOT_ITEM.get());
                 out.accept(RIGGING_BAR_ITEM.get());
                 out.accept(ROUND_TABLE_ITEM.get());
                 out.accept(BANQUET_CHAIR_ITEM.get());

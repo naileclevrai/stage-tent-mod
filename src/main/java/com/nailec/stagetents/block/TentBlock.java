@@ -36,6 +36,8 @@ import net.minecraftforge.fml.DistExecutor;
  */
 public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock {
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 3, 16);
+    /** DJ cover plate: it is the first foot, a square plinth with the leg rising from it. */
+    private static final VoxelShape DJ_FOOT = Shapes.or(Block.box(0.5, 0, 0.5, 15.5, 7.5, 15.5), Block.box(6, 7.5, 6, 10, 16, 10));
     /** Plate hidden from the tent settings: not drawn, no collision, outline only for wrench holders. */
     public static final BooleanProperty HIDDEN = BooleanProperty.create("hidden");
 
@@ -61,6 +63,7 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
     @Override
     @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        if (type == TentType.DJ_ARCH) return DJ_FOOT;
         if (!state.getValue(HIDDEN)) return SHAPE;
         if (type == TentType.OPUS_4200) return Shapes.block(); // centre of the deck stays buildable
         // Punch particles ask for the shape with no player. An empty shape crashes the client
@@ -74,6 +77,7 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
     @Override
     @SuppressWarnings("deprecation")
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        if (type == TentType.DJ_ARCH) return DJ_FOOT;
         if (!state.getValue(HIDDEN)) return SHAPE;
         // A hidden plate still carries the floor or stage that would otherwise have a hole in the middle.
         if (level.getBlockEntity(pos) instanceof TentBlockEntity be) {
@@ -109,6 +113,14 @@ public class TentBlock extends HorizontalDirectionalBlock implements EntityBlock
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof TentBlockEntity be) {
             be.clearCells();
+            if (type == TentType.DJ_ARCH && !level.isClientSide) {
+                // The far foot shows its own model again, ready for another cover.
+                BlockPos other = DjFootBlock.partnerOf(pos, be.facing(), be.params().width);
+                BlockState st = level.getBlockState(other);
+                if (st.getBlock() instanceof DjFootBlock && st.getValue(DjFootBlock.LINKED)) {
+                    level.setBlock(other, st.setValue(DjFootBlock.LINKED, false), Block.UPDATE_ALL);
+                }
+            }
         }
         super.onRemove(state, level, pos, newState, moving);
     }

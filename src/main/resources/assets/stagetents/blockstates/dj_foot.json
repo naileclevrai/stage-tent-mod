@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "linked=false": {
+      "model": "stagetents:block/props/dj_foot"
+    },
+    "linked=true": {
+      "model": "stagetents:block/props/dj_foot"
+    }
+  }
+}

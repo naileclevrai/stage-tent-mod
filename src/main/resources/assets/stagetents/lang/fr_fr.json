@@ -409,5 +409,9 @@
   "message.stagetents.power_busy": "Cette prise a déjà un câble",
   "message.stagetents.power_mismatch": "Ces prises ne vont pas ensemble",
   "message.stagetents.power_gone": "L'autre prise n'est plus là",
-  "message.stagetents.power_self": "Un bloc ne s'alimente pas lui-même"
+  "message.stagetents.power_self": "Un bloc ne s'alimente pas lui-même",
+  "block.stagetents.dj_foot": "Pied de toile DJ",
+  "message.stagetents.dj_foot.none": "Aucun pied de toile DJ libre en ligne, entre %s et %s blocs",
+  "message.stagetents.dj_foot.raised": "Toile DJ montée sur %s blocs",
+  "screen.stagetents.wall_height.dj_arch": "Hauteur des pieds : %s"
 }
