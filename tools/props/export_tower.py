@@ -36,16 +36,6 @@ for y, row in enumerate(rows):
             dyed.putpixel((x, y), (v, v, v, 255))
 base.save(os.path.join(ASSETS, "textures", "item", "light_tower.png"))
 dyed.save(os.path.join(ASSETS, "textures", "item", "light_tower_dye.png"))
-item = {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "stagetents:item/light_tower",
-        "layer1": "stagetents:item/light_tower_dye",
-    },
-}
-with open(os.path.join(ASSETS, "models", "item", "light_tower.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 
 xs, ys, zs = [], [], []
 for tris in body.groups.values():

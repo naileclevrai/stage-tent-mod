@@ -23,8 +23,4 @@ for y, row in enumerate(rows):
         if ch in icons.FIXED:
             img.putpixel((x, y), (*icons.FIXED[ch], 255))
 img.save(os.path.join(folder, "wash_station.png"))
-item = {"parent": "minecraft:item/generated", "textures": {"layer0": "stagetents:item/wash_station"}}
-with open(os.path.join(ASSETS, "models", "item", "wash_station.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 print("wash_station", n, "triangles")

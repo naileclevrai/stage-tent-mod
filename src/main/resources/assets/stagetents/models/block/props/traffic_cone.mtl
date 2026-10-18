@@ -1,0 +1,20 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl rubber
+Kd 1 1 1
+map_Kd #rubber
+forge_TintIndex -1
+
+newmtl orange
+Kd 1 1 1
+map_Kd #orange
+forge_TintIndex -1
+
+newmtl white
+Kd 1 1 1
+map_Kd #white
+forge_TintIndex -1
+

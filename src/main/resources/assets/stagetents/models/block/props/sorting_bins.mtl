@@ -1,0 +1,70 @@
+newmtl bin_plastic
+Kd 1 1 1
+map_Kd #bin_plastic
+forge_TintIndex -1
+
+newmtl bin_plastic_side
+Kd 1 1 1
+map_Kd #bin_plastic_side
+forge_TintIndex -1
+
+newmtl bin_mustard
+Kd 1 1 1
+map_Kd #bin_mustard
+forge_TintIndex -1
+
+newmtl bin_lid_plastic
+Kd 1 1 1
+map_Kd #bin_lid_plastic
+forge_TintIndex -1
+
+newmtl bin_yellow
+Kd 1 1 1
+map_Kd #bin_yellow
+forge_TintIndex -1
+
+newmtl bin_top_plastic
+Kd 1 1 1
+map_Kd #bin_top_plastic
+forge_TintIndex -1
+
+newmtl white
+Kd 1 1 1
+map_Kd #white
+forge_TintIndex -1
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+forge_TintIndex -1
+
+newmtl bin_divers
+Kd 1 1 1
+map_Kd #bin_divers
+forge_TintIndex -1
+
+newmtl bin_divers_side
+Kd 1 1 1
+map_Kd #bin_divers_side
+forge_TintIndex -1
+
+newmtl bin_navy
+Kd 1 1 1
+map_Kd #bin_navy
+forge_TintIndex -1
+
+newmtl bin_lid_divers
+Kd 1 1 1
+map_Kd #bin_lid_divers
+forge_TintIndex -1
+
+newmtl bin_black
+Kd 1 1 1
+map_Kd #bin_black
+forge_TintIndex -1
+
+newmtl bin_top_divers
+Kd 1 1 1
+map_Kd #bin_top_divers
+forge_TintIndex -1
+

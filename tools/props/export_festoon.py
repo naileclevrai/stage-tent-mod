@@ -30,11 +30,4 @@ for y, row in enumerate(rows):
             dyed.putpixel((x, y), (v, v, v, 255))
 base.save(os.path.join(folder, "festoon.png"))
 dyed.save(os.path.join(folder, "festoon_dye.png"))
-item = {
-    "parent": "minecraft:item/generated",
-    "textures": {"layer0": "stagetents:item/festoon", "layer1": "stagetents:item/festoon_dye"},
-}
-with open(os.path.join(ASSETS, "models", "item", "festoon.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 print("festoon", n, "triangles")

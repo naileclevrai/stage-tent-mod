@@ -1,7 +1,107 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "stagetents:item/parasol",
-    "layer1": "stagetents:item/parasol_dye"
+  "parent": "stagetents:block/props/parasol",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        -0.0,
+        -4.323,
+        0
+      ],
+      "scale": [
+        0.2217,
+        0.2217,
+        0.2217
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.08800000000000001,
+        0.08800000000000001,
+        0.08800000000000001
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.17600000000000002,
+        0.17600000000000002,
+        0.17600000000000002
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.132,
+        0.132,
+        0.132
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.1408,
+        0.1408,
+        0.1408
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.1408,
+        0.1408,
+        0.1408
+      ]
+    }
   }
 }

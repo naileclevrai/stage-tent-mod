@@ -21,13 +21,6 @@ for y, row in enumerate(rows):
         if ch in icons.FIXED:
             base.putpixel((x, y), (*icons.FIXED[ch], 255))
 base.save(os.path.join(ASSETS, "textures", "item", "folding_table.png"))
-item = {
-    "parent": "item/generated",
-    "textures": {"layer0": "stagetents:item/folding_table"},
-}
-with open(os.path.join(ASSETS, "models", "item", "folding_table.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 xs, ys, zs = [], [], []
 for tris in mesh.groups.values():
     for t in tris:

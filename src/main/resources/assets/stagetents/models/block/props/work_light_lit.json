@@ -1,0 +1,19 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/work_light_lit.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/rubber",
+    "rubber": "stagetents:block/props/rubber",
+    "orange": "stagetents:block/props/orange",
+    "white": "stagetents:block/props/white",
+    "black": "stagetents:block/props/black",
+    "bulb": "stagetents:block/props/bulb",
+    "chrome": "stagetents:block/props/chrome",
+    "green": "stagetents:block/props/green"
+  }
+}

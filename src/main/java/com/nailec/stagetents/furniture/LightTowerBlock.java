@@ -162,6 +162,7 @@ public class LightTowerBlock extends MultiPropBlock implements EntityBlock {
     @SuppressWarnings("deprecation")
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) instanceof LightTowerBlockEntity be) {
+            be.cables().detach();
             be.clearLights();
         }
         super.onRemove(state, level, pos, newState, moving);

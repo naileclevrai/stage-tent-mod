@@ -1,0 +1,26 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/sorting_bins.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/bin_plastic",
+    "bin_plastic": "stagetents:block/props/bin_plastic",
+    "bin_plastic_side": "stagetents:block/props/bin_plastic_side",
+    "bin_mustard": "stagetents:block/props/bin_mustard",
+    "bin_lid_plastic": "stagetents:block/props/bin_lid_plastic",
+    "bin_yellow": "stagetents:block/props/bin_yellow",
+    "bin_top_plastic": "stagetents:block/props/bin_top_plastic",
+    "white": "stagetents:block/props/white",
+    "black": "stagetents:block/props/black",
+    "bin_divers": "stagetents:block/props/bin_divers",
+    "bin_divers_side": "stagetents:block/props/bin_divers_side",
+    "bin_navy": "stagetents:block/props/bin_navy",
+    "bin_lid_divers": "stagetents:block/props/bin_lid_divers",
+    "bin_black": "stagetents:block/props/bin_black",
+    "bin_top_divers": "stagetents:block/props/bin_top_divers"
+  }
+}

@@ -1,5 +1,6 @@
 package com.nailec.stagetents;
 
+import com.nailec.stagetents.effect.ModEffects;
 import com.nailec.stagetents.network.ModNetwork;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -13,6 +14,7 @@ public class StageTents {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModRegistry.register(modBus);
         ModSounds.SOUNDS.register(modBus);
+        ModEffects.EFFECTS.register(modBus);
         ModNetwork.register();
     }
 }

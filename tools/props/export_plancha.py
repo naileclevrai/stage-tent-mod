@@ -34,13 +34,6 @@ for y, row in enumerate(rows):
             dyed.putpixel((x, y), (v, v, v, 255))
 base.save(os.path.join(folder, "plancha.png"))
 dyed.save(os.path.join(folder, "plancha_dye.png"))
-item = {
-    "parent": "minecraft:item/generated",
-    "textures": {"layer0": "stagetents:item/plancha", "layer1": "stagetents:item/plancha_dye"},
-}
-with open(os.path.join(ASSETS, "models", "item", "plancha.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 lit_item = os.path.join(ASSETS, "models", "item", "plancha_lit.json")
 if os.path.exists(lit_item):
     os.remove(lit_item)

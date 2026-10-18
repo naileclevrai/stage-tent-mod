@@ -1,5 +1,6 @@
 package com.nailec.stagetents.furniture;
 
+import com.nailec.stagetents.effect.DrunkennessEffect;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,6 +40,7 @@ public class BeerMugItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         ItemStack left = super.finishUsingItem(stack, level, entity);
         if (!filled) return left;
+        if (!level.isClientSide) DrunkennessEffect.onDrink(entity);
         ItemStack mug = new ItemStack(com.nailec.stagetents.ModRegistry.BEER_MUG.get());
         if (entity instanceof Player player && !player.getAbilities().instabuild) {
             if (left.isEmpty()) return mug;

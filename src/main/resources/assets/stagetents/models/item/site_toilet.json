@@ -1,7 +1,107 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "stagetents:item/site_toilet",
-    "layer1": "stagetents:item/site_toilet_dye"
+  "parent": "stagetents:block/props/site_toilet",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        -0.0,
+        -2.907,
+        0
+      ],
+      "scale": [
+        0.3743,
+        0.3743,
+        0.3743
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.16000000000000003,
+        0.16000000000000003,
+        0.16000000000000003
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.32000000000000006,
+        0.32000000000000006,
+        0.32000000000000006
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.24,
+        0.24,
+        0.24
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.256,
+        0.256,
+        0.256
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.256,
+        0.256,
+        0.256
+      ]
+    }
   }
 }

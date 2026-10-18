@@ -26,12 +26,17 @@ public class LightTowerBlockEntity extends BlockEntity {
     public static final int TILT_MAX = 60;
     public static final int TILT_STEP = 10;
 
+    private final PowerLinks cables = new PowerLinks(this);
     private int yaw;
     private int tilt = 20;
     private long[] lights = new long[0];
 
     public LightTowerBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistry.LIGHT_TOWER_BE.get(), pos, state);
+    }
+
+    public PowerLinks cables() {
+        return cables;
     }
 
     public int yaw() {
@@ -104,6 +109,7 @@ public class LightTowerBlockEntity extends BlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, LightTowerBlockEntity be) {
         if (level.getGameTime() % 20L != 0) return;
+        be.cables.prune();
         if (!(state.getBlock() instanceof LightTowerBlock) || !state.getValue(LightTowerBlock.RUNNING)) {
             if (be.lights.length > 0) be.clearLights();
             return;
@@ -127,6 +133,7 @@ public class LightTowerBlockEntity extends BlockEntity {
         tag.putInt("Yaw", yaw);
         tag.putInt("Tilt", tilt);
         tag.putLongArray("Lights", lights);
+        cables.save(tag);
     }
 
     @Override
@@ -135,14 +142,17 @@ public class LightTowerBlockEntity extends BlockEntity {
         yaw = tag.contains("Yaw") ? snapYaw(tag.getInt("Yaw")) : 0;
         tilt = tag.contains("Tilt") ? snapTilt(tag.getInt("Tilt")) : 20;
         lights = tag.getLongArray("Lights");
+        cables.load(tag);
     }
 
     @Override
     public AABB getRenderBoundingBox() {
         int height = getBlockState().getBlock() instanceof LightTowerBlock
                 ? getBlockState().getValue(LightTowerBlock.HEIGHT) : LightTowerBlock.MAX_HEIGHT;
-        return new AABB(worldPosition.getX() - 0.4, worldPosition.getY(), worldPosition.getZ() - 0.4,
+        AABB box = new AABB(worldPosition.getX() - 0.4, worldPosition.getY(), worldPosition.getZ() - 0.4,
                 worldPosition.getX() + 2.3, worldPosition.getY() + height + 1.4, worldPosition.getZ() + 1.4);
+        for (PowerLinks.Link link : cables.links()) box = box.minmax(new AABB(link.other()));
+        return box.inflate(0.8);
     }
 
     @Override

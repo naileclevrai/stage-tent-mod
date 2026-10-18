@@ -1,0 +1,19 @@
+{
+  "loader": "forge:obj",
+  "model": "stagetents:models/block/props/menu_board.obj",
+  "flip_v": true,
+  "shade_quads": true,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "stagetents:block/props/paint",
+    "paint": "stagetents:block/props/paint",
+    "black": "stagetents:block/props/black",
+    "white": "stagetents:block/props/white",
+    "wood": "stagetents:block/props/wood",
+    "grey": "stagetents:block/props/grey",
+    "galvanised": "stagetents:block/props/galvanised",
+    "chrome": "stagetents:block/props/chrome"
+  }
+}

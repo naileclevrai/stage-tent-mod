@@ -18,9 +18,10 @@ import net.minecraft.world.phys.BlockHitResult;
 public class WashStationBlock extends FurnitureBlock {
     public WashStationBlock(Properties props) {
         super(props, Spec.of(true, DyeColor.WHITE,
-                new double[]{3.5, 0, 4.8, 12.5, 19, 12.2},
-                new double[]{3.5, 18, 10.5, 12.5, 27, 12.2},
-                new double[]{0.2, 8, 5.5, 3.4, 16, 10.5}));
+                new double[]{1.3, 0, 1.0, 14.7, 15.7, 12.8},
+                new double[]{1.3, 15.7, 10.7, 14.7, 24.0, 12.8},
+                new double[]{15.0, 5.8, 5.8, 17.0, 11.4, 10.2},
+                new double[]{6.4, 0.2, 1.0, 9.6, 0.7, 4.2}));
     }
 
     @Override
@@ -29,13 +30,13 @@ public class WashStationBlock extends FurnitureBlock {
         Direction facing = state.getValue(FACING);
         Direction right = facing.getClockWise();
         // Spout in model space, just over the basin. Model -z is the front.
-        double dx = 0.0, dz = 0.40 - 0.5;
+        double dx = 0.0, dz = 0.44 - 0.5;
         double x = pos.getX() + 0.5 + right.getStepX() * dx + facing.getStepX() * -dz;
         double z = pos.getZ() + 0.5 + right.getStepZ() * dx + facing.getStepZ() * -dz;
         if (level.isClientSide) {
             for (int i = 0; i < 8; i++) {
-                level.addParticle(ParticleTypes.FALLING_WATER, x, pos.getY() + 1.28, z, 0, -0.05, 0);
-                level.addParticle(ParticleTypes.SPLASH, x, pos.getY() + 1.08, z, 0, 0, 0);
+                level.addParticle(ParticleTypes.FALLING_WATER, x, pos.getY() + 1.03, z, 0, -0.04, 0);
+                level.addParticle(ParticleTypes.SPLASH, x, pos.getY() + 0.84, z, 0, 0, 0);
             }
         } else {
             level.playSound(null, pos, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER, SoundSource.BLOCKS, 0.7F, 1.05F);

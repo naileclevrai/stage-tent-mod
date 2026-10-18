@@ -1,6 +1,107 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "stagetents:item/folding_table"
+  "parent": "stagetents:block/props/folding_table",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        3.486,
+        1.377,
+        0
+      ],
+      "scale": [
+        0.3081,
+        0.3081,
+        0.3081
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.10400000000000001,
+        0.10400000000000001,
+        0.10400000000000001
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.20800000000000002,
+        0.20800000000000002,
+        0.20800000000000002
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.156,
+        0.156,
+        0.156
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.16640000000000002,
+        0.16640000000000002,
+        0.16640000000000002
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.16640000000000002,
+        0.16640000000000002,
+        0.16640000000000002
+      ]
+    }
   }
 }

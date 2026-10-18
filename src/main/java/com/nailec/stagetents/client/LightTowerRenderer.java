@@ -49,6 +49,7 @@ public class LightTowerRenderer implements BlockEntityRenderer<LightTowerBlockEn
         BlockState state = be.getBlockState();
         if (!(state.getBlock() instanceof LightTowerBlock)) return;
         Level level = be.getLevel();
+        if (level != null) PowerCableClient.drawCables(be, ps, buffers);
         int height = state.getValue(LightTowerBlock.HEIGHT);
         Direction facing = state.getValue(FurnitureBlock.FACING);
         boolean running = state.getValue(LightTowerBlock.RUNNING);
@@ -101,5 +102,15 @@ public class LightTowerRenderer implements BlockEntityRenderer<LightTowerBlockEn
         }
         ps.popPose();
         ps.popPose();
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(LightTowerBlockEntity be) {
+        return true;
+    }
+
+    @Override
+    public int getViewDistance() {
+        return 96;
     }
 }

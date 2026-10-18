@@ -1343,39 +1343,72 @@ def festoon():
 
 
 def wash_station():
-    """Backstage hand-wash stand: stainless cabinet, sunken basin, gooseneck tap, soap, side bin and a foot pedal."""
+    """Festival hand-wash unit: white cabinet, sunken basin, gooseneck, mirror, soap, towel and a pedal."""
     m = Mesh()
-    steel, tap = "galvanised", "chrome"
-    x0, x1, z0, z1 = 0.22, 0.78, 0.30, 0.74
-    # Plinth and an open toe-kick, with the pedal in the recess.
-    m.box(steel, x0, 0.0, z0, x1, 0.03, z1)
-    m.box(steel, x0, 0.03, z0, x0 + 0.06, 0.22, z1)
-    m.box(steel, x1 - 0.06, 0.03, z0, x1, 0.22, z1)
-    m.box(steel, x0, 0.03, z1 - 0.08, x1, 0.22, z1)
-    m.bevel_box("black", 0.40, 0.035, 0.20, 0.60, 0.075, 0.34, 0.006)
-    m.cylinder("black", 0.035, 0.02, 0.055, cx=0.62, cz=0.66, segs=10)
-    # Cabinet, top deck and the sunken basin.
-    m.bevel_box(steel, x0, 0.22, z0, x1, 1.12, z1, 0.008)
-    m.box(steel, x0 + 0.02, 1.12, z0 + 0.02, x1 - 0.02, 1.175, z1 - 0.02)
-    bx0, bx1, bz0, bz1 = 0.32, 0.68, 0.38, 0.64
-    m.box("grey", bx0, 1.04, bz0, bx1, 1.055, bz1, faces="ud")
-    m.box(steel, x0 + 0.02, 1.05, z0 + 0.02, bx0, 1.175, z1 - 0.08)
-    m.box(steel, bx1, 1.05, z0 + 0.02, x1 - 0.02, 1.175, z1 - 0.08)
-    m.box(steel, bx0, 1.05, z0 + 0.02, bx1, 1.175, bz0)
-    m.box(steel, bx0, 1.05, bz1, bx1, 1.175, z1 - 0.08)
-    # Backsplash, soap dispenser and the rail above it.
-    m.box(steel, x0, 1.12, 0.66, x1, 1.66, 0.76)
-    m.bevel_box("white", 0.56, 1.30, 0.58, 0.70, 1.54, 0.70, 0.006)
-    m.box("white", 0.60, 1.26, 0.56, 0.66, 1.32, 0.62)
-    m.tube(tap, [(0.28, 1.66, 0.71), (0.28, 1.74, 0.71), (0.72, 1.74, 0.71), (0.72, 1.66, 0.71)], 0.012, segs=8)
-    # Gooseneck over the basin, with a short spout.
-    m.tube(tap, [(0.50, 1.30, 0.66), (0.50, 1.50, 0.62), (0.50, 1.52, 0.48), (0.50, 1.40, 0.40), (0.50, 1.30, 0.40)],
-           0.016, segs=8)
-    m.cylinder(tap, 0.022, 1.26, 1.31, cx=0.50, cz=0.40, segs=8)
-    # Hanging bin on the left, clear of the cabinet so it reads as a separate bucket.
-    m.bevel_box("white", 0.02, 0.52, 0.36, 0.20, 0.96, 0.62, 0.01)
-    m.bevel_box("white", 0.015, 0.94, 0.34, 0.205, 1.00, 0.64, 0.006)
-    m.box("grey", 0.05, 0.78, 0.345, 0.17, 0.90, 0.36)
+    # Feet under the cabinet, overlapping it so they are not floating.
+    for x in (0.14, 0.80):
+        for z in (0.30, 0.68):
+            m.box("black", x, 0.0, z, x + 0.06, 0.07, z + 0.06)
+    m.bevel_box("white", 0.10, 0.05, 0.26, 0.90, 0.90, 0.76, 0.01)
+    # Door in front of the cabinet, with a recessed panel and a handle that leaves the face.
+    m.box("white", 0.16, 0.14, 0.22, 0.84, 0.84, 0.27)
+    m.box("galvanised", 0.22, 0.22, 0.205, 0.78, 0.76, 0.225)
+    m.box("chrome", 0.70, 0.40, 0.185, 0.735, 0.58, 0.21)
+    # Counter as a frame, so the basin is a real hole.
+    m.box("white", 0.08, 0.90, 0.18, 0.92, 0.98, 0.34)
+    m.box("white", 0.08, 0.90, 0.62, 0.92, 0.98, 0.80)
+    m.box("white", 0.08, 0.90, 0.34, 0.30, 0.98, 0.62)
+    m.box("white", 0.70, 0.90, 0.34, 0.92, 0.98, 0.62)
+    m.box("chrome", 0.08, 0.90, 0.168, 0.92, 0.945, 0.188)
+    m.box("white", 0.30, 0.80, 0.34, 0.34, 0.98, 0.62)
+    m.box("white", 0.66, 0.80, 0.34, 0.70, 0.98, 0.62)
+    m.box("white", 0.34, 0.80, 0.34, 0.66, 0.98, 0.38)
+    m.box("white", 0.34, 0.80, 0.58, 0.66, 0.98, 0.62)
+    m.box("grey", 0.34, 0.80, 0.38, 0.66, 0.825, 0.58)
+    m.cylinder("chrome", 0.028, 0.82, 0.845, cx=0.50, cz=0.48, segs=10)
+    m.disc("black", 0.012, 0.848, cx=0.50, cz=0.48, segs=8)
+    # Splashback, mirror and the gooseneck, seated on the back deck.
+    m.box("white", 0.10, 0.98, 0.70, 0.90, 1.46, 0.78)
+    m.box("chrome", 0.08, 1.44, 0.68, 0.92, 1.50, 0.80)
+    m.box("grey", 0.32, 1.10, 0.678, 0.68, 1.36, 0.708)
+    m.box("chrome", 0.30, 1.08, 0.672, 0.70, 1.12, 0.714)
+    m.box("chrome", 0.30, 1.34, 0.672, 0.70, 1.38, 0.714)
+    m.box("chrome", 0.30, 1.12, 0.672, 0.33, 1.34, 0.714)
+    m.box("chrome", 0.67, 1.12, 0.672, 0.70, 1.34, 0.714)
+    # Single-lever mixer on the rear deck. The neck is a smooth arc, not a kinked pipe.
+    m.cylinder("chrome", 0.050, 0.970, 0.998, cx=0.50, cz=0.64, segs=16)
+    m.cylinder("chrome", 0.028, 0.990, 1.055, cx=0.50, cz=0.64, segs=14)
+    m.box("chrome", 0.512, 1.030, 0.616, 0.655, 1.052, 0.664)
+    m.box("black", 0.642, 1.028, 0.612, 0.678, 1.054, 0.668)
+    p0, p1, p2, p3 = (0.50, 1.045, 0.64), (0.50, 1.40, 0.58), (0.50, 1.38, 0.46), (0.50, 1.10, 0.44)
+    neck = []
+    for i in range(17):
+        t = i / 16
+        u = 1.0 - t
+        y = u*u*u*p0[1] + 3*u*u*t*p1[1] + 3*u*t*t*p2[1] + t*t*t*p3[1]
+        z = u*u*u*p0[2] + 3*u*u*t*p1[2] + 3*u*t*t*p2[2] + t*t*t*p3[2]
+        neck.append((0.50, y, z))
+    m.tube("chrome", neck, 0.012, segs=10)
+    m.cylinder("chrome", 0.017, 1.055, 1.105, cx=0.50, cz=0.44, segs=12)
+    m.disc("black", 0.011, 1.053, cx=0.50, cz=0.44, segs=10)
+    # Pump bottle on the right of the deck.
+    m.cylinder("white", 0.038, 0.98, 1.16, cx=0.81, cz=0.48, segs=10)
+    m.cylinder("chrome", 0.012, 1.16, 1.22, cx=0.81, cz=0.48, segs=6)
+    m.box("chrome", 0.79, 1.20, 0.44, 0.83, 1.225, 0.50)
+    # Towel roll on brackets that meet the splash.
+    roll = Mesh()
+    roll.cylinder("white", 0.04, -0.055, 0.055, cx=0, cz=0, segs=12)
+    roll.cylinder("chrome", 0.01, -0.07, 0.07, cx=0, cz=0, segs=8)
+    m.merge(roll.transformed(chain(rot_z(90, 0, 0), translate(0.24, 1.20, 0.64))))
+    m.box("chrome", 0.155, 1.14, 0.60, 0.185, 1.26, 0.76)
+    m.box("chrome", 0.295, 1.14, 0.60, 0.325, 1.26, 0.76)
+    # Waste bin hung on an arm that enters the cabinet.
+    m.box("chrome", 0.84, 0.58, 0.44, 0.98, 0.64, 0.56)
+    m.bevel_box("white", 0.94, 0.36, 0.36, 1.06, 0.70, 0.64, 0.008)
+    m.box("black", 0.95, 0.66, 0.37, 1.05, 0.715, 0.63)
+    # Pedal and the rod back into the plinth.
+    m.box("black", 0.40, 0.012, 0.06, 0.60, 0.04, 0.24)
+    m.box("chrome", 0.48, 0.03, 0.20, 0.52, 0.07, 0.30)
     return m
 
 
@@ -2812,3 +2845,585 @@ def plancha(lit=False):
         sausage.cylinder("plancha_sausage", 0.026, -0.11, 0.11, cx=0, cz=0, segs=10)
         m.merge(sausage.transformed(chain(rot_z(90, 0, 0), translate(0.66, 0.938, 0.46))))
     return m.transformed(lambda p: (0.5 + (p[0] - 0.5) * 1.5, p[1] * 1.5, 0.5 + (p[2] - 0.5) * 1.5))
+
+
+def _beam(m, mat, x0, y0, x1, y1, z0, z1, thick):
+    """Square bar from (x0, y0) to (x1, y1), extruded from z0 to z1."""
+    dx, dy = x1 - x0, y1 - y0
+    length = math.hypot(dx, dy) or 1.0
+    px, py = -dy / length * thick * 0.5, dx / length * thick * 0.5
+    poly = [(x0 + px, y0 + py), (x1 + px, y1 + py), (x1 - px, y1 - py), (x0 - px, y0 - py)]
+    area = sum(poly[i][0] * poly[(i + 1) % 4][1] - poly[(i + 1) % 4][0] * poly[i][1] for i in range(4))
+    if area < 0:
+        poly.reverse()
+    s = Mesh()
+    s.extrude(mat, poly, z0, z1)
+    m.merge(s)
+
+
+def _chalk_line(m, x0, x1, y, z, h=0.013):
+    """A chalk stroke with a worn end. No lettering."""
+    span = x1 - x0
+    n = max(2, int(span / 0.11))
+    for i in range(n):
+        a = x0 + span * i / n
+        b = x0 + span * min(1.0, (i + 0.94) / n)
+        yy = y + 0.0022 * math.sin(i * 2.1 + y * 14.0)
+        m.box("white", a, yy, z, b, yy + h, z + 0.009)
+
+
+def _menu_chain(m, x, z, y_wood):
+    """Screw and eye let into the top rail, then interlocking links. The top link lies in the XY plane
+    so a hook can pass through it along Z. Returns that link's centre height."""
+    r, t = 0.017, 0.0046
+    m.cylinder("chrome", 0.007, y_wood - 0.042, y_wood + 0.008, cx=x, cz=z, segs=8)
+    eye_y = y_wood + 0.006
+    _ring(m, "chrome", (x, eye_y, z), r, t, "yz", segs=12, tsegs=5)
+    y = eye_y
+    # Six links: the top one lies in the YZ plane, so a rod along X can pass through it.
+    for i in range(6):
+        y += r
+        _ring(m, "chrome", (x, y, z), r, t, "yz" if i % 2 else "xy", segs=12, tsegs=5)
+    return y
+
+
+def menu_board():
+    """Wall menu slate. The dyed frame is wood-coloured paint; the back sits on the block's south face.
+    Two short chains run from eyes in the top rail up to hooks on a wall plate."""
+    m = Mesh()
+    x0, x1 = 0.15, 0.85
+    y0, y1 = 0.14, 0.78
+    t = 0.050
+    zf, zb = 0.942, 1.0
+    # Four rails, butted so the corners do not share a face.
+    m.bevel_box("paint", x0, y0, zf, x0 + t, y1, zb, 0.005)
+    m.bevel_box("paint", x1 - t, y0, zf, x1, y1, zb, 0.005)
+    m.bevel_box("paint", x0 + t, y0, zf, x1 - t, y0 + t, zb, 0.005)
+    m.bevel_box("paint", x0 + t, y1 - t, zf, x1 - t, y1, zb, 0.005)
+    # Moulding proud of the frame, still one piece with it.
+    lip_z0, lip_z1 = zf - 0.012, zf + 0.006
+    lip = 0.016
+    m.box("paint", x0 - 0.006, y0 - 0.006, lip_z0, x0 + t + lip, y1 + 0.006, lip_z1)
+    m.box("paint", x1 - t - lip, y0 - 0.006, lip_z0, x1 + 0.006, y1 + 0.006, lip_z1)
+    m.box("paint", x0 + t + lip, y0 - 0.006, lip_z0, x1 - t - lip, y0 + t + lip, lip_z1)
+    m.box("paint", x0 + t + lip, y1 - t - lip, lip_z0, x1 - t - lip, y1 + 0.006, lip_z1)
+    # Slate set back in the rebate, overlapping the rails so the opening has no gap.
+    m.box("black", x0 + t - 0.004, y0 + t - 0.004, zf + 0.016, x1 - t + 0.004, y1 - t + 0.004, zb - 0.006)
+    # Chalk, pressed into the slate and standing just proud of it.
+    cz = zf + 0.006
+    _chalk_line(m, 0.28, 0.72, 0.66, cz, 0.016)
+    m.box("white", 0.28, 0.640, cz, 0.72, 0.647, cz + 0.008)
+    for y, x_text in ((0.575, 0.64), (0.495, 0.58), (0.415, 0.66), (0.335, 0.54)):
+        _chalk_line(m, 0.24, x_text, y, cz)
+        _chalk_line(m, 0.68, 0.76, y, cz)
+    # Chalk rail. The lip stays lower than the stick and the eraser so both read from the front.
+    shelf = y0 - 0.020
+    m.box("paint", x0 - 0.008, y0 - 0.040, zf - 0.072, x1 + 0.008, shelf, zf + 0.008)
+    m.box("paint", x0 - 0.008, y0 - 0.040, zf - 0.072, x1 + 0.008, shelf + 0.008, zf - 0.056)
+    stick = Mesh()
+    stick.cylinder("white", 0.012, -0.07, 0.07, cx=0, cz=0, segs=8)
+    m.merge(stick.transformed(chain(rot_z(90, 0, 0), translate(0.34, shelf + 0.012, zf - 0.036))))
+    m.box("wood", 0.55, shelf, zf - 0.054, 0.74, shelf + 0.022, zf - 0.020)
+    m.box("grey", 0.56, shelf, zf - 0.058, 0.73, shelf + 0.016, zf - 0.048)
+    # Hanger: a wall plate, two brackets, and a rod that passes through the top link of each chain.
+    zc = 0.952
+    m.box("galvanised", 0.20, 0.90, 0.968, 0.80, 1.0, 1.0)
+    rod_y = _menu_chain(m, 0.32, zc, y1)
+    _menu_chain(m, 0.68, zc, y1)
+    m.tube("chrome", [(0.24, rod_y, zc), (0.76, rod_y, zc)], 0.0072, segs=8)
+    for sx in (0.25, 0.75):
+        m.box("chrome", sx - 0.016, rod_y - 0.02, 0.960, sx + 0.016, 0.985, 1.0)
+        m.box("chrome", sx - 0.016, rod_y - 0.016, zc - 0.012, sx + 0.016, rod_y + 0.016, 0.978)
+        screw = Mesh()
+        screw.cylinder("chrome", 0.011, 0.0, 0.007, cx=0, cz=0, segs=8)
+        screw.cylinder("black", 0.004, 0.005, 0.018, cx=0, cz=0, segs=6)
+        m.merge(screw.transformed(chain(rot_x(90, 0, 0), translate(sx, 0.955, 0.955))))
+    return m
+
+
+# Wayfinding panel opening, and how far the pictogram stands proud of the board.
+_SIGN_X0, _SIGN_Y0, _SIGN_X1, _SIGN_Y1 = 0.225, 0.695, 0.775, 1.175
+_SIGN_ZF = 0.388
+
+
+
+
+def _sign_plate(m, mat, z0=0.408, z1=0.432):
+    m.box(mat, _SIGN_X0, _SIGN_Y0, z0, _SIGN_X1, _SIGN_Y1, z1)
+
+
+def _sign_stage(m):
+    _sign_plate(m, "navy")
+    x0, y0, x1, y1 = _SIGN_X0 + 0.015, _SIGN_Y0 + 0.015, _SIGN_X1 - 0.015, _SIGN_Y1 - 0.012
+    z0, z1 = _SIGN_ZF, 0.414
+    m.box("wood", x0, y0, z0, x1, y0 + 0.055, z1)
+    m.box("red", x0, y0 + 0.05, z0 + 0.006, x0 + 0.145, y1 - 0.05, z1)
+    m.box("red", x1 - 0.145, y0 + 0.05, z0 + 0.006, x1, y1 - 0.05, z1)
+    m.box("velour", x0 + 0.02, y0 + 0.055, z0, x0 + 0.11, y1 - 0.055, z0 + 0.012)
+    m.box("velour", x1 - 0.11, y0 + 0.055, z0, x1 - 0.02, y1 - 0.055, z0 + 0.012)
+    m.box("gold", x0, y1 - 0.07, z0 - 0.006, x1, y1, z1)
+    m.cylinder("black", 0.028, y1 - 0.085, y1 - 0.04, cx=0.50, cz=0.395, segs=10)
+    m.sphere("bulb", 0.034, 0.50, y1 - 0.10, 0.392, segs=10, rings=6)
+    m.cylinder("chrome", 0.016, y1 - 0.055, y1 - 0.02, cx=0.50, cz=0.40, segs=8)
+
+
+def _sign_bar(m):
+    _sign_plate(m, "navy")
+    x0, y0, x1 = _SIGN_X0 + 0.02, _SIGN_Y0 + 0.02, _SIGN_X1 - 0.02
+    counter = y0 + 0.07
+    m.box("wood", x0, y0, _SIGN_ZF, x1, counter, 0.416)
+    m.box("wood_dark", x0, y0, _SIGN_ZF - 0.008, x1, y0 + 0.028, _SIGN_ZF + 0.004)
+    # Tap, spout toward the reader, handle up. The column is planted in the counter.
+    tx, tz = 0.58, 0.398
+    m.cylinder("chrome", 0.022, counter - 0.01, counter + 0.28, cx=tx, cz=tz, segs=12)
+    m.cylinder("steel", 0.030, counter + 0.20, counter + 0.24, cx=tx, cz=tz, segs=12, caps=False)
+    # Spout swings toward the glass so the silhouette reads from the front, and still leaves the board.
+    m.tube("chrome", [
+        (tx, counter + 0.22, tz),
+        (tx - 0.04, counter + 0.20, tz - 0.02),
+        (tx - 0.09, counter + 0.13, tz - 0.03),
+    ], 0.011, segs=8)
+    m.cylinder("chrome", 0.014, counter + 0.112, counter + 0.132, cx=tx - 0.09, cz=tz - 0.03, segs=8)
+    m.box("black", tx + 0.008, counter + 0.26, tz - 0.012, tx + 0.05, counter + 0.30, tz + 0.012)
+    m.box("black", tx + 0.028, counter + 0.26, tz - 0.012, tx + 0.052, counter + 0.40, tz + 0.012)
+    m.box("yellow", tx - 0.012, counter + 0.30, tz - 0.024, tx + 0.012, counter + 0.345, tz - 0.014)
+    # Pint on the counter, beer showing inside a pale rim.
+    gx = 0.40
+    m.cylinder("white", 0.034, counter - 0.004, counter + 0.016, cx=gx, cz=tz, segs=12)
+    _taper(m, "yellow", 0.024, 0.040, counter + 0.012, counter + 0.20, gx, tz, 12, True)
+    m.cylinder("white", 0.044, counter + 0.175, counter + 0.215, cx=gx, cz=tz, segs=12)
+    m.cylinder("chrome", 0.048, counter + 0.205, counter + 0.222, cx=gx, cz=tz, segs=12, caps=False)
+
+
+def _sign_toilets(m):
+    _sign_plate(m, "white", 0.400, 0.434)
+    m.box("black", _SIGN_X0 + 0.012, _SIGN_Y0 + 0.012, 0.396, _SIGN_X1 - 0.012, _SIGN_Y1 - 0.012, 0.406)
+    m.box("white", _SIGN_X0 + 0.028, _SIGN_Y0 + 0.028, 0.390, _SIGN_X1 - 0.028, _SIGN_Y1 - 0.028, 0.404)
+    z0, z1, w = 0.372, 0.396, 0.036
+    # W
+    _beam(m, "black", 0.26, 1.09, 0.33, 0.77, z0, z1, w)
+    _beam(m, "black", 0.33, 0.77, 0.40, 0.98, z0, z1, w)
+    _beam(m, "black", 0.40, 0.98, 0.47, 0.77, z0, z1, w)
+    _beam(m, "black", 0.47, 0.77, 0.54, 1.09, z0, z1, w)
+    # C, spine on the left, opening on the right.
+    _beam(m, "black", 0.60, 0.76, 0.60, 1.09, z0, z1, w)
+    _beam(m, "black", 0.60, 1.09, 0.74, 1.09, z0, z1, w)
+    _beam(m, "black", 0.60, 0.76, 0.74, 0.76, z0, z1, w)
+    _beam(m, "black", 0.72, 1.09, 0.72, 0.98, z0, z1, w)
+    _beam(m, "black", 0.72, 0.87, 0.72, 0.76, z0, z1, w)
+
+
+def _sign_exit(m):
+    _sign_plate(m, "green", 0.400, 0.434)
+    m.box("white", _SIGN_X0 + 0.016, _SIGN_Y0 + 0.016, 0.392, _SIGN_X1 - 0.016, _SIGN_Y1 - 0.016, 0.404)
+    m.box("green", _SIGN_X0 + 0.032, _SIGN_Y0 + 0.032, 0.384, _SIGN_X1 - 0.032, _SIGN_Y1 - 0.032, 0.400)
+    z0, z1 = 0.372, 0.392
+    # Running figure. Every limb shares an end with the torso, and the head sits on it.
+    _beam(m, "white", 0.34, 0.98, 0.40, 0.82, z0, z1, 0.040)
+    m.sphere("white", 0.032, 0.345, 1.02, 0.382, segs=10, rings=6)
+    _beam(m, "white", 0.36, 0.86, 0.28, 0.72, z0, z1, 0.026)
+    _beam(m, "white", 0.39, 0.86, 0.50, 0.74, z0, z1, 0.026)
+    _beam(m, "white", 0.36, 0.95, 0.48, 0.90, z0, z1, 0.022)
+    # Arrow
+    m.box("white", 0.54, 0.86, z0, 0.68, 0.92, z1)
+    head = Mesh()
+    head.extrude("white", [(0.64, 0.78), (0.76, 0.89), (0.64, 1.00)], z0, z1)
+    m.merge(head)
+
+
+def work_light(lit=False):
+    """Site beacon, about 70 cm. Rubber foot, orange stem, caged lens. The lens glows once it is lit."""
+    m = Mesh()
+    cx = cz = 0.5
+    m.lathe("rubber", [
+        (0.19, 0.0), (0.19, 0.022), (0.16, 0.042), (0.11, 0.062), (0.075, 0.085),
+    ], cx, cz, segs=24)
+    m.lathe("orange", [
+        (0.052, 0.062), (0.068, 0.105), (0.066, 0.34), (0.052, 0.39),
+    ], cx, cz, segs=20)
+    m.cylinder("white", 0.072, 0.16, 0.21, cx=cx, cz=cz, segs=20, caps=False)
+    m.cylinder("black", 0.074, 0.205, 0.218, cx=cx, cz=cz, segs=20, caps=False)
+    m.lathe("black", [
+        (0.048, 0.37), (0.088, 0.43), (0.096, 0.50), (0.078, 0.56),
+    ], cx, cz, segs=20)
+    lens = "bulb" if lit else "yellow"
+    m.cylinder(lens, 0.048, 0.47, 0.60, cx=cx, cz=cz, segs=16)
+    m.sphere(lens, 0.048, cx, 0.60, cz, segs=14, rings=7)
+    m.cylinder("chrome", 0.082, 0.545, 0.568, cx=cx, cz=cz, segs=16, caps=False)
+    m.cylinder("chrome", 0.070, 0.638, 0.658, cx=cx, cz=cz, segs=16, caps=False)
+    for i in range(4):
+        a = math.tau * (i + 0.5) / 4
+        x, z = cx + 0.074 * math.cos(a), cz + 0.074 * math.sin(a)
+        m.tube("chrome", [(x, 0.55, z), (x, 0.65, z)], 0.007, segs=5, caps=False)
+    m.cylinder("black", 0.036, 0.645, 0.71, cx=cx, cz=cz, segs=12)
+    m.tube("black", [
+        (cx + 0.07, 0.47, cz), (cx + 0.115, 0.49, cz), (cx + 0.115, 0.58, cz), (cx + 0.07, 0.60, cz),
+    ], 0.008, segs=6)
+    # Switch let into the front of the stem.
+    m.box("chrome", cx - 0.016, 0.28, 0.40, cx + 0.016, 0.325, 0.445)
+    m.box("green" if lit else "red", cx - 0.008, 0.292, 0.388, cx + 0.008, 0.314, 0.408)
+    return m
+
+
+def traffic_cone():
+    """Road cone, a little over a metre. Square rubber base, a smooth taper and two raised reflective collars."""
+    m = Mesh()
+    cx = cz = 0.5
+    # Flat rubber base with a small lip. The base is the only part that touches the ground.
+    m.bevel_box("black", 0.12, 0.0, 0.12, 0.88, 0.040, 0.88, 0.012)
+    m.bevel_box("rubber", 0.16, 0.040, 0.16, 0.84, 0.060, 0.84, 0.008)
+
+    def radius(y):
+        """Straight taper from the base to the neck, no bulge."""
+        y0, y1, r0, r1 = 0.060, 1.040, 0.250, 0.052
+        t = max(0.0, min(1.0, (y - y0) / (y1 - y0)))
+        return r0 + (r1 - r0) * t
+
+    # Solid cone body, one lathe from the base to the neck.
+    body = [(radius(y), y) for y in (0.060, 0.30, 0.55, 0.80, 1.040)]
+    m.lathe("orange", body, cx, cz, segs=28)
+
+    def collar(y0, y1):
+        """Reflective band that sits just proud of the cone surface."""
+        ring = []
+        for k in range(5):
+            y = y0 + (y1 - y0) * k / 4
+            ring.append((radius(y) + 0.006, y))
+        m.lathe("white", ring, cx, cz, segs=28)
+
+    collar(0.33, 0.45)
+    collar(0.64, 0.74)
+
+    # Neck and grip ring on top.
+    m.lathe("orange", [
+        (radius(1.040), 1.040),
+        (0.060, 1.075),
+        (0.060, 1.110),
+        (0.044, 1.120),
+    ], cx, cz, segs=20)
+    m.cylinder("black", 0.040, 1.110, 1.150, cx=cx, cz=cz, segs=16, caps=False)
+    m.disc("black", 0.040, 1.150, cx=cx, cz=cz, segs=16, up=True)
+    return m
+
+
+def _face(m, mat, x0, y0, z, x1, y1):
+    """Printed panel on a north face. v=0 sits on the top edge so the art stays upright."""
+    m.quad(mat, (x1, y0, z), (x0, y0, z), (x0, y1, z), (x1, y1, z), (0, 0, -1),
+           ((1, 1), (0, 1), (0, 0), (1, 0)))
+
+
+def _poster(m, mat, x0, y0, z, x1, y1):
+    """North-face print for the festival bins. Vertical flip only, so lines read top to bottom from the front."""
+    m.quad(mat, (x1, y0, z), (x0, y0, z), (x0, y1, z), (x1, y1, z), (0, 0, -1),
+           ((0, 0), (1, 0), (1, 1), (0, 1)))
+
+
+
+
+
+
+def _axis_stud(m, mat, x, y, z, length=0.008, radius=0.010, toward=-1):
+    """Short stud on the plane z. toward=-1 points at the player, +1 points back."""
+    stud = Mesh()
+    stud.cylinder(mat, radius, 0.0, length, cx=0, cz=0, segs=8)
+    m.merge(stud.transformed(chain(rot_x(-90 if toward < 0 else 90, 0, 0), translate(x, y, z))))
+
+
+def _hinge_barrel(m, x, y, z, length, radius, mat):
+    barrel = Mesh()
+    barrel.cylinder(mat, radius, -length / 2, length / 2, cx=0, cz=0, segs=10)
+    m.merge(barrel.transformed(chain(rot_z(90, 0, 0), translate(x, y, z))))
+
+
+def _tri_facing(m, mat, a, b, c, n, ua=(0.5, 0.5), ub=(0.5, 0.5), uc=(0.5, 0.5)):
+    """Triangle wound so that it faces n. Plain parts sample the middle of their texture, away from the atlas edge."""
+    g = _cross(_sub(b, a), _sub(c, a))
+    if g[0] * n[0] + g[1] * n[1] + g[2] * n[2] < 0:
+        b, c, ub, uc = c, b, uc, ub
+    m.tri(mat, a, b, c, n, n, n, ua, ub, uc)
+
+
+def _quad_facing(m, mat, a, b, c, d, n, uv=((0.5, 0.5), (0.5, 0.5), (0.5, 0.5), (0.5, 0.5))):
+    _tri_facing(m, mat, a, b, c, n, uv[0], uv[1], uv[2])
+    _tri_facing(m, mat, a, c, d, n, uv[0], uv[2], uv[3])
+
+
+def _printed_box(m, x0, y0, z0, x1, y1, z1, front, back, east, west, edge, b=0.005, top=None, bottom=True,
+                 joined=""):
+    """Folded cardboard box: one print per side, read upright from outside, and narrow chamfers on the vertical
+    folds. Prints use the flat-print mapping: u=0 on the viewer's left, stored v=1 on the top edge.
+
+    joined holds "e" and/or "w": that side butts against a neighbour, so it gets no face and no chamfer.
+    """
+    uv = ((0, 0), (1, 0), (1, 1), (0, 1))
+    be = 0.0 if "e" in joined else b
+    bw = 0.0 if "w" in joined else b
+    m.quad(front, (x1 - be, y0, z0), (x0 + bw, y0, z0), (x0 + bw, y1, z0), (x1 - be, y1, z0), (0, 0, -1), uv)
+    m.quad(back, (x0 + bw, y0, z1), (x1 - be, y0, z1), (x1 - be, y1, z1), (x0 + bw, y1, z1), (0, 0, 1), uv)
+    if "e" not in joined:
+        m.quad(east, (x1, y0, z1 - b), (x1, y0, z0 + b), (x1, y1, z0 + b), (x1, y1, z1 - b), (1, 0, 0), uv)
+    if "w" not in joined:
+        m.quad(west, (x0, y0, z0 + b), (x0, y0, z1 - b), (x0, y1, z1 - b), (x0, y1, z0 + b), (-1, 0, 0), uv)
+    k = 0.7071
+    corners = []
+    if "e" not in joined:
+        corners += [((x1 - b, z0), (x1, z0 + b), (k, 0, -k)), ((x1, z1 - b), (x1 - b, z1), (k, 0, k))]
+    if "w" not in joined:
+        corners += [((x0 + b, z0), (x0, z0 + b), (-k, 0, -k)), ((x0 + b, z1), (x0, z1 - b), (-k, 0, k))]
+    for (px, pz), (qx, qz), n in corners:
+        _quad_facing(m, edge, (px, y0, pz), (qx, y0, qz), (qx, y1, qz), (px, y1, pz), n)
+    outline = [(x0 + bw, z0), (x1 - be, z0), (x1, z0 + be), (x1, z1 - be), (x1 - be, z1), (x0 + bw, z1),
+               (x0, z1 - bw), (x0, z0 + bw)]
+    cx, cz = (x0 + x1) / 2, (z0 + z1) / 2
+    caps = []
+    if bottom:
+        caps.append((y0, (0, -1, 0), edge))
+    if top:
+        caps.append((y1, (0, 1, 0), top))
+    for y, n, mat in caps:
+        for i in range(len(outline)):
+            (ax, az), (bx, bz) = outline[i], outline[(i + 1) % len(outline)]
+            if (ax, az) != (bx, bz):
+                _tri_facing(m, mat, (cx, y, cz), (ax, y, az), (bx, y, bz), n)
+
+
+def _holed_top(m, mat, x0, x1, z0, z1, y, r, segs=32):
+    """Square top with a round hole in the middle. Planar print, read from the front: u=0 on the left (+X),
+    stored v=1 at the back. Square tops only, so the corners fall on the 45 degree spokes."""
+    cx, cz = (x0 + x1) / 2, (z0 + z1) / 2
+    h = (x1 - x0) / 2
+
+    def uv(p):
+        return ((x1 - p[0]) / (x1 - x0), (p[2] - z0) / (z1 - z0))
+
+    def ring(t):
+        c, s = math.cos(t), math.sin(t)
+        e = h / max(abs(c), abs(s))
+        return (cx + r * c, y, cz + r * s), (cx + e * c, y, cz + e * s)
+
+    for k in range(segs):
+        i0, o0 = ring(TAU * k / segs)
+        i1, o1 = ring(TAU * (k + 1) / segs)
+        _quad_facing(m, mat, i0, i1, o1, o0, (0, 1, 0), (uv(i0), uv(i1), uv(o1), uv(o0)))
+
+
+def _flat_ring(m, mat, cx, cz, y, r0, r1, segs=32):
+    """Flat annulus facing up."""
+    for k in range(segs):
+        t0, t1 = TAU * k / segs, TAU * (k + 1) / segs
+        a = (cx + r0 * math.cos(t0), y, cz + r0 * math.sin(t0))
+        b = (cx + r0 * math.cos(t1), y, cz + r0 * math.sin(t1))
+        c = (cx + r1 * math.cos(t1), y, cz + r1 * math.sin(t1))
+        d = (cx + r1 * math.cos(t0), y, cz + r1 * math.sin(t0))
+        _quad_facing(m, mat, a, b, c, d, (0, 1, 0))
+
+
+def _wall(m, mat, cx, cz, r, y0, y1, inward, segs=32):
+    """Vertical cylinder wall with its faces wound explicitly toward (inward) or away from the axis."""
+    for k in range(segs):
+        t0, t1 = TAU * k / segs, TAU * (k + 1) / segs
+        c0, s0, c1, s1 = math.cos(t0), math.sin(t0), math.cos(t1), math.sin(t1)
+        sign = -1 if inward else 1
+        n = (sign * math.cos((t0 + t1) / 2), 0.0, sign * math.sin((t0 + t1) / 2))
+        _quad_facing(m, mat, (cx + r * c0, y0, cz + r * s0), (cx + r * c1, y0, cz + r * s1),
+                     (cx + r * c1, y1, cz + r * s1), (cx + r * c0, y1, cz + r * s0), n)
+
+
+def _waste_bin(m, x0, x1, z0, z1, stream, lid_mat, body_edge, joined):
+    """One corrugated sorting bin with its cap lid. Front is -Z.
+
+    The body is a printed box that stops under the lid. The lid slips over it with a small overhang on the free
+    sides, its skirt closed underneath. A white grommet lines the round hole and a dark bag closes the inside.
+    joined names the side ("e" or "w") that butts against the other bin.
+    """
+    lid_y0, lid_y1 = 0.90, 1.12
+    o = 0.008
+    side = "bin_" + stream + "_side"
+    _printed_box(m, x0, 0.0, z0, x1, lid_y0, z1, "bin_" + stream, side, side, side, body_edge, joined=joined)
+    lx0 = x0 if "w" in joined else x0 - o
+    lx1 = x1 if "e" in joined else x1 + o
+    # Square cap, so the hole sits in the middle of the printed top.
+    hx = (lx1 - lx0) / 2
+    lz0, lz1 = (z0 + z1) / 2 - hx, (z0 + z1) / 2 + hx
+    lid = "bin_lid_" + stream
+    _printed_box(m, lx0, lid_y0, lz0, lx1, lid_y1, lz1, lid, lid, lid, lid, lid_mat, bottom=False, joined=joined)
+    # Underside of the skirt, between the body and the lid edge.
+    for a, b, c, d in ((lx0, lz0, lx1, z0), (lx0, z1, lx1, lz1), (lx0, z0, x0, z1), (x1, z0, lx1, z1)):
+        if c - a > 1e-6 and d - b > 1e-6:
+            m.box(lid_mat, a, lid_y0, b, c, lid_y0, d, faces="d")
+    cx, cz = (lx0 + lx1) / 2, (lz0 + lz1) / 2
+    ro, rh = 0.098, 0.078
+    _holed_top(m, "bin_top_" + stream, cx - hx, cx + hx, cz - hx, cz + hx, lid_y1, ro - 0.004)
+    # Grommet: outer lip, flat top, inner wall facing the hole.
+    _wall(m, "white", cx, cz, ro, lid_y1, lid_y1 + 0.007, inward=False)
+    _flat_ring(m, "white", cx, cz, lid_y1 + 0.007, rh, ro)
+    _wall(m, "white", cx, cz, rh, lid_y1 - 0.014, lid_y1 + 0.007, inward=True)
+    # Bin bag: dark wall and floor, seen through the hole. It stays inside the lid.
+    _wall(m, "black", cx, cz, rh, lid_y1 - 0.20, lid_y1 - 0.014, inward=True)
+    m.disc("black", rh, lid_y1 - 0.20, cx, cz, segs=32, up=True)
+
+
+def sorting_bins():
+    """Pair of corrugated festival sorting bins side by side: plastic (yellow cap) on the left seen from the
+    front, general waste (black cap) on the right. They touch along x=0.50 like the real pair. Front is -Z.
+    """
+    m = Mesh()
+    _waste_bin(m, 0.50, 0.97, 0.265, 0.735, "plastic", "bin_yellow", "bin_mustard", "w")
+    _waste_bin(m, 0.03, 0.50, 0.265, 0.735, "divers", "bin_black", "bin_navy", "e")
+    return m
+
+
+def _wrap_print(m, mat, cx, cz, r, y0, y1, a_mid, half, segs=12):
+    """Print wrapped on a vertical cylinder, read from outside.
+
+    Same mapping as the flat prints: u=0 on the viewer's left (the larger angle), stored v=1 on the top edge.
+    """
+    for k in range(segs):
+        a0 = a_mid - half + 2 * half * k / segs
+        a1 = a_mid - half + 2 * half * (k + 1) / segs
+        u0, u1 = 1 - k / segs, 1 - (k + 1) / segs
+        n0 = (math.cos(a0), 0.0, math.sin(a0))
+        n1 = (math.cos(a1), 0.0, math.sin(a1))
+        p00 = (cx + r * n0[0], y0, cz + r * n0[2])
+        p01 = (cx + r * n0[0], y1, cz + r * n0[2])
+        p10 = (cx + r * n1[0], y0, cz + r * n1[2])
+        p11 = (cx + r * n1[0], y1, cz + r * n1[2])
+        m.quad(mat, p10, p00, p01, p11, uv=((u1, 0), (u0, 0), (u0, 1), (u1, 1)), normals=(n1, n0, n0, n1))
+
+
+def _front_disc(m, mat, cx, cy, z, r, segs=24):
+    """Round print facing -Z, upright from the front: u=0 on the viewer's left (+X), stored v=1 at the top."""
+    c = (cx, cy, z)
+    n = (0, 0, -1)
+    for k in range(segs):
+        t0, t1 = TAU * k / segs, TAU * (k + 1) / segs
+        p0 = (cx + r * math.cos(t0), cy + r * math.sin(t0), z)
+        p1 = (cx + r * math.cos(t1), cy + r * math.sin(t1), z)
+        uv0 = (0.5 - 0.5 * math.cos(t0), 0.5 + 0.5 * math.sin(t0))
+        uv1 = (0.5 - 0.5 * math.cos(t1), 0.5 + 0.5 * math.sin(t1))
+        m.tri(mat, c, p1, p0, n, n, n, (0.5, 0.5), uv1, uv0)
+
+
+def _flat_bar(m, mat, pts, thick, z0, z1, round_ends=True):
+    """Stamped flat bar in the x/y plane along a polyline, from z0 to z1. thick is a width per point.
+
+    Every segment is its own convex prism. Round joints fill the bends and round the tips.
+    """
+    def prism(poly):
+        area = sum(poly[i][0] * poly[(i + 1) % len(poly)][1] - poly[(i + 1) % len(poly)][0] * poly[i][1]
+                   for i in range(len(poly)))
+        m.extrude(mat, poly if area > 0 else poly[::-1], z0, z1)
+
+    for i in range(len(pts) - 1):
+        (px, py), (qx, qy) = pts[i], pts[i + 1]
+        dx, dy = qx - px, qy - py
+        ln = math.hypot(dx, dy)
+        nx, ny = -dy / ln, dx / ln
+        tp, tq = thick[i] / 2, thick[i + 1] / 2
+        prism([(px - nx * tp, py - ny * tp), (qx - nx * tq, qy - ny * tq),
+               (qx + nx * tq, qy + ny * tq), (px + nx * tp, py + ny * tp)])
+    joints = range(len(pts)) if round_ends else range(1, len(pts) - 1)
+    for i in joints:
+        x, y = pts[i]
+        rr = thick[i] / 2
+        prism([(x + rr * math.cos(TAU * k / 14), y + rr * math.sin(TAU * k / 14)) for k in range(14)])
+
+
+def extinguisher():
+    """6 kg powder extinguisher on the floor, drawn from a real one. Front (the label) is -Z.
+
+    Seen from the front: hose outlet and hose on the left, levers to the right and slightly back.
+    Sizes are read off a photo in pixels (tank 360 px wide) and scaled by S.
+    """
+    m = Mesh()
+    S = 0.0005
+    cz = 0.5
+
+    def X(px):
+        return 0.5 + (490 - px) * S
+
+    def Y(py):
+        return (1885 - py) * S
+
+    def L(p):
+        return p * S
+
+    # ---- Tank: rounded foot, weld seam, straight wall, deep-drawn shoulder and the threaded neck.
+    body = [(150, 1885), (166, 1882), (175, 1874), (179, 1862), (180, 1846), (180, 1794),
+            (177, 1789), (180, 1784), (180, 600), (178, 575), (173, 548), (164, 520), (150, 494),
+            (132, 470), (110, 451), (86, 437), (66, 429), (60, 426), (60, 395)]
+    m.lathe("red", [(L(r), Y(y)) for r, y in body], 0.5, cz, segs=36)
+    m.disc("red", L(150), Y(1885), 0.5, cz, segs=36, up=False)
+    m.disc("red", L(60), Y(395), 0.5, cz, segs=36, up=True)
+
+    # ---- Valve: hex nut on the neck, round body, gauge on the front, knurled screw on the left.
+    m.lathe("chrome", [(L(64), Y(395)), (L(64), Y(372))], 0.5, cz, segs=6, smooth=False)
+    m.disc("chrome", L(64), Y(372), 0.5, cz, segs=6, up=True)
+    m.cylinder("chrome", L(46), Y(372), Y(300), 0.5, cz, segs=20)
+
+    zg = cz - L(58)
+    m.tube("chrome", [(X(490), Y(345), cz - L(40)), (X(490), Y(345), zg)], L(10), segs=10)
+    gauge = Mesh()
+    gauge.cylinder("chrome", L(40), 0.0, L(14), cx=0, cz=0, segs=24)
+    gauge.lathe("chrome", [(L(40), L(14)), (L(40), L(18)), (L(37), L(21)), (L(33), L(21)), (L(33), L(18.6))],
+                cx=0, cz=0, segs=24)
+    m.merge(gauge.transformed(chain(rot_x(-90, 0, 0), translate(X(490), Y(345), zg))))
+    _front_disc(m, "extinguisher_gauge", X(490), Y(345), zg - L(18.5), L(33))
+
+    screw0 = (X(452), Y(352), cz - L(22))
+    screw1 = (X(426), Y(382), cz - L(30))
+    screw2 = (X(410), Y(400), cz - L(35))
+    m.tube("chrome", [screw0, screw1], L(9), segs=10)
+    m.tube("chrome", [screw1, screw2], L(17), segs=12)
+
+    # ---- Outlet nipple and crimped ferrule on the left, then the hose.
+    m.tube("chrome", [(X(446), Y(333), cz), (X(418), Y(333), cz)], L(16), segs=12)
+    m.tube("chrome", [(X(420), Y(333), cz), (X(350), Y(333), cz)], L(26), segs=14)
+    for a, b in ((410, 400), (362, 352)):
+        m.tube("chrome", [(X(a), Y(333), cz), (X(b), Y(333), cz)], L(28.5), segs=14)
+    hose = [(358, 333), (300, 336), (250, 350), (205, 380), (165, 430), (138, 500), (122, 600), (116, 750),
+            (116, 900), (120, 1050), (132, 1170), (162, 1260), (200, 1310), (214, 1360), (220, 1420),
+            (228, 1462)]
+    m.tube("rubber", [(X(x), Y(y), cz) for x, y in hose], L(21), segs=12)
+
+    # ---- Nozzle hanging by the foot: crimped ferrule, black diffuser, dark mouth.
+    nx = X(228)
+    m.cylinder("chrome", L(27), Y(1525), Y(1450), nx, cz, segs=14)
+    for a, b in ((1462, 1470), (1505, 1513)):
+        m.cylinder("chrome", L(29.5), Y(b), Y(a), nx, cz, segs=14)
+    nozzle = [(30, 1525), (40, 1535), (44, 1560), (44, 1800), (42, 1822), (36, 1834), (26, 1840)]
+    m.lathe("black", [(L(r), Y(y)) for r, y in nozzle], nx, cz, segs=16)
+    m.disc("rubber", L(26), Y(1840), nx, cz, segs=16, up=False)
+
+    # ---- Bracket screwed on the tank, clamping the hose above the nozzle.
+    m.box("black", 0.585, Y(1432), cz - L(32), 0.614, Y(1342), cz + L(32))
+    m.box("black", 0.612, Y(1420), cz - L(20), 0.624, Y(1356), cz + L(20))
+    m.box("black", 0.622, Y(1420), cz - L(27), 0.652, Y(1356), cz + L(27))
+    m.tube("chrome", [(0.600, Y(1387), cz - L(32)), (0.600, Y(1387), cz - L(38))], L(9), segs=10)
+
+    # ---- Head, levers, pivot, safety pin and seal. Drawn in a vertical plane pointing -X, then swung 25 degrees
+    # towards the back, the way the levers sit on the real valve.
+    head = Mesh()
+    zl0, zl1 = cz - L(22), cz + L(22)
+    head.bevel_box("chrome", X(560), Y(305), cz - L(30), X(462), Y(262), cz + L(30), L(6))
+    upper = [(500, 292), (545, 250), (640, 190), (760, 130), (905, 62)]
+    _flat_bar(head, "red", [(X(x), Y(y)) for x, y in upper], [L(t) for t in (64, 58, 52, 46, 40)], zl0, zl1)
+    lower = [(510, 305), (600, 318), (720, 338), (880, 372)]
+    _flat_bar(head, "red", [(X(x), Y(y)) for x, y in lower], [L(t) for t in (56, 52, 48, 44)], zl0, zl1)
+    head.tube("chrome", [(X(515), Y(283), cz - L(34)), (X(515), Y(283), cz + L(34))], L(9), segs=10)
+    head.tube("chrome", [(X(560), Y(312), cz - L(26)), (X(560), Y(312), cz + L(26))], L(7), segs=10)
+    head.tube("chrome", [(X(600), Y(262), cz - L(30)), (X(600), Y(262), cz + L(30))], L(3.5), segs=8)
+    _ring(head, "chrome", (X(600), Y(238), cz - L(30)), L(22), L(3.5), "xy", segs=16, tsegs=6)
+    head.tube("yellow", [(X(588), Y(258), cz - L(31)), (X(568), Y(282), cz - L(33))], L(2.5), segs=6)
+    head.box("yellow", X(574), Y(298), cz - L(36), X(558), Y(280), cz - L(31))
+    m.merge(head.transformed(rot_y(-25, X(490), cz)))
+
+    # ---- Prints: main label on the front, approval strip to its right, inspection sticker on the back.
+    r = L(180) + 0.0012
+    _wrap_print(m, "extinguisher_label", 0.5, cz, r, Y(1630), Y(830), -math.pi / 2, math.radians(62), segs=16)
+    _wrap_print(m, "extinguisher_side", 0.5, cz, r, Y(1350), Y(835), -math.pi / 2 - math.radians(75),
+                math.radians(8), segs=3)
+    _wrap_print(m, "extinguisher_check", 0.5, cz, r, Y(1110), Y(950), math.pi / 2, math.radians(16), segs=4)
+    return m
+
+

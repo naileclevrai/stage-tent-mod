@@ -35,9 +35,6 @@ for name in ("beer_tap", "beer_keg", "co2_cylinder"):
             if ch in icons.FIXED:
                 base.putpixel((x, y), (*icons.FIXED[ch], 255))
     base.save(os.path.join(item_tex, name + ".png"))
-    with open(os.path.join(ASSETS, "models", "item", name + ".json"), "w", encoding="utf-8", newline="\n") as f:
-        json.dump({"parent": "minecraft:item/generated", "textures": {"layer0": "stagetents:item/" + name}}, f, indent=2)
-        f.write("\n")
 
 
 def _icon(name, draw):

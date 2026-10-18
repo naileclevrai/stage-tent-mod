@@ -1,8 +1,7 @@
-"""Pixel-art inventory icons (16x16) for the stage and site props, in the flat front-view style of the tent items.
+"""Pixel-art inventory icons (16x16) for the tents, drapes and tools.
 
-Layer 0 holds the fixed colours; layer 1 holds the dyed part in greys, tinted in game with the block's colour.
+Block items use their 3D model in the creative menu. These sheets stay for the pieces whose block model is only a plate.
 """
-import json
 import os
 
 from PIL import Image
@@ -10,8 +9,10 @@ from PIL import Image
 N = 16
 FIXED = {
     "K": (38, 38, 42), "k": (68, 68, 74), "g": (104, 108, 114), "s": (154, 158, 166), "S": (198, 200, 206),
+    "O": (226, 112, 28),
     "C": (234, 236, 240), "W": (242, 240, 234), "w": (206, 204, 198), "B": (120, 86, 58), "b": (90, 64, 44),
     "R": (194, 46, 38), "G": (80, 200, 110), "L": (58, 100, 210), "Y": (242, 198, 46),
+    "l": (150, 192, 62), "n": (30, 34, 50),
 }
 TINT = {"1": 246, "2": 212, "3": 172, "4": 128}
 
@@ -190,21 +191,21 @@ ICONS = {
     # Point d'eau: rail, dosseret, robinet, savon, bassine, caisson, pédale, poubelle.
     "wash_station": [
         "................",
-        "......CCCC......",
-        ".....C....C.....",
-        "....SSSSSSSS....",
-        "....S.CC.WW.S...",
-        "....SSSSSSSS....",
-        "...ssssssssss...",
-        "...skkkkkkkks...",
-        "...skkkkkkkks...",
-        "...ssssssssss...",
-        "....ssssssss....",
-        "....ssssssss....",
-        "....s......s....",
-        "....s..KK..s....",
-        ".....sKKKKs.....",
-        "......ssss......",
+        "....CCCCCCCC....",
+        "....WWggggWW....",
+        "....WWggggWW....",
+        "....WWWWWWWW....",
+        "...WWWWWWWWWW...",
+        "...W.kkkkkk.W...",
+        "...W.kkkkkk.W...",
+        "...WWWWWWWWWW...",
+        "...W........W...",
+        "...W......C.W...",
+        "...W........W...",
+        "...WWWWWWWWWW...",
+        "....K..KK..K....",
+        "................",
+        "................",
     ],
     # Sanitaire de chantier: dôme, porte nervurée, voyant, manche, évent.
     "site_toilet": [
@@ -887,6 +888,101 @@ ICONS = {
         ".....KKKKKK.....",
         "......kkkk......",
     ],
+    # Borne de tri : deux coffres, couvercle jaune et couvercle noir, ouvertures rondes.
+    "sorting_bins": [
+        "................",
+        ".YYKKKYYKKSSSKK.",
+        ".YYYYYYYKKKKKKK.",
+        ".YYYLYYYKKKSKKK.",
+        ".YYYYYYYKKKKKKK.",
+        ".llllYlllnllRRn.",
+        ".lWWWYlllnlRlRn.",
+        ".lWWlYlllnllRRn.",
+        ".lWWWYlllnlllln.",
+        ".lRllYlllllllln.",
+        ".llllYlllWWWlln.",
+        ".llWlYlllWWllln.",
+        ".llllYlllllllln.",
+        ".llllYlllllllln.",
+        "................",
+        "................",
+    ],
+    # Extincteur au sol : levier, manomètre, corps, étiquette, tuyau, lance, semelle.
+    "extinguisher": [
+        "................",
+        "......RRRR......",
+        ".....RRRRRR.....",
+        "......kkkk......",
+        ".....kRRRRk.....",
+        "......RRRR......",
+        ".k....WRRW......",
+        ".k....WRRW......",
+        ".k....WRRW......",
+        ".kk...RRRR......",
+        "..k...RRRR......",
+        "..kkk.RRRR......",
+        "...k..RRRR......",
+        "......RRRR......",
+        "....KKKKKKKK....",
+        "...KKKKKKKKKK...",
+    ],
+    # Plot de chantier : lentille, cage, fût orange, bande, socle.
+    "work_light": [
+        "................",
+        ".......KK.......",
+        "......KssK......",
+        "......KYYK......",
+        "......KssK......",
+        "......KKKK......",
+        ".......kk.......",
+        ".......OO.......",
+        "......ORgO......",
+        "......OWWO......",
+        ".......OO.......",
+        ".......OO.......",
+        "......OOOO......",
+        ".....KKKKKK.....",
+        "...KKKKKKKKKK...",
+        "................",
+    ],
+    # Grand cône de route : trou d'empilage, deux collerettes, semelle lestée.
+    "traffic_cone": [
+        ".......kk.......",
+        "......OOOk......",
+        "......OOOO......",
+        ".....OOOOO......",
+        ".....OWWWO......",
+        "....OOOOOOO.....",
+        "....OOOOOOO.....",
+        "...OWWWWWWO.....",
+        "...OOOOOOOOO....",
+        "..OOOOOOOOOOO...",
+        "..OOOOOOOOOOO...",
+        "KKKKKKKKKKKKKKKK",
+        "KKKKKKKKKKKKKKKK",
+        "K..............K",
+        "................",
+        "................",
+    ],
+    # Ardoise : plaque, tringle, chaînes, cadre teinté, traits de craie, bâton et gomme.
+    "menu_board": [
+        "................",
+        "..SSSSSSSSSSSS..",
+        "..Sk........kS..",
+        "...kSSSSSSSSk...",
+        "....K......K....",
+        "....K......K....",
+        ".11111111111111.",
+        ".1KKKKKKKKKKKK1.",
+        ".1KWWWWWWWWWWK1.",
+        ".1K..........K1.",
+        ".1KWWW....WWWK1.",
+        ".1K..........K1.",
+        ".1KWWWW..WWWWK1.",
+        ".1KKKKKKKKKKKK1.",
+        ".11111111111111.",
+        "..1WWW....ggg11.",
+    ],
 }
 
 
@@ -905,11 +1001,6 @@ def write_all(assets):
                     v = TINT[ch]
                     dyed.putpixel((x, y), (v, v, v, 255))
         base.save(os.path.join(folder, name + ".png"))
-        layers = {"layer0": f"stagetents:item/{name}"}
         if dyed.getbbox():
             dyed.save(os.path.join(folder, name + "_dye.png"))
-            layers["layer1"] = f"stagetents:item/{name}_dye"
-        with open(os.path.join(assets, "models", "item", name + ".json"), "w", encoding="utf-8", newline="\n") as f:
-            json.dump({"parent": "item/generated", "textures": layers}, f, indent=2)
-            f.write("\n")
     return sorted(ICONS)

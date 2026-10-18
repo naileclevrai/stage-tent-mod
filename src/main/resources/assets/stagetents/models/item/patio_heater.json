@@ -1,7 +1,107 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "stagetents:item/patio_heater",
-    "layer1": "stagetents:item/patio_heater_dye"
+  "parent": "stagetents:block/props/patio_heater",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0.0,
+        -4.606,
+        0
+      ],
+      "scale": [
+        0.2524,
+        0.2524,
+        0.2524
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.08000000000000002,
+        0.08000000000000002,
+        0.08000000000000002
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.16000000000000003,
+        0.16000000000000003,
+        0.16000000000000003
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.12,
+        0.12,
+        0.12
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.128,
+        0.128,
+        0.128
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.128,
+        0.128,
+        0.128
+      ]
+    }
   }
 }

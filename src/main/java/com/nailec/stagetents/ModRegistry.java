@@ -22,6 +22,11 @@ import com.nailec.stagetents.furniture.PendrillonBlock;
 import com.nailec.stagetents.furniture.ParasolBlock;
 import com.nailec.stagetents.furniture.PatioHeaterBlock;
 import com.nailec.stagetents.furniture.PlanchaBlock;
+import com.nailec.stagetents.furniture.MenuBoardBlock;
+import com.nailec.stagetents.furniture.WorkLightBlock;
+import com.nailec.stagetents.furniture.TrafficConeBlock;
+import com.nailec.stagetents.furniture.ExtinguisherBlock;
+import com.nailec.stagetents.furniture.SortingBinsBlock;
 import com.nailec.stagetents.furniture.PicnicTableBlock;
 import com.nailec.stagetents.furniture.FoldingTableBlock;
 import com.nailec.stagetents.furniture.FestoonBlock;
@@ -33,7 +38,10 @@ import com.nailec.stagetents.furniture.DraftBlockEntity;
 import com.nailec.stagetents.furniture.DraftBlockItem;
 import com.nailec.stagetents.furniture.BeerHoseItem;
 import com.nailec.stagetents.furniture.BeerMugItem;
+import com.nailec.stagetents.furniture.CableToolItem;
 import com.nailec.stagetents.furniture.PowerDistroBlock;
+import com.nailec.stagetents.furniture.PowerNodeBlockEntity;
+import com.nailec.stagetents.furniture.PowerRackBlock;
 import com.nailec.stagetents.furniture.CurtainBlock;
 import com.nailec.stagetents.furniture.FriseBlock;
 import com.nailec.stagetents.furniture.DrapeBlockEntity;
@@ -170,8 +178,7 @@ public final class ModRegistry {
                     .pushReaction(PushReaction.BLOCK).isValidSpawn((s, l, p, e) -> false)
                     .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)));
     public static final RegistryObject<PowerDistroBlock> POWER_DISTRO = BLOCKS.register("power_distro", () -> new PowerDistroBlock(furnitureProps(SoundType.STONE)));
-    public static final RegistryObject<FurnitureBlock> POWER_RACK = BLOCKS.register("power_rack", () -> new FurnitureBlock(
-            furnitureProps(SoundType.METAL), Spec.of(true, DyeColor.BLACK, new double[]{0.2, 0, 1.6, 15.8, 15.9, 13.8})));
+    public static final RegistryObject<PowerRackBlock> POWER_RACK = BLOCKS.register("power_rack", () -> new PowerRackBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<CableRampBlock> CABLE_RAMP = BLOCKS.register("cable_ramp", () -> new CableRampBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(1.0F).sound(SoundType.WOOL).noOcclusion()));
     public static final RegistryObject<WaterCannonBlock> WATER_CANNON = BLOCKS.register("water_cannon", () -> new WaterCannonBlock(furnitureProps(SoundType.METAL)));
@@ -183,6 +190,11 @@ public final class ModRegistry {
     public static final RegistryObject<ParasolBlock> PARASOL = BLOCKS.register("parasol", () -> new ParasolBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PatioHeaterBlock> PATIO_HEATER = BLOCKS.register("patio_heater", () -> new PatioHeaterBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<PlanchaBlock> PLANCHA = BLOCKS.register("plancha", () -> new PlanchaBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<MenuBoardBlock> MENU_BOARD = BLOCKS.register("menu_board", () -> new MenuBoardBlock(furnitureProps(SoundType.WOOD)));
+    public static final RegistryObject<WorkLightBlock> WORK_LIGHT = BLOCKS.register("work_light", () -> new WorkLightBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<TrafficConeBlock> TRAFFIC_CONE = BLOCKS.register("traffic_cone", () -> new TrafficConeBlock(furnitureProps(SoundType.WOOL)));
+    public static final RegistryObject<ExtinguisherBlock> EXTINGUISHER = BLOCKS.register("extinguisher", () -> new ExtinguisherBlock(furnitureProps(SoundType.METAL)));
+    public static final RegistryObject<SortingBinsBlock> SORTING_BINS = BLOCKS.register("sorting_bins", () -> new SortingBinsBlock(furnitureProps(SoundType.STONE)));
     public static final RegistryObject<FestoonBlock> FESTOON = BLOCKS.register("festoon", () -> new FestoonBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<BeerTapBlock> BEER_TAP = BLOCKS.register("beer_tap", () -> new BeerTapBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<BeerKegBlock> BEER_KEG = BLOCKS.register("beer_keg", () -> new BeerKegBlock(furnitureProps(SoundType.METAL)));
@@ -218,6 +230,11 @@ public final class ModRegistry {
     public static final RegistryObject<Item> PARASOL_ITEM = blockItem("parasol", PARASOL);
     public static final RegistryObject<Item> PATIO_HEATER_ITEM = blockItem("patio_heater", PATIO_HEATER);
     public static final RegistryObject<Item> PLANCHA_ITEM = blockItem("plancha", PLANCHA);
+    public static final RegistryObject<Item> MENU_BOARD_ITEM = blockItem("menu_board", MENU_BOARD);
+    public static final RegistryObject<Item> WORK_LIGHT_ITEM = blockItem("work_light", WORK_LIGHT);
+    public static final RegistryObject<Item> TRAFFIC_CONE_ITEM = blockItem("traffic_cone", TRAFFIC_CONE);
+    public static final RegistryObject<Item> EXTINGUISHER_ITEM = blockItem("extinguisher", EXTINGUISHER);
+    public static final RegistryObject<Item> SORTING_BINS_ITEM = blockItem("sorting_bins", SORTING_BINS);
     public static final RegistryObject<Item> FESTOON_ITEM = blockItem("festoon", FESTOON);
     public static final RegistryObject<Item> BEER_TAP_ITEM = blockItem("beer_tap", BEER_TAP);
     public static final RegistryObject<Item> BEER_KEG_ITEM = ITEMS.register("beer_keg",
@@ -265,6 +282,7 @@ public final class ModRegistry {
     public static final RegistryObject<Item> SHOOTING_GALLERY_ITEM = ITEMS.register("shooting_gallery",
             () -> new BlockItem(SHOOTING_GALLERY.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WRENCH = ITEMS.register("tent_wrench", () -> new TentWrenchItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CABLE_TOOL = ITEMS.register("cable_tool", () -> new CableToolItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ACCESS_BADGE = ITEMS.register("access_badge",
             () -> new AccessBadgeItem(new Item.Properties().stacksTo(16)));
 
@@ -287,6 +305,8 @@ public final class ModRegistry {
             () -> BlockEntityType.Builder.of(FestoonBlockEntity::new, FESTOON.get()).build(null));
     public static final RegistryObject<BlockEntityType<DraftBlockEntity>> DRAFT_BE = BLOCK_ENTITIES.register("draft",
             () -> BlockEntityType.Builder.of(DraftBlockEntity::new, BEER_TAP.get(), BEER_KEG.get(), CO2_CYLINDER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<PowerNodeBlockEntity>> POWER_NODE_BE = BLOCK_ENTITIES.register("power_node",
+            () -> BlockEntityType.Builder.of(PowerNodeBlockEntity::new, GENERATOR.get(), POWER_DISTRO.get(), POWER_RACK.get()).build(null));
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stagetents"))
@@ -310,6 +330,11 @@ public final class ModRegistry {
                 out.accept(PARASOL_ITEM.get());
                 out.accept(PATIO_HEATER_ITEM.get());
                 out.accept(PLANCHA_ITEM.get());
+                out.accept(MENU_BOARD_ITEM.get());
+                out.accept(WORK_LIGHT_ITEM.get());
+                out.accept(TRAFFIC_CONE_ITEM.get());
+                out.accept(EXTINGUISHER_ITEM.get());
+                out.accept(SORTING_BINS_ITEM.get());
                 out.accept(FESTOON_ITEM.get());
                 out.accept(FOLDING_TABLE_ITEM.get());
                 out.accept(BAR_COUNTER_ITEM.get());
@@ -353,6 +378,7 @@ public final class ModRegistry {
                 out.accept(ORIFLAMME_ITEM.get());
                 out.accept(SHOOTING_GALLERY_ITEM.get());
                 out.accept(WRENCH.get());
+                out.accept(CABLE_TOOL.get());
             })
             .build());
 

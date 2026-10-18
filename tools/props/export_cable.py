@@ -117,18 +117,15 @@ for n in range(1, 6):
         parts += facing_parts(name, when)
 
 blockstate("cable_ramp", parts)
-# model() also writes a 3D item json per variant. Only the flat icon is an item.
+# The item shows the single-channel ramp. The other variants are not items.
+kept = os.path.join(ASSETS, "models", "item", "cable_ramp_1.json")
+dest = os.path.join(ASSETS, "models", "item", "cable_ramp.json")
+if os.path.exists(kept):
+    os.replace(kept, dest)
 for n in range(1, 6):
     for suffix in ("", "_open"):
         extra = os.path.join(ASSETS, "models", "item", f"cable_ramp_{n}{suffix}.json")
         if os.path.exists(extra):
             os.remove(extra)
-item = {
-    "parent": "item/generated",
-    "textures": {"layer0": "stagetents:item/cable_ramp"},
-}
-with open(os.path.join(ASSETS, "models", "item", "cable_ramp.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 for name, tris, x0, y0, z0, x1, y1, z1, span in report:
     print(f"{name:22} {tris:5d}  bbox {x0:.3f} {y0:.3f} {z0:.3f}  {x1:.3f} {y1:.3f} {z1:.3f}  uv {span:.3f}  w {x1 - x0:.3f}")

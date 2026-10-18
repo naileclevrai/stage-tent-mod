@@ -32,13 +32,6 @@ for y, row in enumerate(rows):
             dyed.putpixel((x, y), (v, v, v, 255))
 base.save(os.path.join(folder, "patio_heater.png"))
 dyed.save(os.path.join(folder, "patio_heater_dye.png"))
-item = {
-    "parent": "minecraft:item/generated",
-    "textures": {"layer0": "stagetents:item/patio_heater", "layer1": "stagetents:item/patio_heater_dye"},
-}
-with open(os.path.join(ASSETS, "models", "item", "patio_heater.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
 lit_item = os.path.join(ASSETS, "models", "item", "patio_heater_lit.json")
 if os.path.exists(lit_item):
     os.remove(lit_item)

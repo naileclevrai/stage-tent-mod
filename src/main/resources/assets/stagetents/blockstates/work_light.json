@@ -1,0 +1,82 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "stagetents:block/props/work_light_lit",
+        "y": 270
+      }
+    }
+  ]
+}

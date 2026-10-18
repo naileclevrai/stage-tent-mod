@@ -31,6 +31,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModRegistry.CONTROL_TOWER_BE.get(), ControlTowerRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.FESTOON_BE.get(), FestoonRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.DRAFT_BE.get(), DraftHoseRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.POWER_NODE_BE.get(), PowerNodeRenderer::new);
     }
 
     /** The barrel is not in the blockstate: it is turned by {@link WaterCannonRenderer}. */
@@ -57,10 +58,10 @@ public final class ClientSetup {
                 ModRegistry.SITE_TOILET.get(), ModRegistry.SITE_FENCE.get(), ModRegistry.ORIFLAMME.get(),
                 ModRegistry.WATER_CANNON.get(), ModRegistry.POWER_RACK.get(), ModRegistry.LIGHT_TOWER.get(),
                 ModRegistry.CONTROL_TOWER.get(), ModRegistry.PARASOL.get(), ModRegistry.PICNIC_TABLE.get(),
-                ModRegistry.PATIO_HEATER.get(), ModRegistry.PLANCHA.get());
+                ModRegistry.PATIO_HEATER.get(), ModRegistry.PLANCHA.get(), ModRegistry.MENU_BOARD.get());
     }
 
-    /** Pixel-art icons of the stage and site props: layer 1 is the dyed part, shown in the block's default colour. */
+    /** Dyed part of a prop. The 3D item uses tint 0; a leftover pixel icon uses tint 1. */
     @SubscribeEvent
     public static void itemColors(RegisterColorHandlersEvent.Item event) {
         Item[] items = {ModRegistry.STAGE_DECK_ITEM.get(), ModRegistry.STAGE_STAIRS_ITEM.get(), ModRegistry.STAGE_RAMP_ITEM.get(),
@@ -73,9 +74,10 @@ public final class ClientSetup {
                 ModRegistry.BLEACHER_ITEM.get(), ModRegistry.BLEACHER_AISLE_ITEM.get(), ModRegistry.STANCHION_ITEM.get(),
                 ModRegistry.WATER_CANNON_ITEM.get(), ModRegistry.POWER_RACK_ITEM.get(), ModRegistry.LIGHT_TOWER_ITEM.get(),
                 ModRegistry.CONTROL_TOWER_ITEM.get(), ModRegistry.PARASOL_ITEM.get(), ModRegistry.PATIO_HEATER_ITEM.get(),
-                ModRegistry.PLANCHA_ITEM.get(), ModRegistry.FESTOON_ITEM.get()};
+                ModRegistry.PLANCHA_ITEM.get(), ModRegistry.MENU_BOARD_ITEM.get(), ModRegistry.FESTOON_ITEM.get(),
+                ModRegistry.PICNIC_TABLE_ITEM.get()};
         event.register((stack, tint) -> {
-            if (tint != 1 || !(stack.getItem() instanceof BlockItem block)) return -1;
+            if ((tint != 0 && tint != 1) || !(stack.getItem() instanceof BlockItem block)) return -1;
             return dyeTint(block.getBlock().defaultBlockState());
         }, items);
     }

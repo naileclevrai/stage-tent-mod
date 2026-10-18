@@ -1,6 +1,107 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "stagetents:item/co2_cylinder"
+  "parent": "stagetents:block/props/co2_cylinder",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0.047,
+        -2.73,
+        0
+      ],
+      "scale": [
+        0.5297,
+        0.5297,
+        0.5297
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.15200000000000002,
+        0.15200000000000002,
+        0.15200000000000002
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.30400000000000005,
+        0.30400000000000005,
+        0.30400000000000005
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.22799999999999998,
+        0.22799999999999998,
+        0.22799999999999998
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.2432,
+        0.2432,
+        0.2432
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.2432,
+        0.2432,
+        0.2432
+      ]
+    }
   }
 }

@@ -126,6 +126,12 @@ def main():
     report["patio_heater_lit"] = model(props.patio_heater(True), "patio_heater_lit", tinted=("paint",), gui_scale=0.20, gui_offset=(0, -1.6, 0))
     report["plancha"] = model(props.plancha(False), "plancha", tinted=("paint",), gui_scale=0.55, gui_offset=(0, -0.15, 0))
     report["plancha_lit"] = model(props.plancha(True), "plancha_lit", tinted=("paint",), gui_scale=0.55, gui_offset=(0, -0.15, 0))
+    report["menu_board"] = model(props.menu_board(), "menu_board", tinted=("paint",), gui_scale=0.72, gui_offset=(0, -0.05, 0))
+    report["work_light"] = model(props.work_light(False), "work_light", gui_scale=0.8)
+    report["work_light_lit"] = model(props.work_light(True), "work_light_lit", gui_scale=0.8)
+    report["traffic_cone"] = model(props.traffic_cone(), "traffic_cone", gui_scale=0.9)
+    report["extinguisher"] = model(props.extinguisher(), "extinguisher", gui_scale=1.05)
+    report["sorting_bins"] = model(props.sorting_bins(), "sorting_bins", gui_scale=0.7)
     report["festoon"] = model(props.festoon(), "festoon", gui_scale=0.32, gui_offset=(0, -1.2, 0))
     report["beer_tap"] = model(props.beer_tap(), "beer_tap", gui_scale=0.7)
     report["beer_tap_bar"] = model(props.beer_tap(True), "beer_tap_bar", gui_scale=0.7)
@@ -157,6 +163,7 @@ def main():
     # The connecting parts are not items.
     extra_items = ["guide_rail_corner", "site_toilet_open", "site_fence_end_left", "site_fence_end_right", "site_fence_joint", "site_fence_end",
                    "water_cannon_base", "beer_tap_bar", "light_tower_section", "light_tower_yoke", "light_tower_lamp", "patio_heater_lit", "plancha_lit",
+                   "work_light_lit",
                    "cyclorama_end_left", "cyclorama_end_right", "stage_stairs_end_left", "stage_stairs_end_right",
                    "stage_ramp_end_left", "stage_ramp_end_right"] + ["water_cannon_barrel_%d" % i for i in range(11)]
     for level in range(1, 5):
@@ -221,6 +228,14 @@ def main():
     for flag, name in (("false", "plancha"), ("true", "plancha_lit")):
         plancha += facing_parts(name, {"lit": flag})
     blockstate("plancha", plancha)
+    blockstate("menu_board", facing_parts("menu_board"))
+    work_light = []
+    for flag, name in (("false", "work_light"), ("true", "work_light_lit")):
+        work_light += facing_parts(name, {"lit": flag})
+    blockstate("work_light", work_light)
+    blockstate("traffic_cone", facing_parts("traffic_cone"))
+    blockstate("extinguisher", facing_parts("extinguisher"))
+    blockstate("sorting_bins", facing_parts("sorting_bins"))
     blockstate("festoon", one("festoon"))
     blockstate("beer_tap", facing_parts("beer_tap", {"bar": "false"}) + facing_parts("beer_tap_bar", {"bar": "true"}))
     blockstate("beer_keg", one("beer_keg"))
@@ -238,8 +253,8 @@ def main():
     deck_icon = os.path.join(ASSETS, "models", "item", "stage_deck.json")
     if os.path.exists(deck_item):
         os.replace(deck_item, deck_icon)
-    # Stage and site props show a pixel-art icon in the inventory instead of the 3D model.
-    print("icons:", ", ".join(icons.write_all(ASSETS)))
+    # Pixel sheets stay on disk for the tents and drapes. Block items keep the model model() just wrote.
+    icons.write_all(ASSETS)
     # Invisible collision cells of multi-block props.
     forms = ["full", "panel_x", "panel_z", "wall_x", "wall_z", "pole", "table_x", "table_z",
              "fold_x", "fold_z", "fold_end_x", "fold_end_z", "tower_x", "tower_z",

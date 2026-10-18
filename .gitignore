@@ -37,3 +37,7 @@ desktop.ini
 *.bak
 *.swp
 .env
+
+# Prop tools
+__pycache__/
+tools/props/preview/

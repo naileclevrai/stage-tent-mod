@@ -271,7 +271,9 @@ def make_all(folder):
     make_co2(folder)
     make_pint(folder)
     make_plancha(folder)
-    return sorted(list(tex) + ["booth_sign", "wc_sign"] + [f"co2_{i}" for i in range(12)] + ["co2_blue", "pint_glass", "beer_liquid", "beer_foam", "plancha_hot", "plancha_meat", "plancha_sausage"])
+    make_bins(folder)
+    make_extinguisher(folder)
+    return sorted(list(tex) + ["booth_sign", "wc_sign"] + [f"co2_{i}" for i in range(12)] + ["co2_blue", "pint_glass", "beer_liquid", "beer_foam", "plancha_hot", "plancha_meat", "plancha_sausage", "bin_plastic", "bin_divers", "bin_plastic_side", "bin_divers_side", "bin_lid_plastic", "bin_lid_divers", "bin_top_plastic", "bin_top_divers", "bin_mustard", "bin_navy", "bin_yellow", "bin_black", "extinguisher_label", "extinguisher_side", "extinguisher_gauge", "extinguisher_check"])
 
 
 def make_co2(folder):
@@ -366,3 +368,375 @@ def make_plancha(folder):
             spec = 40 if rnd.random() < 0.08 else 0
             px[x, y] = (_clamp(168 + n + spec), _clamp(72 + n * 0.3 + spec * 0.4), _clamp(42 + n * 0.2), 255)
     sausage.save(os.path.join(folder, "plancha_sausage.png"))
+
+
+def _font(size):
+    try:
+        return ImageFont.truetype(r"C:\Windows\Fonts\arialbd.ttf", size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def _centered(draw, text, font, box, fill):
+    x0, y0, x1, y1 = box
+    bb = draw.textbbox((0, 0), text, font=font)
+    tw, th = bb[2] - bb[0], bb[3] - bb[1]
+    draw.text((x0 + (x1 - x0 - tw) / 2 - bb[0], y0 + (y1 - y0 - th) / 2 - bb[1]), text, font=font, fill=fill)
+
+
+def _bottle(d, x, y, s, fill, line):
+    cap = (236, 206, 32, 255)
+    d.rounded_rectangle([x + 0.36 * s, y, x + 0.64 * s, y + 0.10 * s], radius=3, fill=cap, outline=line, width=3)
+    d.rectangle([x + 0.42 * s, y + 0.09 * s, x + 0.58 * s, y + 0.24 * s], fill=fill, outline=line, width=3)
+    d.rounded_rectangle([x + 0.16 * s, y + 0.22 * s, x + 0.84 * s, y + 0.96 * s], radius=max(4, int(0.12 * s)),
+                        fill=fill, outline=line, width=4)
+    d.line([(x + 0.30 * s, y + 0.40 * s), (x + 0.30 * s, y + 0.78 * s)], fill=(255, 255, 255, 210), width=3)
+
+
+def _cup(d, x, y, s, fill, line):
+    d.rounded_rectangle([x + 0.18 * s, y + 0.10 * s, x + 0.82 * s, y + 0.20 * s], radius=3, fill=fill, outline=line, width=3)
+    d.polygon([
+        (x + 0.24 * s, y + 0.18 * s), (x + 0.76 * s, y + 0.18 * s),
+        (x + 0.66 * s, y + 0.86 * s), (x + 0.34 * s, y + 0.86 * s),
+    ], fill=fill, outline=line)
+    d.line([(x + 0.24 * s, y + 0.18 * s), (x + 0.34 * s, y + 0.86 * s), (x + 0.66 * s, y + 0.86 * s),
+            (x + 0.76 * s, y + 0.18 * s)], fill=line, width=4)
+    d.arc([x + 0.68 * s, y + 0.28 * s, x + 1.02 * s, y + 0.68 * s], -80, 80, fill=line, width=4)
+
+
+def _carton(d, x, y, s, fill, line):
+    d.polygon([
+        (x + 0.18 * s, y + 0.28 * s), (x + 0.55 * s, y + 0.10 * s), (x + 0.92 * s, y + 0.28 * s),
+        (x + 0.92 * s, y + 0.82 * s), (x + 0.55 * s, y + 0.98 * s), (x + 0.18 * s, y + 0.82 * s),
+    ], fill=fill, outline=line)
+    d.line([(x + 0.18 * s, y + 0.28 * s), (x + 0.55 * s, y + 0.46 * s), (x + 0.92 * s, y + 0.28 * s)], fill=line, width=3)
+    d.line([(x + 0.55 * s, y + 0.46 * s), (x + 0.55 * s, y + 0.98 * s)], fill=line, width=3)
+
+
+def _wave(d, x0, x1, y, amp, period, fill, width):
+    pts = [(x, y + amp * math.sin((x - x0) / period * math.tau)) for x in range(int(x0), int(x1) + 1, 2)]
+    d.line(pts, fill=fill, width=width, joint="curve")
+
+
+def _recycle(d, cx, cy, r, fill, width):
+    """Three chasing arrows on a triangle."""
+    v = [(cx + r * math.cos(math.radians(-90 + 120 * k)), cy + r * math.sin(math.radians(-90 + 120 * k)))
+         for k in range(3)]
+    for k in range(3):
+        (ax, ay), (bx, by) = v[k], v[(k + 1) % 3]
+        p = lambda t: (ax + (bx - ax) * t, ay + (by - ay) * t)
+        d.line([p(0.12), p(0.62)], fill=fill, width=width)
+        dx, dy = bx - ax, by - ay
+        ln = math.hypot(dx, dy)
+        nx, ny = -dy / ln, dx / ln
+        tip = p(0.86)
+        base = p(0.60)
+        s = width * 1.5
+        d.polygon([tip, (base[0] + nx * s, base[1] + ny * s), (base[0] - nx * s, base[1] - ny * s)], fill=fill)
+
+
+def _bottle_badge(d, cx, cy, r, ring, fill):
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=ring)
+    s = r / 20
+    d.rounded_rectangle([cx - 5 * s, cy - 7 * s, cx + 5 * s, cy + 14 * s], radius=3 * s, fill=fill)
+    d.polygon([(cx - 5 * s, cy - 6 * s), (cx - 2.5 * s, cy - 11 * s), (cx + 2.5 * s, cy - 11 * s), (cx + 5 * s, cy - 6 * s)],
+              fill=fill)
+    d.rectangle([cx - 2.5 * s, cy - 15 * s, cx + 2.5 * s, cy - 11 * s], fill=fill)
+
+
+def _trash_badge(d, cx, cy, r, ring, fill):
+    """Person dropping litter into a bin."""
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=ring)
+    s = r / 20
+    d.polygon([(cx + 1 * s, cy + 1 * s), (cx + 13 * s, cy + 1 * s), (cx + 11 * s, cy + 14 * s), (cx + 3 * s, cy + 14 * s)],
+              fill=fill)
+    d.rectangle([cx, cy - 1 * s, cx + 14 * s, cy + 1 * s], fill=fill)
+    d.ellipse([cx - 11 * s, cy - 15 * s, cx - 5 * s, cy - 9 * s], fill=fill)
+    d.line([(cx - 8 * s, cy - 8 * s), (cx - 9 * s, cy + 5 * s)], fill=fill, width=max(2, int(3 * s)))
+    d.line([(cx - 9 * s, cy + 5 * s), (cx - 12 * s, cy + 14 * s)], fill=fill, width=max(2, int(3 * s)))
+    d.line([(cx - 9 * s, cy + 5 * s), (cx - 5 * s, cy + 14 * s)], fill=fill, width=max(2, int(3 * s)))
+    d.line([(cx - 8 * s, cy - 5 * s), (cx - 1 * s, cy - 3 * s)], fill=fill, width=max(2, int(3 * s)))
+    d.rectangle([cx + 4 * s, cy - 7 * s, cx + 7 * s, cy - 4 * s], fill=fill)
+
+
+def _star(d, cx, cy, r0, r1, fill, points=8):
+    pts = []
+    for k in range(points * 2):
+        a = math.pi * k / points - math.pi / 2
+        rr = r1 if k % 2 == 0 else r0
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    d.polygon(pts, fill=fill)
+
+
+def _arc_text(img, text, cx, cy, radius, font, fill, centre_deg=-90):
+    """Letters set on a circle, centred on centre_deg (screen degrees, -90 = top), reading left to right."""
+    d = ImageDraw.Draw(img)
+    widths = [d.textlength(ch, font=font) for ch in text]
+    total = sum(widths) / radius
+    a = math.radians(centre_deg) - total / 2
+    for ch, w in zip(text, widths):
+        mid = a + w / 2 / radius
+        tile = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+        td = ImageDraw.Draw(tile)
+        bb = td.textbbox((0, 0), ch, font=font)
+        td.text((32 - (bb[0] + bb[2]) / 2, 32 - (bb[1] + bb[3]) / 2), ch, font=font, fill=fill)
+        tile = tile.rotate(-math.degrees(mid) - 90, resample=Image.BICUBIC)
+        img.alpha_composite(tile, (int(cx + radius * math.cos(mid) - 32), int(cy + radius * math.sin(mid) - 32)))
+        a += w / radius
+
+
+def make_bins(folder):
+    """Prints for the corrugated festival sorting bins. Generic English wording, no brand.
+
+    Body prints are 256 x 512, lid sides 352 x 160, lid tops 256 x 256 with the hole in the middle.
+    """
+    os.makedirs(folder, exist_ok=True)
+    lime = (150, 192, 62, 255)
+    mustard = (198, 182, 48, 255)
+    yellow = (228, 208, 62, 255)
+    navy = (30, 34, 50, 255)
+    lid_black = (36, 36, 38, 255)
+    white = (250, 250, 246, 255)
+    blue = (46, 150, 222, 255)
+    red = (222, 54, 44, 255)
+    dark = (60, 60, 40, 255)
+
+    for name, colour in (("bin_mustard", mustard), ("bin_navy", navy), ("bin_yellow", yellow),
+                         ("bin_black", lid_black)):
+        Image.new("RGBA", (16, 16), colour).save(os.path.join(folder, name + ".png"))
+
+    def recycle_block(d, y, ink, plastic):
+        _recycle(d, 64, y, 26, ink, 6)
+        if plastic:
+            _centered(d, "5", _font(16), (52, y - 10, 76, y + 12), ink)
+            _centered(d, "PP", _font(13), (44, y + 26, 84, y + 42), ink)
+        _centered(d, "100%", _font(22), (104, y - 30, 236, y - 6), ink)
+        _centered(d, "RECYCLABLE", _font(12), (104, y - 6, 236, y + 8), ink)
+        for x in range(112, 230, 6):
+            d.rectangle([x, y + 12, x + 2, y + 14], fill=ink)
+        _centered(d, "50%", _font(22), (104, y + 18, 236, y + 42), ink)
+        _centered(d, "RECYCLED MATERIAL", _font(10), (104, y + 42, 236, y + 54), ink)
+
+    # ---------------------------------------------------------------- plastics, front
+    img = Image.new("RGBA", (256, 512), lime)
+    d = ImageDraw.Draw(img)
+    d.polygon([(186, 0), (214, 0), (204, 512), (196, 512)], fill=yellow)
+    for k, word in enumerate(("DO THE", "RIGHT", "THING")):
+        d.text((18, 70 + k * 46), word, font=_font(44), fill=white)
+    _star(d, 62, 262, 18, 30, red, 7)
+    d.line([(52, 274), (72, 252)], fill=white, width=5)
+    d.polygon([(76, 248), (62, 250), (74, 262)], fill=white)
+    _wave(d, 196, 256, 330, 7, 22, blue, 8)
+    _recycle(d, 104, 430, 34, white, 8)
+    img.save(os.path.join(folder, "bin_plastic.png"))
+
+    # ---------------------------------------------------------------- plastics, side and back
+    img = Image.new("RGBA", (256, 512), mustard)
+    d = ImageDraw.Draw(img)
+    _wave(d, 0, 76, 86, 7, 22, blue, 8)
+    _centered(d, "PLASTIC", _font(26), (0, 180, 256, 210), white)
+    _bottle_badge(d, 128, 252, 30, blue, white)
+    _wave(d, 160, 256, 360, 7, 22, blue, 8)
+    recycle_block(d, 448, dark, True)
+    img.save(os.path.join(folder, "bin_plastic_side.png"))
+
+    # ---------------------------------------------------------------- general waste, front
+    img = Image.new("RGBA", (256, 512), lime)
+    d = ImageDraw.Draw(img)
+    d.polygon([(70, 0), (112, 0), (96, 330), (86, 330)], fill=navy)
+    d.polygon([(222, 0), (256, 0), (256, 512), (232, 512), (238, 260)], fill=navy)
+    d.ellipse([132, 44, 216, 128], outline=red, width=13)
+    _arc_text(img, "REDUCE · REUSE · RECYCLE ·", 174, 86, 35, _font(9), white, centre_deg=-90)
+    d = ImageDraw.Draw(img)
+    _wave(d, 200, 256, 200, 7, 22, blue, 8)
+    _star(d, 46, 432, 14, 24, red, 7)
+    d.text((70, 380), "SORT", font=_font(40), fill=white)
+    d.text((70, 420), "& RECYCLE", font=_font(24), fill=white)
+    img.save(os.path.join(folder, "bin_divers.png"))
+
+    # ---------------------------------------------------------------- general waste, side and back
+    img = Image.new("RGBA", (256, 512), navy)
+    d = ImageDraw.Draw(img)
+    _wave(d, 0, 76, 86, 7, 22, lime, 8)
+    _centered(d, "GENERAL WASTE", _font(24), (0, 180, 256, 210), white)
+    _trash_badge(d, 128, 252, 30, (150, 150, 150, 255), white)
+    _wave(d, 160, 256, 360, 7, 22, lime, 8)
+    recycle_block(d, 448, white, False)
+    img.save(os.path.join(folder, "bin_divers_side.png"))
+
+    # ---------------------------------------------------------------- lid sides
+    for name, bg, word, badge, ring in (("bin_lid_plastic", yellow, "PLASTIC", _bottle_badge, blue),
+                                       ("bin_lid_divers", lid_black, "GENERAL WASTE", _trash_badge, (150, 150, 150, 255))):
+        img = Image.new("RGBA", (352, 160), bg)
+        d = ImageDraw.Draw(img)
+        _centered(d, word, _font(30), (0, 20, 352, 56), white)
+        badge(d, 176, 104, 30, ring, white)
+        img.save(os.path.join(folder, name + ".png"))
+
+    # ---------------------------------------------------------------- lid tops, hole in the middle
+    for name, bg, ink in (("bin_top_plastic", yellow, (110, 96, 20, 255)),
+                         ("bin_top_divers", lid_black, (170, 170, 170, 255))):
+        img = Image.new("RGBA", (256, 256), bg)
+        d = ImageDraw.Draw(img)
+        d.polygon([(128, 190), (118, 204), (138, 204)], fill=ink)
+        d.rectangle([124, 203, 132, 216], fill=ink)
+        img.save(os.path.join(folder, name + ".png"))
+
+
+def make_extinguisher(folder):
+    """Prints for the 6 kg powder extinguisher. Generic English wording, no brand.
+
+    extinguisher_label wraps 124 degrees around the front, extinguisher_side is the approval strip next to it,
+    extinguisher_gauge is the manometer face and extinguisher_check the inspection sticker on the back.
+    """
+    os.makedirs(folder, exist_ok=True)
+    red = (196, 28, 30, 255)
+    white = (250, 250, 248, 255)
+    ink = (30, 30, 32, 255)
+
+    def centered(d, y, text, size, fill, x0=0, x1=None):
+        font = _font(size)
+        x1 = x1 if x1 is not None else d.im.size[0]
+        w = d.textlength(text, font=font)
+        d.text((x0 + (x1 - x0 - w) / 2, y), text, font=font, fill=fill)
+
+    # ---------------------------------------------------------------- main label, 256 x 512
+    W, H = 256, 512
+    lab = Image.new("RGBA", (W, H), red)
+    d = ImageDraw.Draw(lab)
+    d.rectangle([4, 4, W - 5, H - 5], outline=white, width=3)
+    # Title band and the white tab with the charge.
+    centered(d, 16, "FIRE EXTINGUISHER", 22, white)
+    d.rounded_rectangle([14, 56, W - 15, 88], radius=5, fill=white)
+    centered(d, 61, "6 kg ABC DRY POWDER", 19, red)
+    for i, rating in enumerate(("27A", "183B", "C")):
+        centered(d, 96, rating, 17, white, 12 + i * 77, 12 + (i + 1) * 77)
+    d.line([(14, 122), (W - 15, 122)], fill=white, width=2)
+
+    # Two instruction rows: number box, small pictogram, text.
+    def step(y, num, lines, pin):
+        d.rectangle([14, y, 34, y + 20], outline=white, width=2)
+        centered(d, y + 1, num, 15, white, 14, 35)
+        # Pictogram: the extinguisher head with an arrow (pin out) or a jet towards a flame.
+        d.rounded_rectangle([46, y + 16, 64, y + 40], radius=6, outline=white, width=2)
+        d.rectangle([52, y + 10, 58, y + 16], fill=white)
+        d.line([(57, y + 11), (70, y + 3)], fill=white, width=2)
+        d.line([(52, y + 13), (42, y + 18), (41, y + 36)], fill=white, width=2)
+        if pin:
+            d.ellipse([60, y + 6, 68, y + 14], outline=white, width=2)
+            d.line([(70, y + 10), (86, y + 4)], fill=white, width=2)
+            d.polygon([(86, y + 1), (91, y + 4), (86, y + 8)], fill=white)
+        else:
+            d.line([(66, y + 26), (84, y + 34)], fill=white, width=2)
+            d.polygon([(86, y + 40), (90, y + 28), (94, y + 34), (97, y + 26), (100, y + 40)], fill=(255, 200, 40, 255))
+        for k, text in enumerate(lines):
+            d.text((106, y + 2 + k * 15), text, font=_font(13), fill=white)
+
+    step(132, "1", ("Pull the", "safety pin"), True)
+    step(184, "2", ("Aim at the base of", "the flames and", "squeeze the lever"), False)
+    d.line([(14, 238), (W - 15, 238)], fill=white, width=2)
+
+    # Fire classes: white tiles with the letter in a red corner box and a small pictogram.
+    def tile(x, letter, kind):
+        d.rectangle([x, 248, x + 66, 314], fill=white)
+        d.rectangle([x + 38, 248, x + 66, 276], fill=red)
+        d.rectangle([x + 40, 250, x + 64, 274], outline=white, width=2)
+        centered(d, 249, letter, 21, white, x + 38, x + 67)
+        flame = (220, 60, 30, 255)
+        if kind == "wood":
+            d.polygon([(x + 6, 304), (x + 34, 292), (x + 36, 298), (x + 8, 310)], fill=(140, 82, 40, 255))
+            d.polygon([(x + 8, 292), (x + 36, 304), (x + 34, 310), (x + 6, 298)], fill=(160, 98, 52, 255))
+        elif kind == "liquid":
+            d.ellipse([x + 4, 302, x + 36, 312], fill=(70, 70, 80, 255))
+            d.polygon([(x + 30, 284), (x + 34, 294), (x + 26, 294)], fill=(70, 70, 80, 255))
+            d.ellipse([x + 26, 290, x + 34, 298], fill=(70, 70, 80, 255))
+        else:
+            d.rounded_rectangle([x + 10, 288, x + 28, 312], radius=6, fill=(70, 70, 80, 255))
+            d.rectangle([x + 16, 282, x + 22, 289], fill=(70, 70, 80, 255))
+        d.polygon([(x + 12, 290), (x + 16, 268), (x + 20, 278), (x + 24, 262), (x + 30, 290)], fill=flame)
+        d.polygon([(x + 17, 290), (x + 20, 278), (x + 22, 284), (x + 25, 290)], fill=(255, 200, 40, 255))
+
+    for i, (letter, kind) in enumerate((("A", "wood"), ("B", "liquid"), ("C", "gas"))):
+        tile(14 + i * 79, letter, kind)
+    d.line([(14, 324), (W - 15, 324)], fill=white, width=2)
+
+    # Electrical warning.
+    for k, text in enumerate(("Suitable for use on live electrical",
+                              "equipment up to 1000 V.",
+                              "Keep the nozzle at least 1 m away.",
+                              "Avoid contact with live conductors.")):
+        centered(d, 332 + k * 15, text, 12, white)
+    d.line([(14, 396), (W - 15, 396)], fill=white, width=2)
+
+    # Technical block in small print.
+    for k, text in enumerate(("• Agent: ABC dry powder, 6 kg",
+                              "• Propellant: nitrogen, 15 bar",
+                              "• Operating range: -20 °C to +60 °C",
+                              "• Recharge after every use",
+                              "• Service once a year")):
+        d.text((16, 403 + k * 13), text, font=_font(10), fill=white)
+    d.rectangle([4, 472, W - 5, H - 5], fill=white)
+    centered(d, 478, "DRY POWDER EXTINGUISHER", 13, red)
+    centered(d, 493, "For fire use only · Do not remove", 10, red)
+    lab.save(os.path.join(folder, "extinguisher_label.png"))
+
+    # ---------------------------------------------------------------- approval strip, 48 x 384
+    side = Image.new("RGBA", (48, 384), red)
+    d = ImageDraw.Draw(side)
+    d.rectangle([2, 2, 45, 381], outline=white, width=2)
+    d.rectangle([7, 10, 40, 48], outline=white, width=2)
+    centered(d, 16, "CE", 20, white)
+    d.ellipse([7, 58, 40, 91], outline=white, width=2)
+    for k in range(12):
+        a = math.tau * k / 12
+        d.line([(23.5 + 9 * math.cos(a), 74.5 + 9 * math.sin(a)), (23.5 + 14 * math.cos(a), 74.5 + 14 * math.sin(a))],
+               fill=white, width=2)
+    for k, text in enumerate(("EN 3-7", "EN 3-8")):
+        d.rectangle([7, 102 + k * 30, 40, 126 + k * 30], outline=white, width=2)
+        centered(d, 108 + k * 30, text, 9, white)
+    # Small print running up the strip.
+    run = Image.new("RGBA", (220, 30), (0, 0, 0, 0))
+    rd = ImageDraw.Draw(run)
+    rd.text((0, 0), "Recharge after any use, even partial.", font=_font(9), fill=white)
+    rd.text((0, 14), "Check the extinguisher regularly.", font=_font(9), fill=white)
+    run = run.rotate(90, expand=True)
+    side.alpha_composite(run, (9, 160))
+    side.save(os.path.join(folder, "extinguisher_side.png"))
+
+    # ---------------------------------------------------------------- manometer face, 64 x 64
+    g = Image.new("RGBA", (64, 64), white)
+    d = ImageDraw.Draw(g)
+    box = [6, 6, 57, 57]
+    # Scale from 225 degrees (empty, left) to -45 degrees (overfull, right), clockwise on the dial.
+    d.arc(box, 135, 232, fill=(206, 34, 34, 255), width=6)
+    d.arc(box, 232, 308, fill=(40, 160, 70, 255), width=6)
+    d.arc(box, 308, 405, fill=(206, 34, 34, 255), width=6)
+    for k in range(11):
+        a = math.radians(135 + 27 * k)
+        d.line([(32 + 19 * math.cos(a), 32 + 19 * math.sin(a)), (32 + 24 * math.cos(a), 32 + 24 * math.sin(a))],
+               fill=ink, width=1)
+    # Needle in the green, slightly right of top.
+    a = math.radians(-80)
+    d.line([(32, 32), (32 + 21 * math.cos(a), 32 + 21 * math.sin(a))], fill=ink, width=2)
+    d.ellipse([29, 29, 35, 35], fill=ink)
+    centered(d, 40, "bar", 8, ink)
+    g.save(os.path.join(folder, "extinguisher_gauge.png"))
+
+    # ---------------------------------------------------------------- inspection sticker, 96 x 64
+    c = Image.new("RGBA", (96, 64), white)
+    d = ImageDraw.Draw(c)
+    d.rectangle([0, 0, 95, 15], fill=(36, 130, 64, 255))
+    centered(d, 1, "INSPECTED", 12, white)
+    for k, year in enumerate(("25", "26", "27", "28")):
+        x = 4 + k * 23
+        d.rectangle([x, 19, x + 20, 33], outline=ink, width=1)
+        centered(d, 20, year, 10, ink, x, x + 21)
+    for k in range(12):
+        x = 4 + (k % 6) * 15
+        y = 37 + (k // 6) * 13
+        d.rectangle([x, y, x + 13, y + 11], outline=ink, width=1)
+        centered(d, y, str(k + 1), 8, ink, x, x + 14)
+    # Punched month and year.
+    d.ellipse([29, 23, 37, 31], fill=ink)
+    d.ellipse([68, 51, 76, 59], fill=ink)
+    c.save(os.path.join(folder, "extinguisher_check.png"))

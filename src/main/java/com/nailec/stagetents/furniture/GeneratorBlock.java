@@ -16,13 +16,17 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 /** Site generator, three blocks long and two high. Right-click starts and stops it; a dye recolours the canopy. */
-public class GeneratorBlock extends MultiPropBlock {
+public class GeneratorBlock extends MultiPropBlock implements EntityBlock {
     public static final BooleanProperty RUNNING = BooleanProperty.create("running");
 
     public GeneratorBlock(Properties props) {
@@ -49,6 +53,25 @@ public class GeneratorBlock extends MultiPropBlock {
             player.displayClientMessage(Component.translatable(running ? "message.stagetents.generator_on" : "message.stagetents.generator_off"), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new PowerNodeBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return PowerNodeBlockEntity.ticker(level, type);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) instanceof PowerNodeBlockEntity be) {
+            be.cables().detach();
+        }
+        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override

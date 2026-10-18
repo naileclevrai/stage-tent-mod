@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    " O ",
+    "OWO",
+    "BBB"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:orange_dye"
+    },
+    "W": {
+      "item": "minecraft:white_dye"
+    },
+    "B": {
+      "item": "minecraft:black_dye"
+    }
+  },
+  "result": {
+    "item": "stagetents:traffic_cone",
+    "count": 1
+  }
+}

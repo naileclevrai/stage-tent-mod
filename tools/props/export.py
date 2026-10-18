@@ -38,10 +38,11 @@ def write_model(mesh, name, assets, textures, tinted=(), particle=None, gui_scal
         model["textures"][mat] = textures[mat]
     _json(os.path.join(assets, "models", "block", "props", name + ".json"), model)
     s = gui_scale
+    gui_s, gui_t = gui_fit(_mesh_points(mesh))
     item = {
         "parent": f"{MOD}:block/props/{name}",
         "display": {
-            "gui": {"rotation": [30, 225, 0], "translation": list(gui_offset), "scale": [s, s, s]},
+            "gui": {"rotation": [30, 225, 0], "translation": list(gui_t), "scale": [gui_s, gui_s, gui_s]},
             "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [s * 0.4, s * 0.4, s * 0.4]},
             "fixed": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [s * 0.8, s * 0.8, s * 0.8]},
             "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [s * 0.6, s * 0.6, s * 0.6]},
@@ -105,7 +106,6 @@ def _json(path, obj):
 
 
 PINT_DISPLAY = {
-    "gui": {"rotation": [30, 45, 0], "translation": [0, 2, 0], "scale": [2.15, 2.15, 2.15]},
     "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.8, 0.8, 0.8]},
     "fixed": {"rotation": [0, 90, 0], "translation": [0, 0, 0], "scale": [1.3, 1.3, 1.3]},
     "thirdperson_righthand": {"rotation": [70, 45, 0], "translation": [0, 3.5, 0.4], "scale": [0.62, 0.62, 0.62]},
@@ -119,5 +119,61 @@ def set_item_display(assets, name, display):
     path = os.path.join(assets, "models", "item", name + ".json")
     with open(path, encoding="utf-8") as f:
         item = json.load(f)
-    item["display"] = display
+    item.setdefault("display", {}).update(display)
     _json(path, item)
+
+
+def _mesh_points(mesh):
+    return [vert[0] for tris in mesh.groups.values() for tri in tris for vert in tri]
+
+
+def _rot(rx, ry, rz):
+    """Same order as JOML rotationXYZ: X, then Y, then Z."""
+    def axis(a, idx):
+        a = math.radians(a)
+        c, s = math.cos(a), math.sin(a)
+        if idx == 0:
+            return ((1, 0, 0), (0, c, -s), (0, s, c))
+        if idx == 1:
+            return ((c, 0, s), (0, 1, 0), (-s, 0, c))
+        return ((c, -s, 0), (s, c, 0), (0, 0, 1))
+
+    def mul(a, b):
+        return tuple(tuple(sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)) for i in range(3))
+
+    return mul(axis(rx, 0), mul(axis(ry, 1), axis(rz, 2)))
+
+
+def gui_fit(points, rotation=(30, 225, 0)):
+    """Scale and center a model so its creative-menu icon stays inside one slot.
+
+    Minecraft draws the icon from the slot centre, shifts the mesh by -0.5, then applies the display
+    scale, rotation and translation. A normal block at scale 0.625 already fills that slot, so anything
+    larger has to shrink to the same footprint.
+    """
+    # Projected size of a 0..1 cube at the vanilla 0.625 scale, with a little air at the rim.
+    target_x, target_y = 0.8838834764831844 * 0.92, 0.9832076156068663 * 0.92
+    rotation = _rot(*rotation)
+
+    def projected(scale):
+        out = []
+        for x, y, z in points:
+            p = ((x - 0.5) * scale, (y - 0.5) * scale, (z - 0.5) * scale)
+            out.append(tuple(sum(rotation[i][k] * p[k] for k in range(3)) for i in range(3)))
+        return out
+
+    base = projected(1.0)
+    xs = [p[0] for p in base]
+    ys = [p[1] for p in base]
+    span_x = max(xs) - min(xs)
+    span_y = max(ys) - min(ys)
+    scale = min(target_x / span_x if span_x > 1e-6 else 0.625,
+                target_y / span_y if span_y > 1e-6 else 0.625)
+    scale = min(1.0, max(0.05, scale))
+    placed = projected(scale)
+    xs = [p[0] for p in placed]
+    ys = [p[1] for p in placed]
+    # JSON translation is in 1/16 block and is applied after the rotation.
+    tx = max(-80.0, min(80.0, -(min(xs) + max(xs)) / 2 * 16))
+    ty = max(-80.0, min(80.0, -(min(ys) + max(ys)) / 2 * 16))
+    return round(scale, 4), (round(tx, 3), round(ty, 3), 0)

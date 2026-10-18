@@ -32,11 +32,7 @@ for y, row in enumerate(rows):
             dyed.putpixel((x, y), (v, v, v, 255))
 base.save(os.path.join(folder, "parasol.png"))
 dyed.save(os.path.join(folder, "parasol_dye.png"))
-item = {
-    "parent": "minecraft:item/generated",
-    "textures": {"layer0": "stagetents:item/parasol", "layer1": "stagetents:item/parasol_dye"},
-}
-with open(os.path.join(ASSETS, "models", "item", "parasol.json"), "w", encoding="utf-8", newline="\n") as f:
-    json.dump(item, f, indent=2)
-    f.write("\n")
+extra = os.path.join(ASSETS, "models", "item", "picnic_table_parasol.json")
+if os.path.exists(extra):
+    os.remove(extra)
 print("parasol", n, "triangles")
