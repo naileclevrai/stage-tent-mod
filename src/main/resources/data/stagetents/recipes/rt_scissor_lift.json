@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "SPS",
+    "WFW"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "S": {
+      "item": "minecraft:iron_block"
+    },
+    "P": {
+      "item": "minecraft:sticky_piston"
+    },
+    "W": {
+      "item": "minecraft:black_dye"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "item": "stagetents:rt_scissor_lift",
+    "count": 1
+  }
+}

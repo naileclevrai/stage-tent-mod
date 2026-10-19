@@ -16,6 +16,11 @@ import com.nailec.stagetents.furniture.LightTowerBlockEntity;
 import com.nailec.stagetents.furniture.ControlTowerBlock;
 import com.nailec.stagetents.furniture.ControlTowerBlockEntity;
 import com.nailec.stagetents.furniture.ScaffoldCellBlock;
+import com.nailec.stagetents.furniture.MachineBlock;
+import com.nailec.stagetents.furniture.MachineBlockEntity;
+import com.nailec.stagetents.furniture.MachineItem;
+import com.nailec.stagetents.furniture.MachineKind;
+import com.nailec.stagetents.furniture.MachinePartBlock;
 import com.nailec.stagetents.furniture.GuideRailBlock;
 import com.nailec.stagetents.furniture.OriflammeBlock;
 import com.nailec.stagetents.furniture.PendrillonBlock;
@@ -175,6 +180,16 @@ public final class ModRegistry {
     public static final RegistryObject<LightTowerBlock> LIGHT_TOWER = BLOCKS.register("light_tower", () -> new LightTowerBlock(furnitureProps(SoundType.METAL)));
     public static final RegistryObject<ControlTowerBlock> CONTROL_TOWER = BLOCKS.register("control_tower", () -> new ControlTowerBlock(
             furnitureProps(SoundType.METAL).pushReaction(PushReaction.BLOCK)));
+    public static final RegistryObject<MachineBlock> FORKLIFT = BLOCKS.register("forklift", () -> new MachineBlock(
+            machineProps(), MachineKind.FORKLIFT));
+    public static final RegistryObject<MachineBlock> SCISSOR_LIFT = BLOCKS.register("scissor_lift", () -> new MachineBlock(
+            machineProps(), MachineKind.SCISSOR));
+    public static final RegistryObject<MachineBlock> RT_SCISSOR_LIFT = BLOCKS.register("rt_scissor_lift", () -> new MachineBlock(
+            machineProps(), MachineKind.RT_SCISSOR));
+    public static final RegistryObject<MachinePartBlock> MACHINE_PART = BLOCKS.register("machine_part", () -> new MachinePartBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0F).sound(SoundType.METAL).noOcclusion()
+                    .noLootTable().dynamicShape().pushReaction(PushReaction.BLOCK).isValidSpawn((s, l, p, e) -> false)
+                    .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)));
     public static final RegistryObject<ScaffoldCellBlock> SCAFFOLD_CELL = BLOCKS.register("scaffold_cell", () -> new ScaffoldCellBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
                     .pushReaction(PushReaction.BLOCK).isValidSpawn((s, l, p, e) -> false)
@@ -284,6 +299,12 @@ public final class ModRegistry {
     public static final RegistryObject<Item> CURTAIN_ITEM = blockItem("curtain", CURTAIN);
     public static final RegistryObject<Item> SHOOTING_GALLERY_ITEM = ITEMS.register("shooting_gallery",
             () -> new BlockItem(SHOOTING_GALLERY.get(), new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FORKLIFT_ITEM = ITEMS.register("forklift",
+            () -> new MachineItem(FORKLIFT.get(), new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SCISSOR_LIFT_ITEM = ITEMS.register("scissor_lift",
+            () -> new MachineItem(SCISSOR_LIFT.get(), new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> RT_SCISSOR_LIFT_ITEM = ITEMS.register("rt_scissor_lift",
+            () -> new MachineItem(RT_SCISSOR_LIFT.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WRENCH = ITEMS.register("tent_wrench", () -> new TentWrenchItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CABLE_TOOL = ITEMS.register("cable_tool", () -> new CableToolItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ACCESS_BADGE = ITEMS.register("access_badge",
@@ -292,6 +313,9 @@ public final class ModRegistry {
     public static final RegistryObject<BlockEntityType<TentBlockEntity>> TENT_BE = BLOCK_ENTITIES.register("tent",
             () -> BlockEntityType.Builder.of(TentBlockEntity::new, BIG_TOP.get(), PAGODA.get(), FRAME_TENT.get(),
                     GAZEBO.get(), ARCH.get(), DJ_ARCH.get(), STRETCH.get(), TENSILE.get(), OPUS_4200.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<MachineBlockEntity>> MACHINE_BE = BLOCK_ENTITIES.register("machine",
+            () -> BlockEntityType.Builder.of(MachineBlockEntity::new, FORKLIFT.get(), SCISSOR_LIFT.get(), RT_SCISSOR_LIFT.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<TurnstileBlockEntity>> TURNSTILE_BE = BLOCK_ENTITIES.register("turnstile",
             () -> BlockEntityType.Builder.of(TurnstileBlockEntity::new, TURNSTILE.get()).build(null));
@@ -361,6 +385,9 @@ public final class ModRegistry {
                 out.accept(STAGE_STAIRS_ITEM.get());
                 out.accept(STAGE_RAMP_ITEM.get());
                 out.accept(CONTROL_TOWER_ITEM.get());
+                out.accept(FORKLIFT_ITEM.get());
+                out.accept(SCISSOR_LIFT_ITEM.get());
+                out.accept(RT_SCISSOR_LIFT_ITEM.get());
                 out.accept(CYCLORAMA_ITEM.get());
                 out.accept(FRISE_ITEM.get());
                 out.accept(PENDRILLON_ITEM.get());
@@ -390,6 +417,11 @@ public final class ModRegistry {
     private static RegistryObject<TentBlock> tent(TentType type) {
         return BLOCKS.register(type.id, () -> new TentBlock(type,
                 BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0F).sound(SoundType.METAL).noOcclusion()));
+    }
+
+    private static BlockBehaviour.Properties machineProps() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0F).sound(SoundType.METAL).noOcclusion()
+                .dynamicShape().pushReaction(PushReaction.BLOCK).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false);
     }
 
     private static BlockBehaviour.Properties furnitureProps(SoundType sound) {

@@ -104,3 +104,12 @@ tasks.register('dumpTower', JavaExec) {
     mainClass = 'com.nailec.stagetents.client.ControlTowerDump'
     args = [project.findProperty('dumpDir') ?: "${buildDir}/tower", project.findProperty('roof') ?: "roof"]
 }
+
+// Dev only: dump a machine at a pose (./gradlew dumpMachine -Pkind=FORKLIFT -Prise=1 -Ptilt=0 -Pload=1 -Pout=0 -Pdeck=0).
+tasks.register('dumpMachine', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.MachineDump'
+    args = [project.findProperty('dumpDir') ?: "${buildDir}/machine", project.findProperty('kind') ?: "FORKLIFT",
+            project.findProperty('rise') ?: "0", project.findProperty('tilt') ?: "0", project.findProperty('load') ?: "0",
+            project.findProperty('out') ?: "0", project.findProperty('deck') ?: "0"]
+}

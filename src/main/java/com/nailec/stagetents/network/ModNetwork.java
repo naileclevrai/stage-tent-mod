@@ -65,5 +65,10 @@ public final class ModNetwork {
                 .decoder(ConfigureControlTowerPacket::decode)
                 .consumerMainThread(ConfigureControlTowerPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(ConfigureMachinePacket.class, 10, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ConfigureMachinePacket::encode)
+                .decoder(ConfigureMachinePacket::decode)
+                .consumerMainThread(ConfigureMachinePacket::handle)
+                .add();
     }
 }

@@ -29,6 +29,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModRegistry.WATER_CANNON_BE.get(), WaterCannonRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.LIGHT_TOWER_BE.get(), LightTowerRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.CONTROL_TOWER_BE.get(), ControlTowerRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.MACHINE_BE.get(), MachineRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.FESTOON_BE.get(), FestoonRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.DRAFT_BE.get(), DraftHoseRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.POWER_NODE_BE.get(), PowerNodeRenderer::new);

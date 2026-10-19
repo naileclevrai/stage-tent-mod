@@ -53,6 +53,10 @@
     "stagetents:pendrillon",
     "stagetents:folding_table",
     "stagetents:curtain",
-    "stagetents:dj_foot"
+    "stagetents:dj_foot",
+    "stagetents:forklift",
+    "stagetents:scissor_lift",
+    "stagetents:rt_scissor_lift",
+    "stagetents:machine_part"
   ]
 }

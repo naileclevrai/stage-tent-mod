@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "  I",
+    "CRI",
+    "WGW"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_block"
+    },
+    "R": {
+      "item": "minecraft:piston"
+    },
+    "W": {
+      "item": "minecraft:black_dye"
+    },
+    "G": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "item": "stagetents:forklift",
+    "count": 1
+  }
+}
