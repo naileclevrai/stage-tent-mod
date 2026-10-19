@@ -413,5 +413,7 @@
   "block.stagetents.dj_foot": "Pied de toile DJ",
   "message.stagetents.dj_foot.none": "Aucun pied de toile DJ libre en ligne, entre %s et %s blocs",
   "message.stagetents.dj_foot.raised": "Toile DJ montée sur %s blocs",
-  "screen.stagetents.wall_height.dj_arch": "Hauteur des pieds : %s"
+  "screen.stagetents.wall_height.dj_arch": "Hauteur des pieds : %s",
+  "screen.stagetents.tower.gear_on": "Matériel régie : racks, flight cases, tabourets",
+  "screen.stagetents.tower.gear_off": "Planchers vides"
 }

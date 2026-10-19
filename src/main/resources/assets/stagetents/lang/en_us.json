@@ -413,5 +413,7 @@
   "block.stagetents.dj_foot": "DJ Cover Foot",
   "message.stagetents.dj_foot.none": "No free DJ cover foot in line, %s to %s blocks away",
   "message.stagetents.dj_foot.raised": "DJ cover raised over %s blocks",
-  "screen.stagetents.wall_height.dj_arch": "Leg height: %s"
+  "screen.stagetents.wall_height.dj_arch": "Leg height: %s",
+  "screen.stagetents.tower.gear_on": "FOH gear: racks, cases, stools",
+  "screen.stagetents.tower.gear_off": "Empty decks"
 }

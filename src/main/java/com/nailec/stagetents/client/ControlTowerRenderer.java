@@ -8,6 +8,7 @@ import com.nailec.stagetents.furniture.ControlTowerBlockEntity;
 import com.nailec.stagetents.furniture.FurnitureBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -28,7 +29,8 @@ import java.util.Arrays;
 
 /** Scaffolding control tower. One baked mesh per size, roof, sheets and dye. */
 public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlockEntity> {
-    private static final ResourceLocation WOOL = new ResourceLocation("minecraft", "block/white_wool");
+    private static final ResourceLocation TARP = new ResourceLocation("stagetents", "block/props/tarp_pvc");
+    private static final ResourceLocation PLAIN = new ResourceLocation("stagetents", "block/props/white");
     private static final ResourceLocation METAL = new ResourceLocation("minecraft", "block/iron_block");
     private static final ResourceLocation PLANKS = new ResourceLocation("minecraft", "block/oak_planks");
 
@@ -61,6 +63,7 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
                 | ((long) be.levels() << 8)
                 | (be.roof() ? 1L << 12 : 0L)
                 | (be.skirt() ? 1L << 13 : 0L)
+                | (be.gear() ? 1L << 14 : 0L)
                 | ((long) (tint & 0xFFFFFF) << 16);
         Mesh mesh = cached(key, be, tint);
 
@@ -74,7 +77,8 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
         VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
         TextureAtlasSprite metal = atlas.getSprite(METAL);
         TextureAtlasSprite planks = atlas.getSprite(PLANKS);
-        TextureAtlasSprite wool = atlas.getSprite(WOOL);
+        TextureAtlasSprite tarp = atlas.getSprite(TARP);
+        TextureAtlasSprite plain = atlas.getSprite(PLAIN);
         int top = be.levels() * ControlTowerBlock.LIFT + 3;
         // Sample in front of the tower. A block placed on the deck must not zero the light of the whole floor.
         BlockPos outside = be.getBlockPos().relative(facing);
@@ -82,7 +86,7 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
         for (int dy = 0; dy <= top; dy++) {
             lights[dy] = level == null ? light : brighter(light, brightest(level, outside.above(dy)));
         }
-        mesh.draw(ps.last(), vc, metal, planks, wool, lights);
+        mesh.draw(ps.last(), vc, metal, planks, tarp, plain, lights);
         ps.popPose();
     }
 
@@ -104,13 +108,13 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
 
     private static Mesh cached(long key, ControlTowerBlockEntity be, int tint) {
         for (Mesh mesh : CACHE) if (mesh != null && mesh.key == key) return mesh;
-        Mesh mesh = Mesh.build(key, be.baysW(), be.baysD(), be.levels(), be.roof(), be.skirt(), tint);
+        Mesh mesh = Mesh.build(key, be.baysW(), be.baysD(), be.levels(), be.roof(), be.skirt(), be.gear(), tint);
         CACHE[cacheCursor] = mesh;
         cacheCursor = (cacheCursor + 1) % CACHE.length;
         return mesh;
     }
 
-    /** Baked quads in model space. Material 0 metal, 1 planks, 2 wool. */
+    /** Baked quads in model space. Material 0 metal, 1 planks, 2 PVC, 3 plain colour, 4 plain colour lit at full brightness. */
     private static final class Mesh {
         final long key;
         final float[] xyz;
@@ -128,20 +132,22 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
             this.quads = quads;
         }
 
-        void draw(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite metal, TextureAtlasSprite planks, TextureAtlasSprite wool, int[] lights) {
+        void draw(PoseStack.Pose pose, VertexConsumer vc, TextureAtlasSprite metal, TextureAtlasSprite planks, TextureAtlasSprite tarp,
+                  TextureAtlasSprite plain, int[] lights) {
             Matrix4f m = pose.pose();
             Matrix3f n = pose.normal();
             for (int q = 0; q < quads; q++) {
                 TextureAtlasSprite sprite = switch (mat[q]) {
                     case 1 -> planks;
-                    case 2 -> wool;
+                    case 2 -> tarp;
+                    case 3, 4 -> plain;
                     default -> metal;
                 };
                 int argb = color[q];
                 int r = (argb >> 16) & 255, g = (argb >> 8) & 255, b = argb & 255;
                 int base = q * 12;
                 float y = xyz[base + 1];
-                int lit = lights[Math.min(lights.length - 1, Math.max(0, (int) y))];
+                int lit = mat[q] == 4 ? LightTexture.FULL_BRIGHT : lights[Math.min(lights.length - 1, Math.max(0, (int) y))];
                 float u0 = sprite.getU0(), u1 = sprite.getU1(), v0 = sprite.getV0(), v1 = sprite.getV1();
                 for (int v = 0; v < 4; v++) {
                     int i = base + v * 3;
@@ -153,7 +159,7 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
             }
         }
 
-        static Mesh build(long key, int baysW, int baysD, int levels, boolean roof, boolean skirt, int tint) {
+        static Mesh build(long key, int baysW, int baysD, int levels, boolean roof, boolean skirt, boolean gear, int tint) {
             Builder b = new Builder();
             double w = baysW * (double) ControlTowerBlock.BAY;
             double d = baysD * (double) ControlTowerBlock.BAY;
@@ -193,7 +199,8 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
             ladder(b, d, top, ledger);
 
             if (roof) roof(b, baysW, baysD, w, d, crown, ledger, tint);
-            if (skirt) sheets(b, baysW, baysD, top, tint);
+            if (skirt) sheets(b, baysW, baysD, levels, top, tint);
+            if (gear) FohGear.build(b, w, d, top);
             return b.finish(key);
         }
 
@@ -386,66 +393,123 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
         }
 
         /**
-         * Side and back tarps hung outside the frame. Each bay is its own sheet: hem, folds and eyelets,
-         * with the scaffold hidden behind it.
+         * Side and back sheets of opaque PVC hung just outside the frame, one per bay. Each sheet is welded from one
+         * panel per lift, has a folded hem all round with eyelets, is held by ball bungees to the standards and
+         * ledgers, and shows a fan of tension folds at every corner.
          */
-        private static void sheets(Builder b, int baysW, int baysD, double top, int tint) {
-            int cloth = shade(tint, 1.0f);
-            int hem = shade(tint, 0.62f);
-            int fold = shade(tint, 0.84f);
-            int eye = 0xFF2C3136;
+        private static void sheets(Builder b, int baysW, int baysD, int levels, double top, int tint) {
             double bay = bay();
             double w = baysW * bay, d = baysD * bay;
             double y0 = 0.22, y1 = top - 0.08;
             for (int iz = 0; iz < baysD; iz++) {
-                double z0 = iz * bay + 0.06, z1 = (iz + 1) * bay - 0.06;
-                tarpZ(b, -0.09, z0, y0, z1, y1, -1, cloth, hem, fold, eye);
-                tarpZ(b, w + 0.09, z0, y0, z1, y1, 1, cloth, hem, fold, eye);
+                double a0 = iz * bay + 0.06, a1 = (iz + 1) * bay - 0.06;
+                tarp(b, Plane.side(0, -1), a0, a1, iz * bay, (iz + 1) * bay, y0, y1, levels, tint);
+                tarp(b, Plane.side(w, 1), a0, a1, iz * bay, (iz + 1) * bay, y0, y1, levels, tint);
             }
             for (int ix = 0; ix < baysW; ix++) {
-                double x0 = ix * bay + 0.06, x1 = (ix + 1) * bay - 0.06;
-                tarpX(b, x0, y0, d + 0.09, x1, y1, cloth, hem, fold, eye);
+                double a0 = ix * bay + 0.06, a1 = (ix + 1) * bay - 0.06;
+                tarp(b, Plane.back(d), a0, a1, ix * bay, (ix + 1) * bay, y0, y1, levels, tint);
             }
         }
 
-        private static void tarpZ(Builder b, double x, double z0, double y0, double z1, double y1, int out, int cloth, int hem, int fold, int eye) {
-            double t = 0.018;
-            double ox = out * 0.012;
-            b.box(x - t + ox, y0, z0, x + t + ox, y1, z1, cloth, 2);
-            b.box(x - t - 0.008 + ox, y0, z0, x + t + 0.008 + ox, y0 + 0.07, z1, hem, 2);
-            b.box(x - t - 0.008 + ox, y1 - 0.07, z0, x + t + 0.008 + ox, y1, z1, hem, 2);
-            b.box(x - t - 0.006 + ox, y0, z0, x + t + 0.006 + ox, y1, z0 + 0.045, hem, 2);
-            b.box(x - t - 0.006 + ox, y0, z1 - 0.045, x + t + 0.006 + ox, y1, z1, hem, 2);
-            for (int i = 1; i <= 3; i++) {
-                double z = z0 + (z1 - z0) * i / 4.0;
-                b.box(x - t + ox + out * 0.01, y0 + 0.1, z - 0.03, x + t + ox + out * 0.01, y1 - 0.1, z + 0.03, i % 2 == 0 ? fold : shade(cloth, 1.08f), 2);
+        /**
+         * A wall of the frame seen as a plane: {@code a} runs along the wall, {@code o} is the distance out from the
+         * frame. Side walls run along z at {@code x = at}; the back wall runs along x at {@code z = at}.
+         */
+        private record Plane(boolean alongZ, double at, int out) {
+            static Plane side(double x, int out) {
+                return new Plane(true, x, out);
             }
-            for (double y = y0 + 0.18; y < y1 - 0.05; y += 0.45) {
-                eyelet(b, x + out * 0.02, y, z0 + 0.02, eye);
-                eyelet(b, x + out * 0.02, y, z1 - 0.02, eye);
+
+            static Plane back(double z) {
+                return new Plane(false, z, 1);
+            }
+
+            double[] p(double a, double y, double o) {
+                double n = at + out * o;
+                return alongZ ? new double[]{n, y, a} : new double[]{a, y, n};
+            }
+
+            void box(Builder b, double a0, double y0, double o0, double a1, double y1, double o1, int col, int mat) {
+                double[] p = p(a0, y0, o0), q = p(a1, y1, o1);
+                b.box(Math.min(p[0], q[0]), Math.min(p[1], q[1]), Math.min(p[2], q[2]),
+                        Math.max(p[0], q[0]), Math.max(p[1], q[1]), Math.max(p[2], q[2]), col, mat);
+            }
+
+            void quad(Builder b, double[] a, double[] c, double[] e, double[] f, double o, int col, int mat) {
+                double[] p0 = p(a[0], a[1], o), p1 = p(c[0], c[1], o), p2 = p(e[0], e[1], o), p3 = p(f[0], f[1], o);
+                b.quad(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], p3[0], p3[1], p3[2], col, mat);
             }
         }
 
-        private static void tarpX(Builder b, double x0, double y0, double z, double x1, double y1, int cloth, int hem, int fold, int eye) {
-            double t = 0.018;
-            b.box(x0, y0, z - t, x1, y1, z + t, cloth, 2);
-            b.box(x0, y0, z - t - 0.008, x1, y0 + 0.07, z + t + 0.008, hem, 2);
-            b.box(x0, y1 - 0.07, z - t - 0.008, x1, y1, z + t + 0.008, hem, 2);
-            b.box(x0, y0, z - t - 0.006, x0 + 0.045, y1, z + t + 0.006, hem, 2);
-            b.box(x1 - 0.045, y0, z - t - 0.006, x1, y1, z + t + 0.006, hem, 2);
-            for (int i = 1; i <= 3; i++) {
-                double x = x0 + (x1 - x0) * i / 4.0;
-                b.box(x - 0.03, y0 + 0.1, z + 0.01, x + 0.03, y1 - 0.1, z + t + 0.012, i % 2 == 0 ? fold : shade(cloth, 1.08f), 2);
+        private static void tarp(Builder b, Plane pl, double a0, double a1, double s0, double s1, double y0, double y1, int levels, int tint) {
+            int cloth = shade(tint, 1.0f);
+            int hem = shade(tint, 0.82f);
+            int weld = shade(tint, 0.9f);
+            int cord = 0xFF17191C;
+            double lift = ControlTowerBlock.LIFT;
+            double off = 0.09, t = 0.012;
+            // Panels, one per lift, so the PVC grain keeps its scale, with a welded overlap between them.
+            double prev = y0;
+            for (int k = 1; k <= levels; k++) {
+                double cut = Math.min(y1, k * lift);
+                if (cut <= prev + 0.05) continue;
+                pl.box(b, a0, prev, off - t, a1, cut, off + t, cloth, 2);
+                if (cut < y1 - 0.05) pl.box(b, a0 + 0.04, cut - 0.03, off + t, a1 - 0.04, cut + 0.03, off + t + 0.004, weld, 2);
+                prev = cut;
             }
-            for (double y = y0 + 0.18; y < y1 - 0.05; y += 0.45) {
-                eyelet(b, x0 + 0.02, y, z + 0.02, eye);
-                eyelet(b, x1 - 0.02, y, z + 0.02, eye);
+            // Folded hem round the edge, proud of the sheet on the outside.
+            double hw = 0.06, ho = off + t + 0.003;
+            pl.box(b, a0, y0, off - t - 0.003, a1, y0 + hw, ho, hem, 2);
+            pl.box(b, a0, y1 - hw, off - t - 0.003, a1, y1, ho, hem, 2);
+            pl.box(b, a0, y0 + hw, off - t - 0.003, a0 + hw, y1 - hw, ho, hem, 2);
+            pl.box(b, a1 - hw, y0 + hw, off - t - 0.003, a1, y1 - hw, ho, hem, 2);
+            // Eyelets: up both side hems, and along the top and bottom hems.
+            double eo = ho + 0.002;
+            for (double y = y0 + 0.2; y < y1 - 0.12; y += 0.45) {
+                eyelet(b, pl, a0 + 0.03, y, eo);
+                eyelet(b, pl, a1 - 0.03, y, eo);
+                bungee(b, pl, a0 + 0.03, y, eo, s0, y, 0, cord);
+                bungee(b, pl, a1 - 0.03, y, eo, s1, y, 0, cord);
+            }
+            int along = Math.max(2, (int) Math.round((a1 - a0) / 0.5));
+            for (int i = 1; i < along; i++) {
+                double a = a0 + (a1 - a0) * i / along;
+                eyelet(b, pl, a, y0 + 0.03, eo);
+                eyelet(b, pl, a, y1 - 0.03, eo);
+                bungee(b, pl, a, y0 + 0.03, eo, a, 0.28, 0, cord);
+                bungee(b, pl, a, y1 - 0.03, eo, a, y1 + 0.02, 0, cord);
+            }
+            // Tension folds fanning out of each corner eyelet.
+            double fo = off + t + 0.0015;
+            int light = shade(cloth, 1.06f), dark = shade(cloth, 0.88f);
+            double[][] corners = {{a0, y0, 1, 1}, {a1, y0, -1, 1}, {a0, y1, 1, -1}, {a1, y1, -1, -1}};
+            for (double[] c : corners) {
+                for (int f = 0; f < 3; f++) {
+                    double ang = Math.toRadians(25 + f * 20);
+                    double len = 0.34 - f * 0.06;
+                    double ca = c[0] + c[2] * 0.07, cy = c[1] + c[3] * 0.07;
+                    double ta = ca + c[2] * Math.cos(ang) * len, ty = cy + c[3] * Math.sin(ang) * len;
+                    double na = -Math.sin(ang) * c[2] * 0.012, ny = Math.cos(ang) * c[3] * 0.012;
+                    pl.quad(b, new double[]{ca - na, cy - ny}, new double[]{ca + na, cy + ny},
+                            new double[]{ta + na * 0.2, ty + ny * 0.2}, new double[]{ta - na * 0.2, ty - ny * 0.2},
+                            fo, f % 2 == 0 ? dark : light, 2);
+                }
             }
         }
 
-        private static void eyelet(Builder b, double x, double y, double z, int col) {
-            b.box(x - 0.025, y - 0.025, z - 0.025, x + 0.025, y + 0.025, z + 0.025, col, 0);
-            b.box(x - 0.012, y - 0.012, z - 0.012, x + 0.012, y + 0.012, z + 0.012, 0xFF8A9096, 0);
+        /** Steel eyelet ring in the hem, with the dark hole on its outer face. */
+        private static void eyelet(Builder b, Plane pl, double a, double y, double o) {
+            pl.box(b, a - 0.022, y - 0.022, o - 0.004, a + 0.022, y + 0.022, o + 0.002, 0xFFB4BAC0, 0);
+            pl.quad(b, new double[]{a - 0.01, y - 0.01}, new double[]{a + 0.01, y - 0.01}, new double[]{a + 0.01, y + 0.01},
+                    new double[]{a - 0.01, y + 0.01}, o + 0.003, 0xFF2A2E33, 3);
+        }
+
+        /** Ball bungee from an eyelet to a tube of the frame at (a, y), with the ball at the tube. */
+        private static void bungee(Builder b, Plane pl, double a, double y, double o, double ta, double ty, double to, int col) {
+            double[] p = pl.p(a, y, o), q = pl.p(ta, ty, to + 0.05);
+            b.wire(p[0], p[1], p[2], q[0], q[1], q[2], 0.007, col, 3);
+            b.box(q[0] - 0.022, q[1] - 0.022, q[2] - 0.022, q[0] + 0.022, q[1] + 0.022, q[2] + 0.022, col, 3);
         }
 
         private static void ladder(Builder b, double d, double top, double r) {
@@ -464,7 +528,7 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
     }
 
     /** Grows a quad list. UVs are 0..1 inside the sprite. */
-    private static final class Builder {
+    static final class Builder {
         private float[] xyz = new float[12 * 256];
         private float[] uv = new float[8 * 256];
         private byte[] mat = new byte[256];
@@ -518,6 +582,54 @@ public class ControlTowerRenderer implements BlockEntityRenderer<ControlTowerBlo
                 int face = shade(col, 0.78f + 0.28f * (float) Math.max(-1, Math.min(1, ny / r)));
                 quad(x0 + px[i], y0 + py[i], z0 + pz[i], x0 + px[j], y0 + py[j], z0 + pz[j],
                         x1 + px[j], y1 + py[j], z1 + pz[j], x1 + px[i], y1 + py[i], z1 + pz[i], face, material);
+            }
+        }
+
+        /** Thin cord as two crossed ribbons: reads as round from every side for a third of a tube's quads. */
+        void wire(double x0, double y0, double z0, double x1, double y1, double z1, double r, int col, int material) {
+            double dx = x1 - x0, dy = y1 - y0, dz = z1 - z0;
+            double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (len < 1.0e-4) return;
+            dx /= len;
+            dy /= len;
+            dz /= len;
+            double ax = Math.abs(dy) < 0.85 ? 0 : 1, ay = Math.abs(dy) < 0.85 ? 1 : 0;
+            double sx = -dz * ay, sy = dz * ax, sz = dx * ay - dy * ax;
+            double sl = Math.sqrt(sx * sx + sy * sy + sz * sz);
+            sx = sx / sl * r;
+            sy = sy / sl * r;
+            sz = sz / sl * r;
+            double ux = (dy * sz - dz * sy), uy = (dz * sx - dx * sz), uz = (dx * sy - dy * sx);
+            quad(x0 - sx, y0 - sy, z0 - sz, x0 + sx, y0 + sy, z0 + sz, x1 + sx, y1 + sy, z1 + sz, x1 - sx, y1 - sy, z1 - sz, col, material);
+            quad(x0 - ux, y0 - uy, z0 - uz, x0 + ux, y0 + uy, z0 + uz, x1 + ux, y1 + uy, z1 + uz, x1 - ux, y1 - uy, z1 - uz, shade(col, 0.85f), material);
+        }
+
+        /** Like {@link #tube}, closed at both ends (seats, cups, knobs, wheels). */
+        void rod(double x0, double y0, double z0, double x1, double y1, double z1, double r, int col, int material) {
+            tube(x0, y0, z0, x1, y1, z1, r, col, material);
+            double dx = x1 - x0, dy = y1 - y0, dz = z1 - z0;
+            double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (len < 1.0e-4) return;
+            dx /= len;
+            dy /= len;
+            dz /= len;
+            double ax = Math.abs(dy) < 0.85 ? 0 : 1, ay = Math.abs(dy) < 0.85 ? 1 : 0;
+            double sx = -dz * ay, sy = dz * ax, sz = dx * ay - dy * ax;
+            double sl = Math.sqrt(sx * sx + sy * sy + sz * sz);
+            sx /= sl;
+            sy /= sl;
+            sz /= sl;
+            double ux = dy * sz - dz * sy, uy = dz * sx - dx * sz, uz = dx * sy - dy * sx;
+            int n = 6;
+            for (int end = 0; end < 2; end++) {
+                double cx = end == 0 ? x0 : x1, cy = end == 0 ? y0 : y1, cz = end == 0 ? z0 : z1;
+                int face = shade(col, end == 1 && dy > 0.5 ? 1.08f : 0.86f);
+                for (int i = 0; i < n; i++) {
+                    double a0 = i * Math.PI * 2 / n, a1 = (i + 1) * Math.PI * 2 / n;
+                    double c0 = Math.cos(a0) * r, s0 = Math.sin(a0) * r, c1 = Math.cos(a1) * r, s1 = Math.sin(a1) * r;
+                    quad(cx, cy, cz, cx + sx * c0 + ux * s0, cy + sy * c0 + uy * s0, cz + sz * c0 + uz * s0,
+                            cx + sx * c1 + ux * s1, cy + sy * c1 + uy * s1, cz + sz * c1 + uz * s1, cx, cy, cz, face, material);
+                }
             }
         }
 

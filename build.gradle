@@ -97,3 +97,10 @@ tasks.register('dumpDjArch', JavaExec) {
     mainClass = 'com.nailec.stagetents.client.DjArchDump'
     args = [project.findProperty('dumpDir') ?: "${buildDir}/djarch"]
 }
+
+// Dev only: dump a control tower mesh for offline previews (./gradlew dumpTower -PdumpDir=...).
+tasks.register('dumpTower', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.nailec.stagetents.client.ControlTowerDump'
+    args = [project.findProperty('dumpDir') ?: "${buildDir}/tower", project.findProperty('roof') ?: "roof"]
+}

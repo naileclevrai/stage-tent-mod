@@ -27,6 +27,8 @@ public class ControlTowerBlockEntity extends BlockEntity {
     private int levels = 3;
     private boolean roof = true;
     private boolean skirt = true;
+    /** Racks, flight cases, stools and the small things on the top deck. */
+    private boolean gear = true;
 
     /** What the cells in the world were built from, so a resize removes the old ones. */
     /** Bumped when the cell layout changes, so older towers drop the posts that used to fill the room. */
@@ -61,22 +63,28 @@ public class ControlTowerBlockEntity extends BlockEntity {
         return skirt;
     }
 
+    public boolean gear() {
+        return gear;
+    }
+
     /** Client only: show the new size before the server confirms it. */
-    public void preview(int baysW, int baysD, int levels, boolean roof, boolean skirt) {
+    public void preview(int baysW, int baysD, int levels, boolean roof, boolean skirt, boolean gear) {
         if (level != null && !level.isClientSide) return;
         this.baysW = Mth.clamp(baysW, ControlTowerBlock.MIN_BAYS, ControlTowerBlock.MAX_WIDTH);
         this.baysD = Mth.clamp(baysD, ControlTowerBlock.MIN_BAYS, ControlTowerBlock.MAX_DEPTH);
         this.levels = Mth.clamp(levels, ControlTowerBlock.MIN_LEVELS, ControlTowerBlock.MAX_LEVELS);
         this.roof = roof;
         this.skirt = skirt;
+        this.gear = gear;
     }
 
-    public void configure(int baysW, int baysD, int levels, boolean roof, boolean skirt) {
+    public void configure(int baysW, int baysD, int levels, boolean roof, boolean skirt, boolean gear) {
         this.baysW = Mth.clamp(baysW, ControlTowerBlock.MIN_BAYS, ControlTowerBlock.MAX_WIDTH);
         this.baysD = Mth.clamp(baysD, ControlTowerBlock.MIN_BAYS, ControlTowerBlock.MAX_DEPTH);
         this.levels = Mth.clamp(levels, ControlTowerBlock.MIN_LEVELS, ControlTowerBlock.MAX_LEVELS);
         this.roof = roof;
         this.skirt = skirt;
+        this.gear = gear;
         rebuild();
     }
 
@@ -292,6 +300,7 @@ public class ControlTowerBlockEntity extends BlockEntity {
         tag.putInt("Levels", levels);
         tag.putBoolean("Roof", roof);
         tag.putBoolean("Skirt", skirt);
+        tag.putBoolean("Gear", gear);
     }
 
     @Override
@@ -314,6 +323,7 @@ public class ControlTowerBlockEntity extends BlockEntity {
         levels = Mth.clamp(tag.contains("Levels") ? tag.getInt("Levels") : levels, ControlTowerBlock.MIN_LEVELS, ControlTowerBlock.MAX_LEVELS);
         if (tag.contains("Roof")) roof = tag.getBoolean("Roof");
         if (tag.contains("Skirt")) skirt = tag.getBoolean("Skirt");
+        if (tag.contains("Gear")) gear = tag.getBoolean("Gear");
     }
 
     @Override

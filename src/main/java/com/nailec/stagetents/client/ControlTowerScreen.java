@@ -22,6 +22,7 @@ public class ControlTowerScreen extends Screen {
     private int floors = 3;
     private boolean roof = true;
     private boolean skirt = true;
+    private boolean gear = true;
 
     public ControlTowerScreen(BlockPos pos) {
         super(Component.translatable("block.stagetents.control_tower"));
@@ -31,9 +32,9 @@ public class ControlTowerScreen extends Screen {
     private void send() {
         if (minecraft != null && minecraft.level != null
                 && minecraft.level.getBlockEntity(pos) instanceof ControlTowerBlockEntity be) {
-            be.preview(baysW, baysD, floors, roof, skirt);
+            be.preview(baysW, baysD, floors, roof, skirt, gear);
         }
-        ModNetwork.CHANNEL.sendToServer(new ConfigureControlTowerPacket(pos, baysW, baysD, floors, roof, skirt));
+        ModNetwork.CHANNEL.sendToServer(new ConfigureControlTowerPacket(pos, baysW, baysD, floors, roof, skirt, gear));
     }
 
     @Override
@@ -45,6 +46,7 @@ public class ControlTowerScreen extends Screen {
             floors = be.levels();
             roof = be.roof();
             skirt = be.skirt();
+            gear = be.gear();
         }
         int x = (width - W) / 2;
         int y = this.height / 2 - 78;
@@ -73,12 +75,21 @@ public class ControlTowerScreen extends Screen {
             b.setMessage(skirtLabel());
             send();
         }).bounds(x, y + 100, W, 20).build());
+        addRenderableWidget(Button.builder(gearLabel(), b -> {
+            gear = !gear;
+            b.setMessage(gearLabel());
+            send();
+        }).bounds(x, y + 124, W, 20).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> onClose())
-                .bounds(x, y + 126, W, 20).build());
+                .bounds(x, y + 150, W, 20).build());
     }
 
     private Component roofLabel() {
         return Component.translatable(roof ? "screen.stagetents.tower.roof_on" : "screen.stagetents.tower.roof_off");
+    }
+
+    private Component gearLabel() {
+        return Component.translatable(gear ? "screen.stagetents.tower.gear_on" : "screen.stagetents.tower.gear_off");
     }
 
     private Component skirtLabel() {

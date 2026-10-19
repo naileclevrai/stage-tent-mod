@@ -273,7 +273,8 @@ def make_all(folder):
     make_plancha(folder)
     make_bins(folder)
     make_extinguisher(folder)
-    return sorted(list(tex) + ["booth_sign", "wc_sign"] + [f"co2_{i}" for i in range(12)] + ["co2_blue", "pint_glass", "beer_liquid", "beer_foam", "plancha_hot", "plancha_meat", "plancha_sausage", "bin_plastic", "bin_divers", "bin_plastic_side", "bin_divers_side", "bin_lid_plastic", "bin_lid_divers", "bin_top_plastic", "bin_top_divers", "bin_mustard", "bin_navy", "bin_yellow", "bin_black", "extinguisher_label", "extinguisher_side", "extinguisher_gauge", "extinguisher_check"])
+    make_tower_tarp(folder)
+    return sorted(list(tex) + ["booth_sign", "wc_sign"] + [f"co2_{i}" for i in range(12)] + ["co2_blue", "pint_glass", "beer_liquid", "beer_foam", "plancha_hot", "plancha_meat", "plancha_sausage", "bin_plastic", "bin_divers", "bin_plastic_side", "bin_divers_side", "bin_lid_plastic", "bin_lid_divers", "bin_top_plastic", "bin_top_divers", "bin_mustard", "bin_navy", "bin_yellow", "bin_black", "extinguisher_label", "extinguisher_side", "extinguisher_gauge", "extinguisher_check", "tarp_pvc"])
 
 
 def make_co2(folder):
@@ -740,3 +741,40 @@ def make_extinguisher(folder):
     d.ellipse([29, 23, 37, 31], fill=ink)
     d.ellipse([68, 51, 76, 59], fill=ink)
     c.save(os.path.join(folder, "extinguisher_check.png"))
+
+
+def make_tower_tarp(folder):
+    """Opaque PVC for the control tower sheets and roof, drawn near white so the dye tints it.
+
+    One tile covers one bay by one lift. Faint woven scrim under the coating, a soft mottle and a few scuffs.
+    """
+    os.makedirs(folder, exist_ok=True)
+    rnd = random.Random(42)
+    n = 64
+    img = Image.new("RGBA", (n, n))
+    px = img.load()
+    blobs = [(rnd.uniform(0, n), rnd.uniform(0, n), rnd.uniform(10, 22), rnd.uniform(-6, 6)) for _ in range(9)]
+    for y in range(n):
+        for x in range(n):
+            v = 236.0
+            # Polyester scrim showing through the PVC coat.
+            if x % 2 == 0:
+                v -= 3
+            if y % 2 == 0:
+                v -= 3
+            for bx, by, r, a in blobs:
+                dx = min(abs(x - bx), n - abs(x - bx))
+                dy = min(abs(y - by), n - abs(y - by))
+                d2 = (dx * dx + dy * dy) / (r * r)
+                if d2 < 1:
+                    v += a * (1 - d2)
+            v += rnd.uniform(-2.5, 2.5)
+            c = int(max(0, min(255, v)))
+            px[x, y] = (c, c, c, 255)
+    d = ImageDraw.Draw(img)
+    for _ in range(5):
+        x0, y0 = rnd.uniform(0, n), rnd.uniform(0, n)
+        a = rnd.uniform(0, math.tau)
+        ln = rnd.uniform(4, 10)
+        d.line([(x0, y0), (x0 + ln * math.cos(a), y0 + ln * math.sin(a))], fill=(222, 222, 222, 255), width=1)
+    img.save(os.path.join(folder, "tarp_pvc.png"))

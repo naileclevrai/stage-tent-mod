@@ -10,8 +10,8 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/** Client -> server: bay counts, lifts, roof and side sheets of a control tower. */
-public record ConfigureControlTowerPacket(BlockPos pos, int baysW, int baysD, int levels, boolean roof, boolean skirt) {
+/** Client -> server: bay counts, lifts, roof, side sheets and deck gear of a control tower. */
+public record ConfigureControlTowerPacket(BlockPos pos, int baysW, int baysD, int levels, boolean roof, boolean skirt, boolean gear) {
     private static final double MAX_DISTANCE_SQR = 24 * 24;
 
     public void encode(FriendlyByteBuf buf) {
@@ -21,11 +21,12 @@ public record ConfigureControlTowerPacket(BlockPos pos, int baysW, int baysD, in
         buf.writeByte(levels);
         buf.writeBoolean(roof);
         buf.writeBoolean(skirt);
+        buf.writeBoolean(gear);
     }
 
     public static ConfigureControlTowerPacket decode(FriendlyByteBuf buf) {
         return new ConfigureControlTowerPacket(buf.readBlockPos(), buf.readUnsignedByte(), buf.readUnsignedByte(),
-                buf.readUnsignedByte(), buf.readBoolean(), buf.readBoolean());
+                buf.readUnsignedByte(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -35,7 +36,7 @@ public record ConfigureControlTowerPacket(BlockPos pos, int baysW, int baysD, in
         BlockState state = player.level().getBlockState(pos);
         if (!(state.getBlock() instanceof ControlTowerBlock)) return;
         if (player.level().getBlockEntity(pos) instanceof ControlTowerBlockEntity tower) {
-            tower.configure(baysW, baysD, levels, roof, skirt);
+            tower.configure(baysW, baysD, levels, roof, skirt, gear);
         }
     }
 }
